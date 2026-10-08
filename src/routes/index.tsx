@@ -38,13 +38,13 @@ function Index() {
     <SiteLayout>
       {/* Hero */}
       <section className="texture-dots">
-        <div className="mx-auto max-w-4xl px-6 py-20 text-center md:py-28">
+        <div className="mx-auto max-w-6xl px-6 py-20 text-center md:py-28">
           <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
             Il lavoro educativo
             <br />
             cresce qui
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
+          <p className="mx-auto mt-6 text-lg text-muted-foreground md:whitespace-nowrap">
             Il punto d'incontro tra chi lavora nel sociale e chi sta cercando
             proprio te.
           </p>
