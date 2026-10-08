@@ -42,31 +42,31 @@
 
 :root {
   --radius: 0.75rem;
-  /* semi — a very light tint of the original logo orange */
-  --background: oklch(0.963 0.042 71.568884);
+  /* semi — soft, muted yellow */
+  --background: oklch(0.968 0.042 95);
   --brand-green: oklch(0.391799 0.074169 169.605298);
   --foreground: oklch(0.27 0.03 60);
   --card: var(--background);
   --card-foreground: oklch(0.27 0.03 60);
-  --popover: oklch(0.99 0.008 90);
+  --popover: oklch(0.99 0.012 92);
   --popover-foreground: oklch(0.27 0.03 60);
   --primary: oklch(0.79388 0.142289 71.568884);
   --primary-foreground: oklch(0.24 0.03 60);
-  --secondary: oklch(0.93 0.03 85);
-  --secondary-foreground: oklch(0.35 0.05 60);
-  --muted: oklch(0.94 0.02 85);
-  --muted-foreground: oklch(0.5 0.03 60);
+  --secondary: oklch(0.93 0.035 92);
+  --secondary-foreground: oklch(0.35 0.05 80);
+  --muted: oklch(0.94 0.03 92);
+  --muted-foreground: oklch(0.5 0.03 80);
   --accent: var(--primary);
   --accent-foreground: oklch(0.24 0.03 60);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.01 90);
-  --border: oklch(0.89 0.02 80);
-  --input: oklch(0.89 0.02 80);
+  --border: oklch(0.89 0.028 88);
+  --input: oklch(0.89 0.028 88);
   --ring: var(--primary);
   --chart-1: var(--primary);
   --chart-2: oklch(0.68 0.16 45);
   --chart-3: oklch(0.6 0.1 220);
-  --chart-4: oklch(0.75 0.12 85);
+  --chart-4: oklch(0.75 0.12 92);
   --chart-5: oklch(0.55 0.12 30);
 }
 
