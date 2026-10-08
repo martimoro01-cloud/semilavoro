@@ -37,14 +37,16 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-brand-green: var(--brand-green);
 }
 
 :root {
   --radius: 0.75rem;
-  /* semi — pale orange sampled from the supplied reference */
-  --background: oklch(0.966983 0.016422 91.55085);
+  /* semi — a very light tint of the original logo orange */
+  --background: oklch(0.963 0.042 71.568884);
+  --brand-green: oklch(0.391799 0.074169 169.605298);
   --foreground: oklch(0.27 0.03 60);
-  --card: oklch(0.99 0.008 90);
+  --card: var(--background);
   --card-foreground: oklch(0.27 0.03 60);
   --popover: oklch(0.99 0.008 90);
   --popover-foreground: oklch(0.27 0.03 60);

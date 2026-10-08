@@ -125,11 +125,11 @@ function Index() {
       </section>
 
       {/* Dicono di noi */}
-      <section id="dicono-di-noi" className="scroll-mt-24 bg-card py-16">
+      <section id="dicono-di-noi" className="scroll-mt-24 bg-background py-16">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-3xl font-bold md:text-4xl">Dicono di noi</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
-            <blockquote className="rounded-3xl border border-border bg-background p-7">
+            <blockquote className="rounded-3xl border border-brand-green bg-background p-7">
               <p className="leading-relaxed text-muted-foreground">
                 "Grazie a semi ho trovato una cooperativa seria in pochi giorni.
                 Finalmente un portale pensato per chi lavora davvero nel
@@ -139,7 +139,7 @@ function Index() {
                 — Giulia, educatrice di comunità
               </footer>
             </blockquote>
-            <blockquote className="rounded-3xl border border-border bg-background p-7">
+            <blockquote className="rounded-3xl border border-brand-green bg-background p-7">
               <p className="leading-relaxed text-muted-foreground">
                 "Pubblicare un annuncio è semplicissimo e le candidature
                 arrivano già filtrate per area di intervento. Lo consiglio."
