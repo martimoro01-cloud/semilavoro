@@ -44,16 +44,17 @@ function TrovaLavoro() {
         <h2 className="mt-12 text-2xl font-bold">Scegli l'area di intervento</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {areeDiIntervento.map((area) => (
-            <Button
-              key={area.nome}
-              type="button"
-              className="group flex h-16 items-center justify-between gap-3 rounded-lg px-5 text-left font-display text-lg font-semibold shadow-none transition-transform hover:-translate-y-0.5"
+            <Link
+              key={area.slug}
+              to="/trova-lavoro/$area"
+              params={{ area: area.slug }}
+              className="group flex h-16 items-center justify-between gap-3 rounded-lg bg-primary px-5 text-left font-display text-lg font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90"
             >
               <span>{area.nome}</span>
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-card text-foreground transition-transform group-hover:translate-x-1">
                 <ArrowRight className="h-4 w-4" />
               </span>
-            </Button>
+            </Link>
           ))}
         </div>
       </section>
