@@ -12,7 +12,7 @@ import {
   Mail,
   ArrowRight,
 } from "lucide-react";
-import logoAsset from "@/assets/logo-semi.jpg.asset.json";
+import logoAsset from "@/assets/logo-semi-transparent.png.asset.json";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
@@ -26,7 +26,7 @@ const navItems = [
 function Logo() {
   return (
     <Link to="/" aria-label="semi — Home" className="flex items-center">
-      <img src={logoAsset.url} alt="semi — Il lavoro educativo cresce qui" className="h-auto w-36 mix-blend-multiply sm:w-44" width={710} height={255} />
+      <img src={logoAsset.url} alt="semi — Il lavoro educativo cresce qui" className="h-auto w-36 sm:w-44" width={710} height={255} />
     </Link>
   );
 }
