@@ -44,11 +44,19 @@ export const areeDiIntervento = [
     descrizione: "Comunità terapeutiche e servizi di recupero dalle dipendenze.",
   },
   {
-    nome: "Anziani",
-    descrizione: "Residenze, centri diurni e assistenza domiciliare per anziani.",
+    nome: "Donne sotto tutela",
+    descrizione: "Servizi di accoglienza e protezione per donne sotto tutela.",
+  },
+  {
+    nome: "Migranti",
+    descrizione: "Servizi di accoglienza e inclusione per persone migranti.",
   },
   {
     nome: "Disabilità",
     descrizione: "Servizi educativi e riabilitativi per persone con disabilità.",
+  },
+  {
+    nome: "Anziani",
+    descrizione: "Residenze, centri diurni e assistenza domiciliare per anziani.",
   },
 ];

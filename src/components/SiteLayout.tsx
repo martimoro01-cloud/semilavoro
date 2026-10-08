@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import {
-  Sprout,
   Menu,
   X,
   Home,
@@ -13,6 +12,7 @@ import {
   Mail,
   ArrowRight,
 } from "lucide-react";
+import logoAsset from "@/assets/logo-semi.jpg.asset.json";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
@@ -25,11 +25,8 @@ const navItems = [
 
 function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-1.5">
-      <Sprout className="h-7 w-7 text-foreground" strokeWidth={2.2} />
-      <span className="font-display text-3xl font-semibold tracking-tight text-primary">
-        semi
-      </span>
+    <Link to="/" aria-label="semi — Home" className="flex items-center">
+      <img src={logoAsset.url} alt="semi — Il lavoro educativo cresce qui" className="h-auto w-36 mix-blend-multiply sm:w-44" width={710} height={255} />
     </Link>
   );
 }
@@ -180,8 +177,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 
       {/* Footer */}
       <footer className="border-t border-border py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground md:flex-row">
-          <Logo />
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-center px-6 text-center text-sm text-muted-foreground">
           <p>© 2026 semi — Il lavoro educativo cresce qui</p>
         </div>
       </footer>
