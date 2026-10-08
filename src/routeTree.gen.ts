@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PubblicaAnnuncioRouteImport } from './routes/pubblica-annuncio'
+import { Route as TrovaLavoroRouteImport } from './routes/trova-lavoro'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PubblicaAnnuncioRoute = PubblicaAnnuncioRouteImport.update({
+  id: '/pubblica-annuncio',
+  path: '/pubblica-annuncio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrovaLavoroRoute = TrovaLavoroRouteImport.update({
+  id: '/trova-lavoro',
+  path: '/trova-lavoro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
+  '/trova-lavoro': typeof TrovaLavoroRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
+  '/trova-lavoro': typeof TrovaLavoroRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
+  '/trova-lavoro': typeof TrovaLavoroRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/pubblica-annuncio' | '/trova-lavoro'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/pubblica-annuncio' | '/trova-lavoro'
+  id: '__root__' | '/' | '/pubblica-annuncio' | '/trova-lavoro'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PubblicaAnnuncioRoute: typeof PubblicaAnnuncioRoute
+  TrovaLavoroRoute: typeof TrovaLavoroRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pubblica-annuncio': {
+      id: '/pubblica-annuncio'
+      path: '/pubblica-annuncio'
+      fullPath: '/pubblica-annuncio'
+      preLoaderRoute: typeof PubblicaAnnuncioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trova-lavoro': {
+      id: '/trova-lavoro'
+      path: '/trova-lavoro'
+      fullPath: '/trova-lavoro'
+      preLoaderRoute: typeof TrovaLavoroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PubblicaAnnuncioRoute: PubblicaAnnuncioRoute,
+  TrovaLavoroRoute: TrovaLavoroRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
