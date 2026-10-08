@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import presentazioneVideo from "@/assets/presentazione.mp4.asset.json";
 import {
   GraduationCap,
   MapPin,
@@ -162,16 +163,13 @@ function Index() {
           {/* Video section */}
           <div id="video" className="scroll-mt-24">
             <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-2xl shadow-primary/10">
-              {/* Sostituisci l'attributo src con il percorso del tuo video,
-                  ad esempio /video/presentazione.mp4 dopo averlo caricato in public/video/ */}
               <video
-                className="aspect-video w-full bg-secondary object-cover"
+                className="aspect-video w-full bg-secondary object-contain"
                 controls
                 playsInline
                 preload="metadata"
-                poster=""
+                src={presentazioneVideo.url}
               >
-                <track kind="captions" label="Italiano" />
                 Il tuo browser non supporta la riproduzione video.
               </video>
               <div className="flex items-center gap-3 px-5 py-4">
