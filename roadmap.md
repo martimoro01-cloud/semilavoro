@@ -4,5 +4,5 @@
 - [x] Allineare il modulo Pubblica annuncio alle foto.
 - [x] Allineare le otto aree Trova lavoro alla foto.
 - [x] Verificare pagine e controlli.
-- [ ] Abbinare lo sfondo alla foto e gli accenti all’arancione del logo.
-- [ ] Rendere il logo nitido e trasparente, senza stacco dallo sfondo.
+- [x] Abbinare lo sfondo alla foto e gli accenti all’arancione del logo.
+- [x] Rendere il logo nitido e trasparente, senza stacco dallo sfondo.
