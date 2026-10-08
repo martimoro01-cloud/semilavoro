@@ -37,7 +37,7 @@ function Index() {
   return (
     <SiteLayout>
       {/* Hero */}
-      <section className="texture-dots">
+      <section>
         <div className="mx-auto max-w-6xl px-6 py-20 text-center md:py-28">
           <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
             Il lavoro educativo
@@ -86,9 +86,9 @@ function Index() {
             </h2>
             <Link
               to="/trova-lavoro"
-              className="hidden items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+              className="hidden items-center gap-1 text-sm font-semibold text-muted-foreground decoration-primary decoration-2 underline-offset-4 transition-colors hover:text-foreground sm:inline-flex"
             >
-              Vedi tutti gli annunci
+              <span className="underline decoration-primary decoration-2 underline-offset-4">Vedi tutti gli annunci</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -99,7 +99,7 @@ function Index() {
                 key={annuncio.titolo}
                 className="group flex flex-col rounded-3xl border border-border bg-card p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
               >
-                <span className="inline-flex w-fit rounded-full bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-secondary-foreground">
+                <span className="inline-flex w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
                   {annuncio.area}
                 </span>
                 <h3 className="mt-4 flex-1 text-xl font-bold leading-snug">
