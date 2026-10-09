@@ -71,7 +71,7 @@ export const areeDiIntervento: AreaDiIntervento[] = [
   {
     slug: "dipendenze",
     nome: "Dipendenze",
-    descrizione: "Comunità terapeutiche e servizi di recupero dalle dipendenze.",
+    descrizione: "\n",
   },
   {
     slug: "donne-sotto-tutela",
