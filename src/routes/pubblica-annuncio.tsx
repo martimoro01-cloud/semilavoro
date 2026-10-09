@@ -48,7 +48,7 @@ function PubblicaAnnuncio() {
         </Link>
         <h1 className="mt-6 text-3xl font-bold sm:text-4xl">Pubblica un annuncio</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Raccontaci il ruolo che stai cercando. Semplice, chiaro, pensato per il sociale.
+          {"\n"}
         </p>
         <form className="mt-6 space-y-5 rounded-lg border border-border bg-card p-5 sm:p-7" onSubmit={(event) => { event.preventDefault(); setNotice(true); }}>
           <div>
