@@ -6,3 +6,5 @@
 - [x] Verificare pagine e controlli.
 - [x] Abbinare lo sfondo alla foto e gli accenti all’arancione del logo.
 - [x] Rendere il logo nitido e trasparente, senza stacco dallo sfondo.
+- [x] Pagine delle aree con annunci o "Nessun annuncio disponibile".
+- [x] Modulo di candidatura per ogni annuncio (email, cellulare, CV, lettera di presentazione — tutti obbligatori).

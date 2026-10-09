@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PubblicaAnnuncioRouteImport } from './routes/pubblica-annuncio'
 import { Route as TrovaLavoroRouteImport } from './routes/trova-lavoro'
+import { Route as TrovaLavoroIndexRouteImport } from './routes/trova-lavoro.index'
 import { Route as TrovaLavoroAreaRouteImport } from './routes/trova-lavoro.$area'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const TrovaLavoroRoute = TrovaLavoroRouteImport.update({
   path: '/trova-lavoro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrovaLavoroIndexRoute = TrovaLavoroIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TrovaLavoroRoute,
+} as any)
 const TrovaLavoroAreaRoute = TrovaLavoroAreaRouteImport.update({
   id: '/$area',
   path: '/$area',
@@ -40,12 +46,13 @@ export interface FileRoutesByFullPath {
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
   '/trova-lavoro': typeof TrovaLavoroRouteWithChildren
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
+  '/trova-lavoro/': typeof TrovaLavoroIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
-  '/trova-lavoro': typeof TrovaLavoroRouteWithChildren
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
+  '/trova-lavoro': typeof TrovaLavoroIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,19 +60,25 @@ export interface FileRoutesById {
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
   '/trova-lavoro': typeof TrovaLavoroRouteWithChildren
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
+  '/trova-lavoro/': typeof TrovaLavoroIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/pubblica-annuncio' | '/trova-lavoro' | '/trova-lavoro/$area'
+    | '/'
+    | '/pubblica-annuncio'
+    | '/trova-lavoro'
+    | '/trova-lavoro/$area'
+    | '/trova-lavoro/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pubblica-annuncio' | '/trova-lavoro' | '/trova-lavoro/$area'
+  to: '/' | '/pubblica-annuncio' | '/trova-lavoro/$area' | '/trova-lavoro'
   id:
     | '__root__'
     | '/'
     | '/pubblica-annuncio'
     | '/trova-lavoro'
     | '/trova-lavoro/$area'
+    | '/trova-lavoro/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -97,6 +110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrovaLavoroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trova-lavoro/': {
+      id: '/trova-lavoro/'
+      path: '/'
+      fullPath: '/trova-lavoro/'
+      preLoaderRoute: typeof TrovaLavoroIndexRouteImport
+      parentRoute: typeof TrovaLavoroRoute
+    }
     '/trova-lavoro/$area': {
       id: '/trova-lavoro/$area'
       path: '/$area'
@@ -109,10 +129,12 @@ declare module '@tanstack/react-router' {
 
 interface TrovaLavoroRouteChildren {
   TrovaLavoroAreaRoute: typeof TrovaLavoroAreaRoute
+  TrovaLavoroIndexRoute: typeof TrovaLavoroIndexRoute
 }
 
 const TrovaLavoroRouteChildren: TrovaLavoroRouteChildren = {
   TrovaLavoroAreaRoute: TrovaLavoroAreaRoute,
+  TrovaLavoroIndexRoute: TrovaLavoroIndexRoute,
 }
 
 const TrovaLavoroRouteWithChildren = TrovaLavoroRoute._addFileChildren(
