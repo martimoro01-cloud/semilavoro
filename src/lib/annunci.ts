@@ -61,8 +61,7 @@ export const areeDiIntervento: AreaDiIntervento[] = [
   {
     slug: "minori",
     nome: "Minori",
-    descrizione:
-      "Centri diurni, comunità educative e doposcuola per bambini e ragazzi.",
+    descrizione: "\n",
   },
   {
     slug: "mamma-bambino",
