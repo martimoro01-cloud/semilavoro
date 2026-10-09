@@ -86,7 +86,7 @@ export const areeDiIntervento: AreaDiIntervento[] = [
   {
     slug: "disabilita",
     nome: "Disabilità",
-    descrizione: "Servizi educativi e riabilitativi per persone con disabilità.",
+    descrizione: "\n",
   },
   {
     slug: "anziani",
