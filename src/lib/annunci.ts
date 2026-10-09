@@ -56,7 +56,7 @@ export const areeDiIntervento: AreaDiIntervento[] = [
   {
     slug: "prima-infanzia",
     nome: "Prima infanzia",
-    descrizione: "Asili nido, micronidi e servizi per bambini da 0 a 3 anni.",
+    descrizione: "\n",
   },
   {
     slug: "minori",
