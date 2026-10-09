@@ -66,7 +66,7 @@ export const areeDiIntervento: AreaDiIntervento[] = [
   {
     slug: "mamma-bambino",
     nome: "Mamma-bambino",
-    descrizione: "Comunità e servizi di accoglienza per mamme con bambini.",
+    descrizione: "\n",
   },
   {
     slug: "dipendenze",
