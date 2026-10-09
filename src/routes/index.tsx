@@ -38,8 +38,8 @@ function Index() {
     <SiteLayout>
       {/* Hero */}
       <section>
-        <div className="mx-auto max-w-6xl px-6 py-20 text-center md:py-28">
-          <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+        <div className="mx-auto max-w-6xl px-6 pb-20 pt-6 text-center md:pb-28 md:pt-8">
+          <h1 className="text-3xl font-bold leading-tight tracking-tight md:text-5xl">
             Il lavoro educativo
             <br />
             cresce qui
