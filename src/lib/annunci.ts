@@ -91,7 +91,7 @@ export const areeDiIntervento: AreaDiIntervento[] = [
   {
     slug: "anziani",
     nome: "Anziani",
-    descrizione: "Residenze, centri diurni e assistenza domiciliare per anziani.",
+    descrizione: "\n\n\n",
   },
 ];
 
