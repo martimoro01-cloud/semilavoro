@@ -91,21 +91,20 @@ function PubblicaAnnuncio() {
             </div>
           </fieldset>
           <div>
-            <label htmlFor="guadagno-min" className={labelClass}>Guadagno annuale lordo (€)</label>
+            <label htmlFor="guadagno-min" className={labelClass}>Guadagno annuale lordo (€) *</label>
             <div className="grid grid-cols-2 gap-3">
-              <input id="guadagno-min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" placeholder="Min (es. 22000)" className={inputClass} />
-              <input id="guadagno-max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" placeholder="Max (es. 28000)" className={inputClass} />
+              <input id="guadagno-min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
+              <input id="guadagno-max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
-            <input aria-label="Note sulla retribuzione" placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
-            <p className="mt-1.5 text-xs text-muted-foreground">Lascia vuoto se preferisci specificarlo diversamente.</p>
+            <input aria-label="Note sulla retribuzione" required placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
           </div>
           <div>
             <label htmlFor="email" className={labelClass}>Email di contatto *</label>
             <input id="email" name="email" type="email" required placeholder="candidature@tuoservizio.it" className={inputClass} />
           </div>
           <div>
-            <label htmlFor="informazioni" className={labelClass}>Altre informazioni</label>
-            <textarea id="informazioni" rows={4} placeholder="Scrivi liberamente..." className={inputClass} />
+            <label htmlFor="informazioni" className={labelClass}>Altre informazioni *</label>
+            <textarea id="informazioni" rows={4} required placeholder="Scrivi liberamente..." className={inputClass} />
             <p className="mt-1.5 text-xs text-muted-foreground">Benefit, requisiti preferenziali, modalità di candidatura, scadenze.</p>
           </div>
           <div className="flex items-start gap-3 rounded-md border border-border p-4">
