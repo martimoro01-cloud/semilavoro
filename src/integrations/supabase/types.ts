@@ -14,16 +14,169 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      annunci: {
+        Row: {
+          area: string
+          created_at: string
+          email: string
+          guadagno_max: number
+          guadagno_min: number
+          id: string
+          impegno: string
+          in_primo_piano: boolean
+          informazioni: string
+          mansione: string
+          note_retribuzione: string
+          owner_id: string | null
+          provincia: string
+          regione: string
+          servizio: string
+        }
+        Insert: {
+          area: string
+          created_at?: string
+          email: string
+          guadagno_max: number
+          guadagno_min: number
+          id?: string
+          impegno: string
+          in_primo_piano?: boolean
+          informazioni: string
+          mansione: string
+          note_retribuzione: string
+          owner_id?: string | null
+          provincia: string
+          regione: string
+          servizio: string
+        }
+        Update: {
+          area?: string
+          created_at?: string
+          email?: string
+          guadagno_max?: number
+          guadagno_min?: number
+          id?: string
+          impegno?: string
+          in_primo_piano?: boolean
+          informazioni?: string
+          mansione?: string
+          note_retribuzione?: string
+          owner_id?: string | null
+          provincia?: string
+          regione?: string
+          servizio?: string
+        }
+        Relationships: []
+      }
+      candidature: {
+        Row: {
+          annuncio_id: string
+          candidato_id: string
+          cellulare: string
+          colloquio_at: string | null
+          colloquio_luogo: string | null
+          created_at: string
+          cv_path: string
+          email: string
+          id: string
+          lettera: string
+          nome: string
+          risposta: string | null
+          stato: Database["public"]["Enums"]["stato_candidatura"]
+        }
+        Insert: {
+          annuncio_id: string
+          candidato_id: string
+          cellulare: string
+          colloquio_at?: string | null
+          colloquio_luogo?: string | null
+          created_at?: string
+          cv_path: string
+          email: string
+          id?: string
+          lettera: string
+          nome?: string
+          risposta?: string | null
+          stato?: Database["public"]["Enums"]["stato_candidatura"]
+        }
+        Update: {
+          annuncio_id?: string
+          candidato_id?: string
+          cellulare?: string
+          colloquio_at?: string | null
+          colloquio_luogo?: string | null
+          created_at?: string
+          cv_path?: string
+          email?: string
+          id?: string
+          lettera?: string
+          nome?: string
+          risposta?: string | null
+          stato?: Database["public"]["Enums"]["stato_candidatura"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidature_annuncio_id_fkey"
+            columns: ["annuncio_id"]
+            isOneToOne: false
+            referencedRelation: "annunci"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          nome?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      owns_annuncio: { Args: { _annuncio_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "educatore" | "servizio"
+      stato_candidatura: "in_attesa" | "accettata" | "rifiutata" | "colloquio"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +303,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["educatore", "servizio"],
+      stato_candidatura: ["in_attesa", "accettata", "rifiutata", "colloquio"],
+    },
   },
 } as const
