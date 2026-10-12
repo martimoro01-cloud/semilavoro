@@ -10,8 +10,8 @@ import {
   MessageCircle,
   LogIn,
   Mail,
-  ArrowRight,
 } from "lucide-react";
+import { useAccount } from "@/hooks/use-account";
 import logoImage from "@/assets/logo-semi-refined.png";
 
 const navItems = [
@@ -33,7 +33,9 @@ function Logo() {
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
+  const { user } = useAccount();
+  const accountTo = user ? "/area-personale" : "/auth";
+  const accountLabel = user ? "Area personale" : "Accedi";
 
   return (
     <div className="min-h-screen bg-background">
@@ -49,13 +51,12 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <Menu className="h-5 w-5" />
           </button>
           <Logo />
-          <button
-            type="button"
-            onClick={() => setLoginOpen(true)}
+          <Link
+            to={accountTo}
             className="rounded-full border border-border px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
           >
-            Accedi
-          </button>
+            {accountLabel}
+          </Link>
         </div>
       </header>
 
@@ -90,86 +91,16 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                   {item.label}
                 </a>
               ))}
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  setLoginOpen(true);
-                }}
+              <Link
+                to={accountTo}
+                onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
               >
                 <LogIn className="h-4 w-4 text-primary" />
-                Accedi
-              </button>
+                {accountLabel}
+              </Link>
             </nav>
           </aside>
-        </div>
-      )}
-
-      {/* Login modal */}
-      {loginOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
-          <div
-            className="absolute inset-0 bg-foreground/40"
-            onClick={() => setLoginOpen(false)}
-          />
-          <div className="relative w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-2xl">
-            <button
-              type="button"
-              aria-label="Chiudi"
-              onClick={() => setLoginOpen(false)}
-              className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full border border-border transition-colors hover:bg-secondary"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <div className="flex items-center gap-2">
-              <LogIn className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold">Accedi</h2>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Entra con la tua email e password
-            </p>
-            <form
-              className="mt-6 space-y-4"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <div>
-                <label htmlFor="login-email" className="text-sm font-semibold">
-                  Email
-                </label>
-                <input
-                  id="login-email"
-                  type="email"
-                  placeholder="tu@email.it"
-                  className="mt-1.5 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-primary"
-                />
-              </div>
-              <div>
-                <label htmlFor="login-password" className="text-sm font-semibold">
-                  Password
-                </label>
-                <input
-                  id="login-password"
-                  type="password"
-                  placeholder="••••••••"
-                  className="mt-1.5 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-primary"
-                />
-              </div>
-              <button
-                type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3.5 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-              >
-                Accedi
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              <p className="text-center text-sm text-muted-foreground">
-                Non hai un account?{" "}
-                <a href="#registrati" className="font-semibold text-primary underline">
-                  Registrati
-                </a>
-              </p>
-            </form>
-          </div>
         </div>
       )}
 

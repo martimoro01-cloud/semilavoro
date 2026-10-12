@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { annunciPerArea, trovaArea, type Annuncio } from "@/lib/annunci";
+import { trovaArea, type Annuncio } from "@/lib/annunci";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAnnunci } from "@/lib/annunci-db";
+import { supabase } from "@/integrations/supabase/client";
+import { useAccount } from "@/hooks/use-account";
 import {
   ArrowLeft,
   MapPin,
@@ -89,11 +93,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor={`email-${annuncio.titolo}`} className={labelClass}>
+          <label htmlFor={`email-${annuncio.id}`} className={labelClass}>
             Email *
           </label>
           <input
-            id={`email-${annuncio.titolo}`}
+            id={`email-${annuncio.id}`}
             name="email"
             type="email"
             required
@@ -102,11 +106,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
           />
         </div>
         <div>
-          <label htmlFor={`tel-${annuncio.titolo}`} className={labelClass}>
+          <label htmlFor={`tel-${annuncio.id}`} className={labelClass}>
             Numero di cellulare *
           </label>
           <input
-            id={`tel-${annuncio.titolo}`}
+            id={`tel-${annuncio.id}`}
             name="telefono"
             type="tel"
             required
@@ -116,11 +120,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
         </div>
       </div>
       <div>
-        <label htmlFor={`cv-${annuncio.titolo}`} className={labelClass}>
+        <label htmlFor={`cv-${annuncio.id}`} className={labelClass}>
           Curriculum vitae *
         </label>
         <input
-          id={`cv-${annuncio.titolo}`}
+          id={`cv-${annuncio.id}`}
           name="cv"
           type="file"
           required
@@ -132,11 +136,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
         </p>
       </div>
       <div>
-        <label htmlFor={`lettera-${annuncio.titolo}`} className={labelClass}>
+        <label htmlFor={`lettera-${annuncio.id}`} className={labelClass}>
           Lettera di presentazione *
         </label>
         <textarea
-          id={`lettera-${annuncio.titolo}`}
+          id={`lettera-${annuncio.id}`}
           name="lettera"
           required
           rows={5}
@@ -200,7 +204,7 @@ function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
 
 function AreaPage() {
   const { area } = Route.useLoaderData();
-  const annunci = annunciPerArea(area.nome);
+  const { data: annunci = [], isLoading } = useQuery({ queryKey: ["annunci", area.nome], queryFn: () => fetchAnnunci({ area: area.nome }) });
 
   return (
     <SiteLayout>
@@ -215,7 +219,7 @@ function AreaPage() {
         <h1 className="mt-6 text-4xl font-bold md:text-5xl">{area.nome}</h1>
         <p className="mt-4 text-lg text-muted-foreground">{area.descrizione}</p>
 
-        {annunci.length === 0 ? (
+        {isLoading ? null : annunci.length === 0 ? (
           <div className="mt-12 rounded-3xl border border-border bg-card p-12 text-center">
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-primary">
               <SearchX className="h-6 w-6" />
@@ -228,7 +232,7 @@ function AreaPage() {
         ) : (
           <div className="mt-12 grid gap-6">
             {annunci.map((annuncio) => (
-              <AnnuncioCard key={annuncio.titolo} annuncio={annuncio} />
+              <AnnuncioCard key={annuncio.id} annuncio={annuncio} />
             ))}
           </div>
         )}
