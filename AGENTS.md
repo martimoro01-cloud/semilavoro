@@ -10,6 +10,6 @@
 <!-- LOVABLE:END -->
 
 - Keep intervention areas in the shared annunci module so search and publication use the same categories.
-- Keep the publication form presentation-only until publishing is explicitly connected to Cloud; never imply that an unsaved listing is live.
+- Listings, applications and CVs live in Cloud tables/storage guarded by RLS; account type (educatore/servizio) lives in user_roles so permissions never depend on editable profile data.
 - Use the region-to-province data map for dependent location selectors so selecting a new region clears an incompatible province.
 - Use the transparent original-logo asset in the shared layout so its edges remain clean on every site surface.
