@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { annunciInPrimoPiano } from "@/lib/annunci";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAnnunci } from "@/lib/annunci-db";
 import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { data: annunciInPrimoPiano = [] } = useQuery({ queryKey: ["annunci", "primo-piano"], queryFn: () => fetchAnnunci({ primoPiano: true }) });
   return (
     <SiteLayout>
       {/* Hero */}
@@ -96,7 +98,7 @@ function Index() {
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {annunciInPrimoPiano.map((annuncio) => (
               <article
-                key={annuncio.titolo}
+                key={annuncio.id}
                 className="group flex flex-col rounded-3xl border border-border bg-card p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
               >
                 <span className="inline-flex w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">

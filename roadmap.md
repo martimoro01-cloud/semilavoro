@@ -8,3 +8,5 @@
 - [x] Rendere il logo nitido e trasparente, senza stacco dallo sfondo.
 - [x] Pagine delle aree con annunci o "Nessun annuncio disponibile".
 - [x] Modulo di candidatura per ogni annuncio (email, cellulare, CV, lettera di presentazione — tutti obbligatori).
+- [x] Tutti i campi di "Pubblica annuncio" obbligatori.
+- [x] Area personale: educatore (candidature, risposte, colloqui) e servizio (annunci con candidati, risposte, colloqui).

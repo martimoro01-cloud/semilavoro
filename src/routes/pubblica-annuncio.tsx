@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import { useAccount } from "@/hooks/use-account";
 import { SiteLayout } from "@/components/SiteLayout";
 import { areeDiIntervento } from "@/lib/annunci";
 import { ArrowLeft, Send, Sparkles } from "lucide-react";
@@ -38,7 +40,38 @@ function PubblicaAnnuncio() {
   const [provincia, setProvincia] = useState("");
   const [impegno, setImpegno] = useState("Full-time");
   const [inPrimoPiano, setInPrimoPiano] = useState(false);
-  const [notice, setNotice] = useState(false);
+  const [errore, setErrore] = useState("");
+  const [invio, setInvio] = useState(false);
+  const { user, tipo, loading } = useAccount();
+  const navigate = useNavigate();
+
+  async function pubblica(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const f = new FormData(event.currentTarget);
+    const min = Number(f.get("guadagno_min"));
+    const max = Number(f.get("guadagno_max"));
+    if (max < min) return setErrore("Il guadagno massimo deve essere uguale o superiore al minimo.");
+    setErrore("");
+    setInvio(true);
+    const { error } = await supabase.from("annunci").insert({
+      owner_id: user!.id,
+      servizio: String(f.get("servizio")),
+      area: String(f.get("area")),
+      regione,
+      provincia,
+      mansione: String(f.get("mansione")),
+      impegno,
+      guadagno_min: min,
+      guadagno_max: max,
+      note_retribuzione: String(f.get("note_retribuzione")),
+      email: String(f.get("email")),
+      informazioni: String(f.get("informazioni")),
+      in_primo_piano: inPrimoPiano,
+    });
+    setInvio(false);
+    if (error) return setErrore("Pubblicazione non riuscita, riprova.");
+    navigate({ to: "/area-personale" });
+  }
 
   return (
     <SiteLayout>
@@ -50,7 +83,13 @@ function PubblicaAnnuncio() {
         <p className="mt-3 text-sm text-muted-foreground">
           {"\n"}
         </p>
-        <form className="mt-6 space-y-5 rounded-lg border border-border bg-card p-5 sm:p-7" onSubmit={(event) => { event.preventDefault(); setNotice(true); }}>
+        {loading ? null : !user || tipo !== "servizio" ? (
+          <div className="mt-6 rounded-lg border border-border bg-card p-7 text-sm">
+            <p className="text-muted-foreground">{user ? "La pubblicazione è riservata agli account dei servizi educativi." : "Per pubblicare un annuncio accedi o registrati come servizio educativo."}</p>
+            {!user && <Button asChild className="mt-4 rounded-full shadow-none"><Link to="/auth">Accedi o registrati</Link></Button>}
+          </div>
+        ) : (
+        <form className="mt-6 space-y-5 rounded-lg border border-border bg-card p-5 sm:p-7" onSubmit={pubblica}>
           <div>
             <label htmlFor="servizio" className={labelClass}>Nome del servizio *</label>
             <input id="servizio" name="servizio" required placeholder="Es. Cooperativa sociale La Rondine" className={inputClass} />
@@ -93,10 +132,10 @@ function PubblicaAnnuncio() {
           <div>
             <label htmlFor="guadagno-min" className={labelClass}>Guadagno annuale lordo (€) *</label>
             <div className="grid grid-cols-2 gap-3">
-              <input id="guadagno-min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
-              <input id="guadagno-max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
+              <input id="guadagno-min" name="guadagno_min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
+              <input id="guadagno-max" name="guadagno_max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
-            <input aria-label="Note sulla retribuzione" required placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
+            <input name="note_retribuzione" aria-label="Note sulla retribuzione" required placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
           </div>
           <div>
             <label htmlFor="email" className={labelClass}>Email di contatto *</label>
@@ -104,7 +143,7 @@ function PubblicaAnnuncio() {
           </div>
           <div>
             <label htmlFor="informazioni" className={labelClass}>Altre informazioni *</label>
-            <textarea id="informazioni" rows={4} required placeholder="Scrivi liberamente..." className={inputClass} />
+            <textarea id="informazioni" name="informazioni" rows={4} required placeholder="Scrivi liberamente..." className={inputClass} />
             <p className="mt-1.5 text-xs text-muted-foreground">Benefit, requisiti preferenziali, modalità di candidatura, scadenze.</p>
           </div>
           <div className="flex items-start gap-3 rounded-md border border-border p-4">
@@ -115,12 +154,13 @@ function PubblicaAnnuncio() {
             </div>
             <Switch id="primo-piano" checked={inPrimoPiano} onCheckedChange={setInPrimoPiano} />
           </div>
-          {notice && <p role="status" className="text-sm text-muted-foreground">La pubblicazione non è ancora attiva: l’annuncio non è stato salvato.</p>}
+          {errore && <p role="alert" className="text-sm text-destructive">{errore}</p>}
           <div className="flex flex-wrap items-center justify-end gap-3 pt-1">
             <Button asChild variant="ghost" className="rounded-full"><Link to="/">Annulla</Link></Button>
-            <Button type="submit" className="rounded-full px-5 shadow-none"><Send />Pubblica annuncio</Button>
+            <Button type="submit" disabled={invio} className="rounded-full px-5 shadow-none"><Send />Pubblica annuncio</Button>
           </div>
         </form>
+        )}
       </section>
     </SiteLayout>
   );
