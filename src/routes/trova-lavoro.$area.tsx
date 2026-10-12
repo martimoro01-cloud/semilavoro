@@ -77,16 +77,55 @@ const inputClass =
 const labelClass = "text-sm font-medium";
 
 function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
-  const [notice, setNotice] = useState(false);
+  const { user, tipo, loading } = useAccount();
+  const [stato, setStato] = useState<"idle" | "invio" | "ok" | "errore" | "doppia">("idle");
+
+  if (loading) return null;
+  if (!user || tipo !== "educatore") {
+    return (
+      <div className="mt-6 border-t border-border pt-6 text-sm">
+        <p className="text-muted-foreground">
+          {user ? "Le candidature sono riservate agli account educatore." : "Per candidarti accedi o registrati come educatore."}
+        </p>
+        {!user && (
+          <Link to="/auth" className="mt-3 inline-flex rounded-full bg-primary px-5 py-2.5 font-semibold text-primary-foreground">Accedi o registrati</Link>
+        )}
+      </div>
+    );
+  }
+  if (stato === "ok") {
+    return (
+      <div className="mt-6 border-t border-border pt-6 text-sm">
+        <p role="status" className="font-semibold">Candidatura inviata! La trovi nella tua area personale.</p>
+        <Link to="/area-personale" className="mt-2 inline-block font-semibold text-primary underline">Vai all’area personale</Link>
+      </div>
+    );
+  }
+
+  async function invia(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const f = new FormData(event.currentTarget);
+    const file = f.get("cv") as File;
+    setStato("invio");
+    const path = `${user!.id}/${annuncio.id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+    const up = await supabase.storage.from("cv").upload(path, file);
+    if (up.error) return setStato("errore");
+    const { data: prof } = await supabase.from("profiles").select("nome").eq("id", user!.id).maybeSingle();
+    const { error } = await supabase.from("candidature").insert({
+      annuncio_id: annuncio.id,
+      candidato_id: user!.id,
+      nome: prof?.nome ?? "",
+      email: String(f.get("email")),
+      cellulare: String(f.get("telefono")),
+      lettera: String(f.get("lettera")),
+      cv_path: path,
+    });
+    if (error) return setStato(error.code === "23505" ? "doppia" : "errore");
+    setStato("ok");
+  }
 
   return (
-    <form
-      className="mt-6 space-y-4 border-t border-border pt-6"
-      onSubmit={(event) => {
-        event.preventDefault();
-        setNotice(true);
-      }}
-    >
+    <form className="mt-6 space-y-4 border-t border-border pt-6" onSubmit={invia}>
       <p className="text-sm text-muted-foreground">
         Ti stai candidando per <strong>{annuncio.titolo}</strong>. Tutti i campi
         sono obbligatori.
@@ -101,6 +140,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
             name="email"
             type="email"
             required
+            defaultValue={user.email ?? ""}
             placeholder="tu@email.it"
             className={inputClass}
           />
@@ -148,15 +188,12 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
           className={inputClass}
         />
       </div>
-      {notice && (
-        <p role="status" className="text-sm text-muted-foreground">
-          L'invio delle candidature non è ancora attivo: la tua candidatura non
-          è stata salvata.
-        </p>
-      )}
+      {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
+      {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
       <div className="flex justify-end">
         <button
           type="submit"
+          disabled={stato === "invio"}
           className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
           <Send className="h-4 w-4" />

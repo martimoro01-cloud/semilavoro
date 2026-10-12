@@ -10,14 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PubblicaAnnuncioRouteImport } from './routes/pubblica-annuncio'
 import { Route as TrovaLavoroRouteImport } from './routes/trova-lavoro'
+import { Route as AuthenticatedAreaPersonaleRouteImport } from './routes/_authenticated/area-personale'
 import { Route as TrovaLavoroIndexRouteImport } from './routes/trova-lavoro.index'
 import { Route as TrovaLavoroAreaRouteImport } from './routes/trova-lavoro.$area'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PubblicaAnnuncioRoute = PubblicaAnnuncioRouteImport.update({
@@ -30,6 +42,12 @@ const TrovaLavoroRoute = TrovaLavoroRouteImport.update({
   path: '/trova-lavoro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAreaPersonaleRoute =
+  AuthenticatedAreaPersonaleRouteImport.update({
+    id: '/area-personale',
+    path: '/area-personale',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const TrovaLavoroIndexRoute = TrovaLavoroIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,22 +61,29 @@ const TrovaLavoroAreaRoute = TrovaLavoroAreaRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
   '/trova-lavoro': typeof TrovaLavoroRouteWithChildren
+  '/area-personale': typeof AuthenticatedAreaPersonaleRoute
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
   '/trova-lavoro/': typeof TrovaLavoroIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
+  '/area-personale': typeof AuthenticatedAreaPersonaleRoute
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
   '/trova-lavoro': typeof TrovaLavoroIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
   '/trova-lavoro': typeof TrovaLavoroRouteWithChildren
+  '/_authenticated/area-personale': typeof AuthenticatedAreaPersonaleRoute
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
   '/trova-lavoro/': typeof TrovaLavoroIndexRoute
 }
@@ -66,23 +91,36 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/pubblica-annuncio'
     | '/trova-lavoro'
+    | '/area-personale'
     | '/trova-lavoro/$area'
     | '/trova-lavoro/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pubblica-annuncio' | '/trova-lavoro/$area' | '/trova-lavoro'
+  to:
+    | '/'
+    | '/auth'
+    | '/pubblica-annuncio'
+    | '/area-personale'
+    | '/trova-lavoro/$area'
+    | '/trova-lavoro'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/pubblica-annuncio'
     | '/trova-lavoro'
+    | '/_authenticated/area-personale'
     | '/trova-lavoro/$area'
     | '/trova-lavoro/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   PubblicaAnnuncioRoute: typeof PubblicaAnnuncioRoute
   TrovaLavoroRoute: typeof TrovaLavoroRouteWithChildren
 }
@@ -94,6 +132,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pubblica-annuncio': {
@@ -109,6 +161,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/trova-lavoro'
       preLoaderRoute: typeof TrovaLavoroRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/area-personale': {
+      id: '/_authenticated/area-personale'
+      path: '/area-personale'
+      fullPath: '/area-personale'
+      preLoaderRoute: typeof AuthenticatedAreaPersonaleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/trova-lavoro/': {
       id: '/trova-lavoro/'
@@ -127,6 +186,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAreaPersonaleRoute: typeof AuthenticatedAreaPersonaleRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAreaPersonaleRoute: AuthenticatedAreaPersonaleRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 interface TrovaLavoroRouteChildren {
   TrovaLavoroAreaRoute: typeof TrovaLavoroAreaRoute
   TrovaLavoroIndexRoute: typeof TrovaLavoroIndexRoute
@@ -143,6 +213,8 @@ const TrovaLavoroRouteWithChildren = TrovaLavoroRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   PubblicaAnnuncioRoute: PubblicaAnnuncioRoute,
   TrovaLavoroRoute: TrovaLavoroRouteWithChildren,
 }
