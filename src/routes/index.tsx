@@ -44,26 +44,15 @@ function Index() {
     <SiteLayout>
       {/* Hero */}
       <section className="relative overflow-hidden bg-background">
-        {/* Motivi editoriali ispirati a semi, connessioni e crescita: forme geometriche e tratti organici. */}
-        <svg aria-hidden="true" viewBox="0 0 340 510" fill="none" className="pointer-events-none absolute -left-28 top-12 hidden h-[510px] w-[340px] text-brand-green opacity-35 lg:block" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M70 480 Q205 365 121 256 T190 24" strokeWidth="2.5" />
-          <path d="M121 256 Q30 211 48 139 Q119 146 121 256Z M140 205 Q240 190 265 107 Q174 108 140 205Z M99 348 Q20 332 21 271 Q90 275 99 348Z M130 395 Q235 382 268 310 Q177 309 130 395Z" strokeWidth="1.8" />
-          <path d="M121 256 L48 139 M140 205 L265 107 M99 348 L21 271 M130 395 L268 310" strokeWidth="1" opacity=".7" />
-          <circle cx="180" cy="96" r="68" strokeWidth="1" strokeDasharray="4 10" />
-          <circle cx="80" cy="435" r="19" strokeWidth="1.5" />
-          <path d="M198 65 L230 32 M206 105 L251 108 M173 42 L170 9" strokeWidth="1.5" />
-          <path d="M221 255 Q285 233 303 187 M224 264 Q290 260 315 231" strokeWidth="1.2" />
-        </svg>
-        <svg aria-hidden="true" viewBox="0 0 350 520" fill="none" className="pointer-events-none absolute -right-28 bottom-0 hidden h-[520px] w-[350px] text-brand-green opacity-30 lg:block" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M180 505 C95 410 236 344 161 259 S151 109 197 20" strokeWidth="2.5" />
-          <path d="M168 420 C82 412 45 360 52 300 C126 310 170 345 168 420Z M183 355 C267 330 299 281 302 230 C223 247 184 291 183 355Z M168 267 C88 253 68 197 82 146 C143 161 177 204 168 267Z M170 166 C258 138 282 92 275 46 C207 64 177 103 170 166Z" strokeWidth="1.8" />
-          <path d="M168 420 L52 300 M183 355 L302 230 M168 267 L82 146 M170 166 L275 46" strokeWidth="1" opacity=".7" />
-          <circle cx="233" cy="448" r="61" strokeDasharray="3 10" />
-          <circle cx="234" cy="448" r="24" strokeWidth="1.4" />
-          <path d="M27 90 L65 90 M46 71 L46 109 M275 186 L312 186 M294 167 L294 205" strokeWidth="1.5" />
-        </svg>
-        <div className="relative mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center px-6 pb-24 pt-16 text-center md:min-h-[610px] md:pb-32 md:pt-24">
-          <h1 className="max-w-3xl text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+        {/* Motivo grafico astratto: archi e trame, anziché illustrazioni botaniche */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-48 top-12 h-[540px] w-[540px] rounded-full border-[70px] border-primary/[0.055]" />
+          <div className="absolute -right-56 -top-48 h-[680px] w-[680px] rounded-full border-[90px] border-primary/[0.06]" />
+          <div className="absolute bottom-12 left-[8%] hidden h-32 w-32 rotate-12 rounded-[2.5rem] border border-primary/15 md:block" />
+          <div className="absolute bottom-16 right-[10%] hidden h-24 w-24 -rotate-12 rounded-full bg-primary/[0.06] md:block" />
+        </div>
+        <div className="relative mx-auto flex min-h-[560px] max-w-6xl flex-col items-center justify-center px-6 pb-24 pt-20 text-center md:min-h-[660px] md:pb-32 md:pt-24">
+          <h1 className="max-w-4xl text-5xl font-bold leading-[1.08] tracking-tight sm:text-6xl md:text-7xl lg:text-[5.5rem]">
             Il lavoro educativo
             <br />
             cresce qui
@@ -76,7 +65,7 @@ function Index() {
           <div className="mx-auto mt-5 grid w-full max-w-3xl gap-4 sm:grid-cols-2 md:gap-6">
             <Link
               to="/pubblica-annuncio"
-              className="group flex min-h-24 items-center justify-between gap-4 rounded-2xl bg-primary px-6 py-6 text-left text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20 sm:px-7"
+              className="group flex min-h-28 items-center justify-between gap-4 rounded-[1.75rem] border border-primary/10 bg-primary px-7 py-7 text-left text-base font-semibold text-primary-foreground shadow-xl shadow-primary/10 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/15 sm:px-8"
             >
               <span className="flex items-center gap-3">
                 <Megaphone className="h-5 w-5" />
@@ -124,7 +113,7 @@ function Index() {
             {annunciInPrimoPiano.map((annuncio) => (
               <article
                 key={annuncio.id}
-                className="group flex flex-col rounded-3xl border border-border bg-card p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
+                className="group flex flex-col rounded-[2rem] border border-border bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
               >
                 <span className="inline-flex w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
                   {annuncio.area}
