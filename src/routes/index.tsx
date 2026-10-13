@@ -40,19 +40,23 @@ function Index() {
     <SiteLayout>
       {/* Hero */}
       <section className="relative overflow-hidden bg-background">
-        {/* Illustrazioni botaniche lineari: richiamo alla crescita e al nome SEMI */}
-        <svg aria-hidden="true" viewBox="0 0 280 480" fill="none" className="pointer-events-none absolute -left-20 top-10 hidden h-[480px] w-[280px] text-brand-green opacity-30 lg:block" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M85 480 C115 395 75 340 130 258 S172 125 147 20"/>
-          <path d="M111 370 C43 340 30 294 35 255 C95 263 125 302 111 370Z M123 320 C172 269 213 260 247 270 C230 321 177 348 123 320Z M137 250 C76 222 63 175 74 135 C129 150 150 189 137 250Z M151 177 C207 152 230 111 225 72 C178 83 151 116 151 177Z M145 92 C102 76 86 46 90 13 C127 24 145 47 145 92Z"/>
-          <path d="M111 370 L35 255 M123 320 L247 270 M137 250 L74 135 M151 177 L225 72 M145 92 L90 13" opacity=".6"/>
-          <circle cx="83" cy="424" r="48" strokeDasharray="3 9" opacity=".45"/>
+        {/* Motivi editoriali ispirati a semi, connessioni e crescita: forme geometriche e tratti organici. */}
+        <svg aria-hidden="true" viewBox="0 0 340 510" fill="none" className="pointer-events-none absolute -left-28 top-12 hidden h-[510px] w-[340px] text-brand-green opacity-35 lg:block" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M70 480 Q205 365 121 256 T190 24" strokeWidth="2.5" />
+          <path d="M121 256 Q30 211 48 139 Q119 146 121 256Z M140 205 Q240 190 265 107 Q174 108 140 205Z M99 348 Q20 332 21 271 Q90 275 99 348Z M130 395 Q235 382 268 310 Q177 309 130 395Z" strokeWidth="1.8" />
+          <path d="M121 256 L48 139 M140 205 L265 107 M99 348 L21 271 M130 395 L268 310" strokeWidth="1" opacity=".7" />
+          <circle cx="180" cy="96" r="68" strokeWidth="1" strokeDasharray="4 10" />
+          <circle cx="80" cy="435" r="19" strokeWidth="1.5" />
+          <path d="M198 65 L230 32 M206 105 L251 108 M173 42 L170 9" strokeWidth="1.5" />
+          <path d="M221 255 Q285 233 303 187 M224 264 Q290 260 315 231" strokeWidth="1.2" />
         </svg>
-        <svg aria-hidden="true" viewBox="0 0 300 460" fill="none" className="pointer-events-none absolute -right-24 bottom-0 hidden h-[460px] w-[300px] text-brand-green opacity-25 lg:block" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M150 460 C128 370 191 308 153 232 C118 161 168 94 180 12"/>
-          <path d="M147 400 C77 393 42 354 38 305 C101 308 149 343 147 400Z M157 337 C213 327 247 291 263 243 C200 247 165 276 157 337Z M158 251 C93 234 65 196 61 150 C122 163 158 194 158 251Z M159 164 C225 140 249 99 252 59 C197 69 167 110 159 164Z"/>
-          <path d="M147 400 L38 305 M157 337 L263 243 M158 251 L61 150 M159 164 L252 59" opacity=".55"/>
-          <circle cx="203" cy="402" r="46" strokeDasharray="2 8" opacity=".5"/>
-          <circle cx="222" cy="390" r="12" opacity=".45"/>
+        <svg aria-hidden="true" viewBox="0 0 350 520" fill="none" className="pointer-events-none absolute -right-28 bottom-0 hidden h-[520px] w-[350px] text-brand-green opacity-30 lg:block" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M180 505 C95 410 236 344 161 259 S151 109 197 20" strokeWidth="2.5" />
+          <path d="M168 420 C82 412 45 360 52 300 C126 310 170 345 168 420Z M183 355 C267 330 299 281 302 230 C223 247 184 291 183 355Z M168 267 C88 253 68 197 82 146 C143 161 177 204 168 267Z M170 166 C258 138 282 92 275 46 C207 64 177 103 170 166Z" strokeWidth="1.8" />
+          <path d="M168 420 L52 300 M183 355 L302 230 M168 267 L82 146 M170 166 L275 46" strokeWidth="1" opacity=".7" />
+          <circle cx="233" cy="448" r="61" strokeDasharray="3 10" />
+          <circle cx="234" cy="448" r="24" strokeWidth="1.4" />
+          <path d="M27 90 L65 90 M46 71 L46 109 M275 186 L312 186 M294 167 L294 205" strokeWidth="1.5" />
         </svg>
         <div className="relative mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center px-6 pb-24 pt-16 text-center md:min-h-[610px] md:pb-32 md:pt-24">
           <h1 className="max-w-3xl text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
