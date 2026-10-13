@@ -96,7 +96,8 @@ function AreaPersonale() {
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
             </p>
-            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao{profilo?.nome ? `, ${profilo.nome}` : ""}</h1>
+            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao</h1>
+            {profilo?.nome && <p className="mt-1 font-display text-2xl font-semibold sm:text-3xl">{profilo.nome}</p>}
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
           </div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
