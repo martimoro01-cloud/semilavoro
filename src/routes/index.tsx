@@ -61,8 +61,7 @@ function Index() {
             Il punto d'incontro tra chi lavora nel sociale e chi sta cercando
             proprio te.
           </p>
-          <p className="mt-10 text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">Scegli da dove iniziare</p>
-          <div className="mx-auto mt-5 grid w-full max-w-3xl gap-4 sm:grid-cols-2 md:gap-6">
+          <div className="mx-auto mt-10 grid w-full max-w-3xl gap-4 sm:grid-cols-2 md:gap-6">
             <Link
               to="/pubblica-annuncio"
               className="group flex min-h-28 items-center justify-between gap-4 rounded-[1.75rem] border border-primary/10 bg-primary px-7 py-7 text-left text-base font-semibold text-primary-foreground shadow-xl shadow-primary/10 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/15 sm:px-8"
