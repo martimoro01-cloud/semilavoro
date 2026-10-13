@@ -46,7 +46,7 @@ function Index() {
       <section className="relative overflow-hidden bg-background">
         {/* Motivo grafico astratto: archi e trame, anziché illustrazioni botaniche */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-48 top-12 h-[540px] w-[540px] rounded-full border-[70px] border-primary/[0.055]" />
+          <div className="absolute -left-48 top-12 h-[540px] w-[540px] rounded-full border-[70px] border-[#B8D7A8]/40" />
           <div className="absolute -right-56 -top-48 h-[680px] w-[680px] rounded-full border-[90px] border-primary/[0.06]" />
           <div className="absolute bottom-12 left-[8%] hidden h-32 w-32 rotate-12 rounded-[2.5rem] border border-primary/15 md:block" />
           <div className="absolute bottom-16 right-[10%] hidden h-24 w-24 -rotate-12 rounded-full bg-primary/[0.06] md:block" />
@@ -140,6 +140,9 @@ function Index() {
         </div>
       </section>
 
+      {/* Recensioni autentiche, pubblicate dopo moderazione */}
+      <Recensioni />
+      
       {/* Concorsi e bandi */}
       <section className="border-t border-border bg-primary/[0.06] py-20 md:py-24">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 md:grid-cols-[1fr_auto]">
@@ -151,9 +154,6 @@ function Index() {
           <Link to="/concorsi-bandi" className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-7 py-4 font-bold text-primary-foreground transition-transform hover:-translate-y-1"><CalendarClock className="h-5 w-5" /> Esplora concorsi e bandi <ArrowRight className="h-5 w-5" /></Link>
         </div>
       </section>
-      {/* Recensioni autentiche, pubblicate dopo moderazione */}
-      <Recensioni />
-      
       {/* Contatti */}
       <section id="contatti" className="scroll-mt-24 border-t border-border bg-muted/30 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
