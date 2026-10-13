@@ -71,6 +71,66 @@ export type Database = {
         }
         Relationships: []
       }
+      bandi: {
+        Row: {
+          id: string
+          titolo: string
+          ente: string
+          tipo: "concorso" | "avviso" | "bando_enti"
+          regione: string
+          professione: string
+          descrizione: string
+          scadenza: string
+          url_ufficiale: string
+          fonte: "manuale" | "automatica"
+          identificativo_fonte: string | null
+          verificato: boolean
+          pubblicato: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          titolo: string
+          ente: string
+          tipo: "concorso" | "avviso" | "bando_enti"
+          regione?: string
+          professione?: string
+          descrizione?: string
+          scadenza: string
+          url_ufficiale: string
+          fonte?: "manuale" | "automatica"
+          identificativo_fonte?: string | null
+          verificato?: boolean
+          pubblicato?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          titolo?: string
+          ente?: string
+          tipo?: "concorso" | "avviso" | "bando_enti"
+          regione?: string
+          professione?: string
+          descrizione?: string
+          scadenza?: string
+          url_ufficiale?: string
+          fonte?: "manuale" | "automatica"
+          identificativo_fonte?: string | null
+          verificato?: boolean
+          pubblicato?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bandi_amministratori: {
+        Row: { user_id: string }
+        Insert: { user_id: string }
+        Update: { user_id?: string }
+        Relationships: []
+      }
       candidature: {
         Row: {
           annuncio_id: string
@@ -201,6 +261,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_bandi_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
