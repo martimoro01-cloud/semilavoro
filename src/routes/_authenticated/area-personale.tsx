@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil, Archive, PauseCircle, PlayCircle, Trash2 } from "lucide-react";
+import { CalendarDays, ChevronDown, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil, Archive, PauseCircle, PlayCircle, Trash2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
@@ -97,7 +97,7 @@ function AreaPersonale() {
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
             </p>
             <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao</h1>
-            {profilo?.nome && <p className="mt-1 font-display text-2xl font-semibold sm:text-3xl">{profilo.nome}</p>}
+            <p className="mt-2 font-display text-2xl font-semibold sm:text-3xl">{profilo?.nome || "Benvenuto su SEMI"}</p>
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
           </div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
@@ -121,6 +121,7 @@ function AreaPersonale() {
 }
 
 function AreaEducatore({ userId }: { userId: string }) {
+  const [aperta, setAperta] = useState<string | null>(null);
   const { data, isLoading } = useQuery({
     queryKey: ["mie-candidature", userId],
     queryFn: async () => {
@@ -164,7 +165,7 @@ function AreaEducatore({ userId }: { userId: string }) {
       ) : (
         <div className="mt-4 grid gap-4">
           {data!.map((c) => (
-            <article key={c.id} className="rounded-3xl border border-border bg-card p-6">
+            <article key={c.id} className="rounded-3xl border border-border bg-card p-6 transition-shadow hover:shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-bold">{c.annunci?.mansione}</h3>
@@ -173,6 +174,15 @@ function AreaEducatore({ userId }: { userId: string }) {
                 <StatoBadge stato={c.stato} />
               </div>
               <p className="mt-3 text-xs text-muted-foreground">Inviata il {new Date(c.created_at).toLocaleDateString("it-IT")}</p>
+              <button type="button" aria-expanded={aperta === c.id} aria-controls={`dettagli-candidatura-${c.id}`} onClick={() => setAperta(aperta === c.id ? null : c.id)} className="mt-4 inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold transition-colors hover:bg-secondary"> {aperta === c.id ? "Chiudi dettagli" : "Visualizza candidatura"} <ChevronDown className={`h-4 w-4 transition-transform ${aperta === c.id ? "rotate-180" : ""}`} /></button>
+              {aperta === c.id && <div id={`dettagli-candidatura-${c.id}`} className="mt-4 space-y-3 border-t border-border pt-4 text-sm">
+                <p><strong>Annuncio:</strong> {c.annunci?.mansione} — {c.annunci?.servizio}</p>
+                <p><strong>Email utilizzata:</strong> {c.email}</p>
+                <p><strong>Cellulare:</strong> {c.cellulare}</p>
+                <div><p className="font-semibold">Lettera di presentazione</p><p className="mt-1 whitespace-pre-line text-muted-foreground">{c.lettera}</p></div>
+                {c.colloquio_at && <p><strong>Colloquio:</strong> {formatData(c.colloquio_at)}{c.colloquio_luogo ? ` · ${c.colloquio_luogo}` : ""}</p>}
+                <p className="text-xs text-muted-foreground">Stato: {statoLabel[c.stato]}</p>
+              </div>}
               {c.risposta && (
                 <div className="mt-4 rounded-xl bg-secondary p-4 text-sm">
                   <p className="font-semibold">Risposta del servizio</p>
