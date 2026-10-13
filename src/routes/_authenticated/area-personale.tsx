@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, FileText, LogOut, Mail, MapPin, Phone, Users } from "lucide-react";
+import { CalendarDays, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
@@ -34,9 +34,24 @@ function StatoBadge({ stato }: { stato: StatoCandidatura }) {
   return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${tone}`}>{statoLabel[stato]}</span>;
 }
 
-async function apriCv(path: string) {
-  const { data } = await supabase.storage.from("cv").createSignedUrl(path, 300);
-  if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener");
+async function gestisciCv(path: string, mode: "view" | "download") {
+  if (!path) throw new Error("CV non disponibile.");
+  const { data, error } = await supabase.storage.from("cv").download(path);
+  if (error || !data) throw error ?? new Error("Download non disponibile.");
+  const url = URL.createObjectURL(data);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = path.split("/").pop() || "curriculum";
+  if (mode === "view") {
+    // Apertura nel contesto corrente: evita i blocchi popup.
+    window.location.assign(url);
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } else {
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
 }
 
 function AreaPersonale() {
@@ -48,6 +63,23 @@ function AreaPersonale() {
     enabled: !!user,
     queryFn: async () => (await supabase.from("profiles").select("nome").eq("id", user!.id).maybeSingle()).data,
   });
+
+  const [modificaProfilo, setModificaProfilo] = useState(false);
+  const [nome, setNome] = useState("");
+  const [salvataggioProfilo, setSalvataggioProfilo] = useState(false);
+  const [erroreProfilo, setErroreProfilo] = useState("");
+
+  async function salvaProfilo(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user || !nome.trim()) return;
+    setSalvataggioProfilo(true);
+    setErroreProfilo("");
+    const { error } = await supabase.from("profiles").update({ nome: nome.trim() }).eq("id", user.id);
+    setSalvataggioProfilo(false);
+    if (error) return setErroreProfilo("Non è stato possibile salvare il profilo.");
+    await queryClient.invalidateQueries({ queryKey: ["profilo", user.id] });
+    setModificaProfilo(false);
+  }
 
   async function esci() {
     await queryClient.cancelQueries();
@@ -69,6 +101,18 @@ function AreaPersonale() {
           </div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
         </div>
+        {user && <div className="mt-8 rounded-3xl border border-border bg-card p-6 sm:p-8">
+          <div className="flex items-center justify-between gap-4">
+            <div><h2 className="text-xl font-bold">Il mio profilo</h2><p className="mt-1 text-sm text-muted-foreground">Aggiorna il nome visualizzato sul tuo account.</p></div>
+            <Button type="button" variant="outline" className="rounded-full" onClick={() => { setNome(profilo?.nome ?? ""); setErroreProfilo(""); setModificaProfilo(!modificaProfilo); }}><Pencil className="h-4 w-4" />Modifica</Button>
+          </div>
+          {modificaProfilo && <form className="mt-5 space-y-3 border-t border-border pt-5" onSubmit={salvaProfilo}>
+            <label htmlFor="nome-profilo" className="block text-sm font-semibold">Nome o nome del servizio</label>
+            <input id="nome-profilo" className={inputClass} value={nome} onChange={e => setNome(e.target.value)} maxLength={120} required />
+            {erroreProfilo && <p role="alert" className="text-sm text-destructive">{erroreProfilo}</p>}
+            <Button type="submit" disabled={salvataggioProfilo} className="rounded-full">{salvataggioProfilo ? "Salvataggio..." : "Salva modifiche"}</Button>
+          </form>}
+        </div>}
         {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}
       </section>
     </SiteLayout>
@@ -196,6 +240,16 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errore, setErrore] = useState("");
+  const [erroreCv, setErroreCv] = useState("");
+  const [cvBusy, setCvBusy] = useState(false);
+
+  async function azioneCv(mode: "view" | "download") {
+    setErroreCv("");
+    setCvBusy(true);
+    try { await gestisciCv(c.cv_path, mode); }
+    catch { setErroreCv("Non è stato possibile recuperare il CV. Verifica i permessi e riprova."); }
+    finally { setCvBusy(false); }
+  }
 
   async function salva(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -235,9 +289,11 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
         <p className="mt-2 whitespace-pre-line text-muted-foreground">{c.lettera}</p>
       </details>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" variant="outline" className="rounded-full shadow-none" onClick={() => apriCv(c.cv_path)}><FileText />Apri CV</Button>
+        <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("view")}><Eye />Visualizza CV</Button>
+        <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />Scarica CV</Button>
         <Button size="sm" className="rounded-full shadow-none" onClick={() => setOpen((v) => !v)}>Rispondi / fissa colloquio</Button>
       </div>
+      {erroreCv && <p role="alert" className="mt-2 text-sm text-destructive">{erroreCv}</p>}
       {open && (
         <form onSubmit={salva} className="mt-4 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
           <div>
