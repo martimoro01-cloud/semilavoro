@@ -145,6 +145,39 @@ export type Database = {
         }
         Relationships: []
       }
+      recensioni: {
+        Row: {
+          id: string
+          autore_id: string
+          nome: string
+          ruolo: "educatore" | "servizio"
+          testo: string
+          valutazione: number
+          approvata: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          autore_id: string
+          nome: string
+          ruolo: "educatore" | "servizio"
+          testo: string
+          valutazione: number
+          approvata?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          autore_id?: string
+          nome?: string
+          ruolo?: "educatore" | "servizio"
+          testo?: string
+          valutazione?: number
+          approvata?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
