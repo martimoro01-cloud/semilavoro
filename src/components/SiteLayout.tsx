@@ -25,8 +25,8 @@ const navItems = [
 
 function Logo() {
   return (
-    <Link to="/" aria-label="semi — Home" className="flex items-center">
-      <img src={logoImage} alt="semi — Il lavoro educativo cresce qui" className="h-auto w-36 sm:w-44" width={710} height={255} />
+    <Link to="/" aria-label="semi — Home" className="flex items-center justify-center">
+      <img src={logoImage} alt="semi — Il lavoro educativo cresce qui" className="block h-auto w-36 object-contain object-center sm:w-44" width={710} height={255} />
     </Link>
   );
 }
@@ -41,7 +41,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
-        <div className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="relative mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-6 py-4">
           <button
             type="button"
             aria-label="Apri il menu"
@@ -50,10 +50,10 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <div className="absolute left-1/2 -translate-x-1/2"><Logo /></div>
+          <div className="flex items-center justify-center"><Logo /></div>
           <Link
             to={accountTo}
-            className="ml-auto max-w-[110px] rounded-full border border-border px-3 py-2 text-center text-xs font-semibold text-foreground transition-colors hover:bg-secondary sm:max-w-none sm:px-5 sm:text-sm"
+            className="ml-auto max-w-[110px] justify-self-end rounded-full border border-border px-3 py-2 text-center text-xs font-semibold text-foreground transition-colors hover:bg-secondary sm:max-w-none sm:px-5 sm:text-sm"
           >
             {accountLabel}
           </Link>
