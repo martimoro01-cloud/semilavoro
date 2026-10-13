@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil } from "lucide-react";
+import { CalendarDays, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil, Archive, PauseCircle, PlayCircle, Trash2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
@@ -218,10 +218,45 @@ function AreaServizio({ userId }: { userId: string }) {
 }
 
 function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; candidature: CandidaturaRow[] }) {
+  const queryClient = useQueryClient();
+  const [working, setWorking] = useState(false);
+  const [errorAction, setErrorAction] = useState("");
+  const stato = annuncio.stato_pubblicazione;
+  async function cambiaStato(next: "attivo" | "sospeso" | "archiviato") {
+    setWorking(true);
+    setErrorAction("");
+    const { error } = await supabase.from("annunci").update({ stato_pubblicazione: next }).eq("id", annuncio.id).eq("owner_id", annuncio.owner_id!);
+    setWorking(false);
+    if (error) return setErrorAction("Impossibile aggiornare l'annuncio. Verifica che la migrazione del database sia stata applicata.");
+    await queryClient.invalidateQueries({ queryKey: ["miei-annunci"] });
+    await queryClient.invalidateQueries({ queryKey: ["annunci"] });
+  }
+  async function elimina() {
+    if (candidature.length > 0) return setErrorAction("Questo annuncio ha candidature: per non perderle, archivialo invece di eliminarlo.");
+    if (!window.confirm("Eliminare definitivamente questo annuncio? L'operazione non è reversibile.")) return;
+    setWorking(true);
+    setErrorAction("");
+    const { error } = await supabase.from("annunci").delete().eq("id", annuncio.id).eq("owner_id", annuncio.owner_id!);
+    setWorking(false);
+    if (error) return setErrorAction("Eliminazione non riuscita. Verifica i permessi dell'account.");
+    await queryClient.invalidateQueries({ queryKey: ["miei-annunci"] });
+    await queryClient.invalidateQueries({ queryKey: ["annunci"] });
+  }
   return (
     <article className="rounded-3xl border border-border bg-card p-6">
       <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">{annuncio.area}</span>
-      <h3 className="mt-3 text-xl font-bold">{annuncio.mansione}</h3>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <h3 className="text-xl font-bold">{annuncio.mansione}</h3>
+        <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">{stato === "attivo" ? "Attivo" : stato === "sospeso" ? "Sospeso" : "Archiviato"}</span>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {stato !== "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("attivo")}><PlayCircle className="h-4 w-4" />Riattiva</Button>}
+        {stato === "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("sospeso")}><PauseCircle className="h-4 w-4" />Sospendi</Button>}
+        {stato !== "archiviato" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("archiviato")}><Archive className="h-4 w-4" />Archivia</Button>}
+        <Button size="sm" variant="outline" disabled={working || candidature.length > 0} title={candidature.length ? "Archivia per conservare le candidature" : "Elimina definitivamente"} onClick={elimina}><Trash2 className="h-4 w-4" />Elimina</Button>
+      </div>
+      {errorAction && <p role="alert" className="mt-3 text-sm text-destructive">{errorAction}</p>}
+      {candidature.length > 0 && <p className="mt-2 text-xs text-muted-foreground">Per conservare le candidature ricevute, puoi archiviare questo annuncio ma non eliminarlo.</p>}
       <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" />{annuncio.provincia}, {annuncio.regione} · {annuncio.impegno}</p>
       <p className="mt-4 flex items-center gap-2 text-sm font-semibold"><Users className="h-4 w-4 text-primary" />{candidature.length} {candidature.length === 1 ? "candidato" : "candidati"}</p>
       {candidature.length === 0 ? (
