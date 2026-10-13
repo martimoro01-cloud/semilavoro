@@ -96,7 +96,7 @@ function AreaPersonale() {
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
             </p>
-            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao</h1>
+            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao,</h1>
             <p className="mt-2 font-display text-2xl font-semibold sm:text-3xl">{profilo?.nome || "Benvenuto su SEMI"}</p>
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
           </div>
