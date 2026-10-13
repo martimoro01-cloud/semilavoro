@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAnnunci } from "@/lib/annunci-db";
-import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail, Sprout } from "lucide-react";
+import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,10 +40,21 @@ function Index() {
     <SiteLayout>
       {/* Hero */}
       <section className="relative overflow-hidden bg-background">
-        <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full border border-brand-green/15" />
-        <div aria-hidden="true" className="pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full border border-brand-green/15" />
+        {/* Illustrazioni botaniche lineari: richiamo alla crescita e al nome SEMI */}
+        <svg aria-hidden="true" viewBox="0 0 280 480" fill="none" className="pointer-events-none absolute -left-20 top-10 hidden h-[480px] w-[280px] text-brand-green opacity-30 lg:block" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M85 480 C115 395 75 340 130 258 S172 125 147 20"/>
+          <path d="M111 370 C43 340 30 294 35 255 C95 263 125 302 111 370Z M123 320 C172 269 213 260 247 270 C230 321 177 348 123 320Z M137 250 C76 222 63 175 74 135 C129 150 150 189 137 250Z M151 177 C207 152 230 111 225 72 C178 83 151 116 151 177Z M145 92 C102 76 86 46 90 13 C127 24 145 47 145 92Z"/>
+          <path d="M111 370 L35 255 M123 320 L247 270 M137 250 L74 135 M151 177 L225 72 M145 92 L90 13" opacity=".6"/>
+          <circle cx="83" cy="424" r="48" strokeDasharray="3 9" opacity=".45"/>
+        </svg>
+        <svg aria-hidden="true" viewBox="0 0 300 460" fill="none" className="pointer-events-none absolute -right-24 bottom-0 hidden h-[460px] w-[300px] text-brand-green opacity-25 lg:block" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M150 460 C128 370 191 308 153 232 C118 161 168 94 180 12"/>
+          <path d="M147 400 C77 393 42 354 38 305 C101 308 149 343 147 400Z M157 337 C213 327 247 291 263 243 C200 247 165 276 157 337Z M158 251 C93 234 65 196 61 150 C122 163 158 194 158 251Z M159 164 C225 140 249 99 252 59 C197 69 167 110 159 164Z"/>
+          <path d="M147 400 L38 305 M157 337 L263 243 M158 251 L61 150 M159 164 L252 59" opacity=".55"/>
+          <circle cx="203" cy="402" r="46" strokeDasharray="2 8" opacity=".5"/>
+          <circle cx="222" cy="390" r="12" opacity=".45"/>
+        </svg>
         <div className="relative mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center px-6 pb-24 pt-16 text-center md:min-h-[610px] md:pb-32 md:pt-24">
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-brand-green/30 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-brand-green"><Sprout className="h-4 w-4" /> Il lavoro nel sociale, insieme</div>
           <h1 className="max-w-3xl text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             Il lavoro educativo
             <br />
