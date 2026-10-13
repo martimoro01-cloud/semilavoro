@@ -6,7 +6,7 @@ import { fetchAnnunci } from "@/lib/annunci-db";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail, Star } from "lucide-react";
+import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail, Star, CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -143,6 +143,17 @@ function Index() {
       {/* Recensioni autentiche, pubblicate dopo moderazione */}
       <Recensioni />
       
+      {/* Concorsi e bandi */}
+      <section className="border-t border-border bg-primary/[0.06] py-20 md:py-24">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 md:grid-cols-[1fr_auto]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Non solo annunci di lavoro</p>
+            <h2 className="mt-3 max-w-2xl text-4xl font-bold leading-tight md:text-5xl">Nuove opportunità. <span className="font-display italic text-primary">Nuove strade.</span></h2>
+            <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">Concorsi pubblici, avvisi e bandi per chi lavora nell'educazione e nel sociale. Con scadenze e collegamenti alle fonti ufficiali.</p>
+          </div>
+          <Link to="/concorsi-bandi" className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-7 py-4 font-bold text-primary-foreground transition-transform hover:-translate-y-1"><CalendarClock className="h-5 w-5" /> Esplora concorsi e bandi <ArrowRight className="h-5 w-5" /></Link>
+        </div>
+      </section>
       {/* Contatti */}
       <section id="contatti" className="scroll-mt-24 border-t border-border bg-muted/30 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
