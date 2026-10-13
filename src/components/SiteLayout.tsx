@@ -19,8 +19,8 @@ const navItems = [
   { to: "/", label: "Home", icon: Home },
   { to: "/pubblica-annuncio", label: "Pubblica annuncio", icon: Megaphone },
   { to: "/trova-lavoro", label: "Trova lavoro", icon: Search },
-  { to: "/concorsi-bandi", label: "Nuove opportunità", icon: CalendarClock },
   { to: "/#annunci", label: "Annunci in primo piano", icon: Star, hash: "annunci" },
+  { to: "/concorsi-bandi", label: "Concorsi e bandi", icon: CalendarClock },
   { to: "/#dicono-di-noi", label: "Dicono di noi", icon: MessageCircle, hash: "dicono-di-noi" },
   { to: "/#contatti", label: "Contatti", icon: Mail, hash: "contatti" },
 ] as const;
