@@ -10,6 +10,7 @@ import {
   MessageCircle,
   LogIn,
   Mail,
+  CalendarClock,
 } from "lucide-react";
 import { useAccount } from "@/hooks/use-account";
 import logoImage from "@/assets/logo-semi-refined.png";
@@ -18,6 +19,7 @@ const navItems = [
   { to: "/", label: "Home", icon: Home },
   { to: "/pubblica-annuncio", label: "Pubblica annuncio", icon: Megaphone },
   { to: "/trova-lavoro", label: "Trova lavoro", icon: Search },
+  { to: "/concorsi-bandi", label: "Concorsi e bandi", icon: CalendarClock },
   { to: "/#annunci", label: "Annunci in primo piano", icon: Star, hash: "annunci" },
   { to: "/#dicono-di-noi", label: "Dicono di noi", icon: MessageCircle, hash: "dicono-di-noi" },
   { to: "/#contatti", label: "Contatti", icon: Mail, hash: "contatti" },
