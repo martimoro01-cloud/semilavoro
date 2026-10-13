@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAnnunci } from "@/lib/annunci-db";
-import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail } from "lucide-react";
+import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail, Sprout } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,9 +39,12 @@ function Index() {
   return (
     <SiteLayout>
       {/* Hero */}
-      <section>
-        <div className="mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center px-6 pb-24 pt-16 text-center md:min-h-[610px] md:pb-32 md:pt-24">
-          <h1 className="max-w-3xl text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl md:text-6xl">
+      <section className="relative overflow-hidden bg-background">
+        <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full border border-brand-green/15" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full border border-brand-green/15" />
+        <div className="relative mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center px-6 pb-24 pt-16 text-center md:min-h-[610px] md:pb-32 md:pt-24">
+          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-brand-green/30 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-brand-green"><Sprout className="h-4 w-4" /> Il lavoro nel sociale, insieme</div>
+          <h1 className="max-w-3xl text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             Il lavoro educativo
             <br />
             cresce qui
@@ -50,7 +53,8 @@ function Index() {
             Il punto d'incontro tra chi lavora nel sociale e chi sta cercando
             proprio te.
           </p>
-          <div className="mx-auto mt-12 grid w-full max-w-3xl gap-4 sm:grid-cols-2 md:gap-6">
+          <p className="mt-10 text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">Scegli da dove iniziare</p>
+          <div className="mx-auto mt-5 grid w-full max-w-3xl gap-4 sm:grid-cols-2 md:gap-6">
             <Link
               to="/pubblica-annuncio"
               className="group flex min-h-24 items-center justify-between gap-4 rounded-2xl bg-primary px-6 py-6 text-left text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20 sm:px-7"
@@ -76,6 +80,7 @@ function Index() {
               </span>
             </Link>
           </div>
+          <div className="mt-16 h-px w-16 bg-brand-green/50" aria-hidden="true" />
         </div>
       </section>
 
@@ -84,6 +89,7 @@ function Index() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-3xl font-bold md:text-4xl">
+              <span className="mb-3 block font-sans text-xs font-bold uppercase tracking-[0.2em] text-brand-green">Opportunità selezionate</span>
               Annunci in primo piano
             </h2>
             <Link
@@ -129,7 +135,7 @@ function Index() {
       {/* Dicono di noi */}
       <section id="dicono-di-noi" className="scroll-mt-24 border-t border-border bg-background py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-3xl font-bold md:text-4xl">Dicono di noi</h2>
+          <h2 className="text-3xl font-bold md:text-4xl"><span className="mb-3 block font-sans text-xs font-bold uppercase tracking-[0.2em] text-brand-green">La comunità</span>Dicono di noi</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             <blockquote className="rounded-3xl border border-brand-green bg-background p-7">
               <p className="leading-relaxed text-muted-foreground">
@@ -157,7 +163,7 @@ function Index() {
       {/* Contatti */}
       <section id="contatti" className="scroll-mt-24 border-t border-border bg-muted/30 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-3xl font-bold md:text-4xl">Contatti</h2>
+          <h2 className="text-3xl font-bold md:text-4xl"><span className="mb-3 block font-sans text-xs font-bold uppercase tracking-[0.2em] text-brand-green">Restiamo in contatto</span>Contatti</h2>
           <div className="mt-8 max-w-xl rounded-3xl border border-border bg-card p-7">
             <h3 className="text-xl font-bold">Hai domande?</h3>
             <p className="mt-2 text-muted-foreground">
