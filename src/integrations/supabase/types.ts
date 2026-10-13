@@ -31,6 +31,7 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
+          stato_pubblicazione: "attivo" | "sospeso" | "archiviato"
         }
         Insert: {
           area: string
@@ -48,6 +49,7 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
+          stato_pubblicazione?: "attivo" | "sospeso" | "archiviato"
         }
         Update: {
           area?: string
@@ -65,6 +67,7 @@ export type Database = {
           provincia?: string
           regione?: string
           servizio?: string
+          stato_pubblicazione?: "attivo" | "sospeso" | "archiviato"
         }
         Relationships: []
       }
