@@ -40,20 +40,20 @@ function Index() {
     <SiteLayout>
       {/* Hero */}
       <section>
-        <div className="mx-auto max-w-6xl px-6 pb-20 pt-6 text-center md:pb-28 md:pt-8">
-          <h1 className="text-3xl font-bold leading-tight tracking-tight md:text-5xl">
+        <div className="mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center px-6 pb-24 pt-16 text-center md:min-h-[610px] md:pb-32 md:pt-24">
+          <h1 className="max-w-3xl text-4xl font-bold leading-[1.12] tracking-tight sm:text-5xl md:text-6xl">
             Il lavoro educativo
             <br />
             cresce qui
           </h1>
-          <p className="mx-auto mt-6 text-lg text-muted-foreground md:whitespace-nowrap">
+          <p className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
             Il punto d'incontro tra chi lavora nel sociale e chi sta cercando
             proprio te.
           </p>
-          <div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-2">
+          <div className="mx-auto mt-12 grid w-full max-w-3xl gap-4 sm:grid-cols-2 md:gap-6">
             <Link
               to="/pubblica-annuncio"
-              className="group flex items-center justify-between gap-3 rounded-2xl bg-primary px-6 py-5 text-left font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:-translate-y-0.5"
+              className="group flex min-h-24 items-center justify-between gap-4 rounded-2xl bg-primary px-6 py-6 text-left text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20 sm:px-7"
             >
               <span className="flex items-center gap-3">
                 <Megaphone className="h-5 w-5" />
@@ -65,7 +65,7 @@ function Index() {
             </Link>
             <Link
               to="/trova-lavoro"
-              className="group flex items-center justify-between gap-3 rounded-2xl bg-primary px-6 py-5 text-left font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:-translate-y-0.5"
+              className="group flex min-h-24 items-center justify-between gap-4 rounded-2xl bg-primary px-6 py-6 text-left text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20 sm:px-7"
             >
               <span className="flex items-center gap-3">
                 <Search className="h-5 w-5" />
@@ -80,7 +80,7 @@ function Index() {
       </section>
 
       {/* Annunci in primo piano */}
-      <section id="annunci" className="scroll-mt-24 py-16">
+      <section id="annunci" className="scroll-mt-24 border-t border-border bg-muted/30 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-3xl font-bold md:text-4xl">
@@ -127,7 +127,7 @@ function Index() {
       </section>
 
       {/* Dicono di noi */}
-      <section id="dicono-di-noi" className="scroll-mt-24 bg-background py-16">
+      <section id="dicono-di-noi" className="scroll-mt-24 border-t border-border bg-background py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-3xl font-bold md:text-4xl">Dicono di noi</h2>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
@@ -155,7 +155,7 @@ function Index() {
       </section>
 
       {/* Contatti */}
-      <section id="contatti" className="scroll-mt-24 py-16">
+      <section id="contatti" className="scroll-mt-24 border-t border-border bg-muted/30 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-3xl font-bold md:text-4xl">Contatti</h2>
           <div className="mt-8 max-w-xl rounded-3xl border border-border bg-card p-7">
