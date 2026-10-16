@@ -186,7 +186,8 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
           className={inputClass}
         />
       </div>
-      <p className="text-xs text-muted-foreground">Il CV e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta l'informativa privacy di SEMI.</p>
+      <p className="text-xs text-muted-foreground">Il CV e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta la pagina dedicata alla privacy di SEMI.</p>
+      <p className="text-xs"><Link to="/privacy" className="font-semibold text-primary underline">Privacy e trattamento dei dati personali</Link> (informativa completa in preparazione)</p>
       {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
       {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
       <div className="flex justify-end">
