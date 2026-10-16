@@ -139,12 +139,11 @@ function AreaPersonale() {
 
   async function eliminaAccount() {
     if (!user) return;
-    const conferma = window.prompt("Per eliminare definitivamente il tuo account, gli annunci, le candidature e i messaggi, scrivi ELIMINA. L'operazione non è reversibile.");
-    if (conferma !== "ELIMINA") return;
+    if (!window.confirm("Sei sicuro di voler eliminare definitivamente il tuo account? Verranno eliminati anche annunci, candidature e messaggi associati. L’operazione non può essere annullata.")) return;
     setEliminazioneAccount(true); setErroreEliminazione("");
     const { data, error } = await supabase.functions.invoke("elimina-account", { method: "POST" });
     setEliminazioneAccount(false);
-    if (error || !data?.ok) return setErroreEliminazione("Eliminazione non riuscita. La funzione server deve essere attivata e verificata; contatta info@semilavoro.it.");
+    if (error || !data?.ok) return setErroreEliminazione("Non è stato possibile eliminare l’account. Riprova oppure contatta info@semilavoro.it.");
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
