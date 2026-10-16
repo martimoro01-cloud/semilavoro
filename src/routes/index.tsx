@@ -46,7 +46,7 @@ function Index() {
       <section className="relative overflow-hidden bg-background">
         {/* Motivo grafico astratto: archi e trame, anziché illustrazioni botaniche */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-48 top-12 h-[540px] w-[540px] rounded-full border-[70px] border-[#B8D7A8]/40" />
+          <div className="absolute -left-48 top-12 h-[540px] w-[540px] rounded-full border-[70px] border-[#E3AD57]/55" />
           <div className="absolute -right-56 -top-48 h-[680px] w-[680px] rounded-full border-[90px] border-primary/[0.06]" />
           <div className="absolute bottom-12 left-[8%] hidden h-32 w-32 rotate-12 rounded-[2.5rem] border border-primary/15 md:block" />
           <div className="absolute bottom-16 right-[10%] hidden h-24 w-24 -rotate-12 rounded-full bg-primary/[0.06] md:block" />
