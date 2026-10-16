@@ -68,7 +68,7 @@ function Index() {
             >
               <span className="flex items-center gap-3">
                 <Megaphone className="h-5 w-5" />
-                Pubblica un annuncio
+                Pubblica annuncio
               </span>
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/20 transition-transform group-hover:translate-x-1">
                 <ArrowRight className="h-4 w-4" />
