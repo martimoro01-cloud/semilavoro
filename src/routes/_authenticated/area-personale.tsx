@@ -281,13 +281,17 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
     await queryClient.invalidateQueries({ queryKey: ["annunci"] });
   }
   async function elimina() {
-    if (candidature.length > 0) return setErrorAction("Questo annuncio ha candidature: per non perderle, archivialo invece di eliminarlo.");
-    if (!window.confirm("Eliminare definitivamente questo annuncio? L'operazione non è reversibile.")) return;
+    if (!window.confirm("Eliminare definitivamente questo annuncio e tutte le candidature ricevute? L'operazione non è reversibile.")) return;
     setWorking(true);
     setErrorAction("");
     const { error } = await supabase.from("annunci").delete().eq("id", annuncio.id).eq("owner_id", annuncio.owner_id!);
     setWorking(false);
-    if (error) return setErrorAction("Eliminazione non riuscita. Verifica i permessi dell'account.");
+    if (error) return setErrorAction("Eliminazione non riuscita. Verifica i permessi e i vincoli del database.");
+    const paths = candidature.map(c => c.cv_path).filter(Boolean);
+    if (paths.length) {
+      const result = await supabase.storage.from("cv").remove(paths);
+      if (result.error) setErrorAction("Annuncio eliminato, ma la pulizia dei CV richiede intervento amministrativo.");
+    }
     await queryClient.invalidateQueries({ queryKey: ["miei-annunci"] });
     await queryClient.invalidateQueries({ queryKey: ["annunci"] });
   }
@@ -302,7 +306,7 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
         {stato !== "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("attivo")}><PlayCircle className="h-4 w-4" />Riattiva</Button>}
         {stato === "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("sospeso")}><PauseCircle className="h-4 w-4" />Sospendi</Button>}
         {stato !== "archiviato" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("archiviato")}><Archive className="h-4 w-4" />Archivia</Button>}
-        <Button size="sm" variant="outline" disabled={working || candidature.length > 0} title={candidature.length ? "Archivia per conservare le candidature" : "Elimina definitivamente"} onClick={elimina}><Trash2 className="h-4 w-4" />Elimina</Button>
+        <Button size="sm" variant="outline" disabled={working} title="Elimina definitivamente annuncio e candidature" onClick={elimina}><Trash2 className="h-4 w-4" />Elimina</Button>
       </div>
       {errorAction && <p role="alert" className="mt-3 text-sm text-destructive">{errorAction}</p>}
 
