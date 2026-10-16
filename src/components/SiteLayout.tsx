@@ -66,8 +66,8 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                     <button type="button" aria-label="Chiudi menu area personale" className="fixed inset-0 z-40 cursor-default" onClick={() => setAccountMenuOpen(false)} />
                     <nav id="menu-area-personale" aria-label="Sezioni area personale" className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-border bg-card p-2 shadow-xl">
                       {(tipo === "servizio"
-                        ? [["I miei annunci", "miei-annunci"], ["Profilo", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
-                        : [["Colloqui fissati", "colloqui-fissati"], ["Le mie candidature", "mie-candidature"], ["Account", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
+                        ? [["I miei annunci", "miei-annunci"], ["Il mio profilo", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
+                        : [["Colloqui fissati", "colloqui-fissati"], ["Le mie candidature", "mie-candidature"], ["Il mio profilo", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
                       ).map(([label, id]) => (
                         <a key={id} href={`/area-personale#${id}`} onClick={() => setAccountMenuOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-semibold hover:bg-secondary">{label}</a>
                       ))}
