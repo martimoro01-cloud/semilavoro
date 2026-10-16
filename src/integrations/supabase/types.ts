@@ -187,21 +187,30 @@ export type Database = {
           },
         ]
       }
+      messaggi_candidatura: {
+        Row: { id: string; candidatura_id: string; mittente_id: string; testo: string; created_at: string }
+        Insert: { id?: string; candidatura_id: string; mittente_id: string; testo: string; created_at?: string }
+        Update: { id?: string; candidatura_id?: string; mittente_id?: string; testo?: string; created_at?: string }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           id: string
           nome: string
+          foto_path: string | null
         }
         Insert: {
           created_at?: string
           id: string
           nome?: string
+          foto_path?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           nome?: string
+          foto_path?: string | null
         }
         Relationships: []
       }
@@ -261,6 +270,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      puo_messaggiare_candidatura: { Args: { p_candidatura_id: string }; Returns: boolean }
       is_bandi_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
       has_role: {
         Args: {
