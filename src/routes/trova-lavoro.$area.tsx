@@ -117,7 +117,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       nome: prof?.nome ?? "",
       email: String(f.get("email")),
       cellulare: String(f.get("telefono")),
-      lettera: String(f.get("lettera")),
+      lettera: String(f.get("messaggio") || ""),
       cv_path: path,
     });
     if (error) return setStato(error.code === "23505" ? "doppia" : "errore");
@@ -127,8 +127,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   return (
     <form className="mt-6 space-y-4 border-t border-border pt-6" onSubmit={invia}>
       <p className="text-sm text-muted-foreground">
-        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Tutti i campi
-        sono obbligatori.
+        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Compila i recapiti, allega il CV e, se vuoi, aggiungi un messaggio.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -176,18 +175,31 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
         </p>
       </div>
       <div>
-        <label htmlFor={`lettera-${annuncio.id}`} className={labelClass}>
-          Lettera di presentazione *
+        <label htmlFor={`messaggio-${annuncio.id}`} className={labelClass}>
+          Messaggio (facoltativo)
         </label>
         <textarea
-          id={`lettera-${annuncio.id}`}
-          name="lettera"
-          required
+          id={`messaggio-${annuncio.id}`}
+          name="messaggio"
           rows={5}
-          placeholder="Raccontaci chi sei e perché vuoi lavorare con noi..."
+          placeholder="Scrivi un messaggio al servizio educativo..."
           className={inputClass}
         />
       </div>
+      <p className="text-xs text-muted-foreground">Il CV e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta la pagina dedicata alla privacy di SEMI.</p>
+      <p className="text-xs"><Link to="/privacy" className="font-semibold text-primary underline">Privacy e trattamento dei dati personali</Link> (informativa completa in preparazione)</p>
+      <fieldset className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
+        <legend className="px-1 text-sm font-semibold">Privacy e trattamento dei dati</legend>
+        <label className="flex items-start gap-3 text-sm leading-relaxed">
+          <input type="checkbox" name="privacy_presa_visione" required className="mt-1 h-4 w-4 shrink-0 accent-primary" />
+          <span>Confermo di aver preso visione delle <Link to="/privacy" className="font-semibold text-primary underline">informazioni sul trattamento dei dati personali</Link> e di sapere che i dati della mia candidatura, compreso il CV, saranno condivisi con il servizio educativo che ha pubblicato l'annuncio. *</span>
+        </label>
+        <label className="flex items-start gap-3 text-sm leading-relaxed">
+          <input type="checkbox" name="privacy_consenso_facoltativo" className="mt-1 h-4 w-4 shrink-0 accent-primary" />
+          <span>Acconsento a essere ricontattato da SEMI per future opportunità professionali, anche oltre questa candidatura. (Facoltativo)</span>
+        </label>
+        <p className="text-xs text-muted-foreground">La prima conferma è necessaria per inviare la candidatura; il consenso per eventuali contatti futuri è facoltativo e non influisce sulla selezione. L'informativa completa e la gestione dei consensi devono essere finalizzate prima della pubblicazione.</p>
+      </fieldset>
       {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
       {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
       <div className="flex justify-end">

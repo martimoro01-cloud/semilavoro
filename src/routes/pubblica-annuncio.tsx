@@ -63,9 +63,9 @@ function PubblicaAnnuncio() {
       impegno,
       guadagno_min: min,
       guadagno_max: max,
-      note_retribuzione: String(f.get("note_retribuzione")),
+      note_retribuzione: String(f.get("note_retribuzione") || ""),
       email: String(f.get("email")),
-      informazioni: String(f.get("informazioni")),
+      informazioni: String(f.get("informazioni") || ""),
       in_primo_piano: inPrimoPiano,
     });
     setInvio(false);
@@ -75,7 +75,7 @@ function PubblicaAnnuncio() {
 
   return (
     <SiteLayout>
-      <section className="mx-auto max-w-2xl px-6 py-12">
+      <section className="mx-auto max-w-3xl px-6 py-16">
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Torna alla home
         </Link>
@@ -89,7 +89,7 @@ function PubblicaAnnuncio() {
             {!user && <Button asChild className="mt-4 rounded-full shadow-none"><Link to="/auth">Accedi o registrati</Link></Button>}
           </div>
         ) : (
-        <form className="mt-6 space-y-5 rounded-lg border border-border bg-card p-5 sm:p-7" onSubmit={pubblica}>
+        <form className="mt-8 space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-9" onSubmit={pubblica}>
           <div>
             <label htmlFor="servizio" className={labelClass}>Nome del servizio *</label>
             <input id="servizio" name="servizio" required placeholder="Es. Cooperativa sociale La Rondine" className={inputClass} />
@@ -135,15 +135,15 @@ function PubblicaAnnuncio() {
               <input id="guadagno-min" name="guadagno_min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
               <input id="guadagno-max" name="guadagno_max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
-            <input name="note_retribuzione" aria-label="Note sulla retribuzione" required placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
+            <input name="note_retribuzione" aria-label="Note sulla retribuzione (facoltative)" placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
           </div>
           <div>
             <label htmlFor="email" className={labelClass}>Email di contatto *</label>
             <input id="email" name="email" type="email" required placeholder="candidature@tuoservizio.it" className={inputClass} />
           </div>
           <div>
-            <label htmlFor="informazioni" className={labelClass}>Altre informazioni *</label>
-            <textarea id="informazioni" name="informazioni" rows={4} required placeholder="Scrivi liberamente..." className={inputClass} />
+            <label htmlFor="informazioni" className={labelClass}>Altre informazioni <span className="text-muted-foreground">(facoltative)</span></label>
+            <textarea id="informazioni" name="informazioni" rows={4} placeholder="Scrivi liberamente..." className={inputClass} />
             <p className="mt-1.5 text-xs text-muted-foreground">Benefit, requisiti preferenziali, modalità di candidatura, scadenze.</p>
           </div>
           <div className="flex items-start gap-3 rounded-md border border-border p-4">
