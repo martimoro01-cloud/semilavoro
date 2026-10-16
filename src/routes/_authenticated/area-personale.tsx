@@ -177,7 +177,7 @@ function AreaPersonale() {
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
             </p>
-            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao{profilo?.nome ? `, ${profilo.nome.trim().split(" ")[0]}` : ""}!</h1>
+            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao, {(profilo?.nome?.trim() || String(user?.user_metadata?.nome || "").trim() || user?.email?.split("@")[0] || "utente").split(/\s+/)[0]}!</h1>
             <p className="mt-2 font-display text-xl font-semibold sm:text-2xl">Benvenuta su SEMI</p>
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
             {erroreFoto && <p role="alert" className="mt-2 text-xs text-destructive">{erroreFoto}</p>}
@@ -199,7 +199,7 @@ function AreaPersonale() {
         </div>}
         {user && <div className="mt-6 rounded-3xl border border-border bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between gap-3">
-            <div><h2 className="text-xl font-bold">Password e sicurezza</h2><p className="mt-1 text-sm text-muted-foreground">La password di SEMI è indipendente da quella della tua email.</p></div>
+            <div><h2 className="text-xl font-bold">Password e sicurezza</h2></div>
             <Button type="button" variant="outline" className="rounded-full" onClick={() => { setModificaPassword(v => !v); setErrorePassword(""); setSuccessoPassword(""); }}>Cambia password</Button>
           </div>
           {modificaPassword && <form onSubmit={cambiaPassword} className="mt-5 space-y-4 border-t border-border pt-5">
