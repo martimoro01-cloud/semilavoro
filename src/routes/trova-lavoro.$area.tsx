@@ -117,7 +117,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       nome: prof?.nome ?? "",
       email: String(f.get("email")),
       cellulare: String(f.get("telefono")),
-      lettera: String(f.get("lettera")),
+      lettera: String(f.get("messaggio")),
       cv_path: path,
     });
     if (error) return setStato(error.code === "23505" ? "doppia" : "errore");
@@ -127,8 +127,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   return (
     <form className="mt-6 space-y-4 border-t border-border pt-6" onSubmit={invia}>
       <p className="text-sm text-muted-foreground">
-        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Tutti i campi
-        sono obbligatori.
+        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Compila i recapiti, scrivi un messaggio e allega il CV.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -176,18 +175,19 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
         </p>
       </div>
       <div>
-        <label htmlFor={`lettera-${annuncio.id}`} className={labelClass}>
-          Lettera di presentazione *
+        <label htmlFor={`messaggio-${annuncio.id}`} className={labelClass}>
+          Messaggio *
         </label>
         <textarea
-          id={`lettera-${annuncio.id}`}
-          name="lettera"
+          id={`messaggio-${annuncio.id}`}
+          name="messaggio"
           required
           rows={5}
-          placeholder="Raccontaci chi sei e perché vuoi lavorare con noi..."
+          placeholder="Scrivi un messaggio al servizio educativo..."
           className={inputClass}
         />
       </div>
+      <p className="text-xs text-muted-foreground">Il CV e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta l'informativa privacy di SEMI.</p>
       {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
       {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
       <div className="flex justify-end">
