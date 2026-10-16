@@ -65,6 +65,10 @@ function AreaPersonale() {
     queryFn: async () => (await supabase.from("profiles").select("nome, foto_path").eq("id", user!.id).maybeSingle()).data,
   });
 
+  const [modificaPassword, setModificaPassword] = useState(false);
+  const [salvataggioPassword, setSalvataggioPassword] = useState(false);
+  const [errorePassword, setErrorePassword] = useState("");
+  const [successoPassword, setSuccessoPassword] = useState("");
   const [eliminazioneAccount, setEliminazioneAccount] = useState(false);
   const [erroreEliminazione, setErroreEliminazione] = useState("");
   const [caricamentoFoto, setCaricamentoFoto] = useState(false);
@@ -85,6 +89,33 @@ function AreaPersonale() {
     if (error) return setErroreProfilo("Non è stato possibile salvare il profilo.");
     await queryClient.invalidateQueries({ queryKey: ["profilo", user.id] });
     setModificaProfilo(false);
+  }
+
+  async function cambiaPassword(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user?.email) return;
+    const form = event.currentTarget;
+    const dati = new FormData(form);
+    const attuale = String(dati.get("password_attuale") || "");
+    const nuova = String(dati.get("password_nuova") || "");
+    const conferma = String(dati.get("password_conferma") || "");
+    setErrorePassword("");
+    setSuccessoPassword("");
+    if (nuova.length < 8) return setErrorePassword("La nuova password deve contenere almeno 8 caratteri.");
+    if (nuova !== conferma) return setErrorePassword("Le nuove password non coincidono.");
+    if (nuova === attuale) return setErrorePassword("La nuova password deve essere diversa da quella attuale.");
+    setSalvataggioPassword(true);
+    const verifica = await supabase.auth.signInWithPassword({ email: user.email, password: attuale });
+    if (verifica.error) {
+      setSalvataggioPassword(false);
+      return setErrorePassword("La password attuale non è corretta.");
+    }
+    const { error } = await supabase.auth.updateUser({ password: nuova });
+    setSalvataggioPassword(false);
+    if (error) return setErrorePassword("Non è stato possibile modificare la password. Riprova.");
+    form.reset();
+    setModificaPassword(false);
+    setSuccessoPassword("Password aggiornata correttamente.");
   }
 
   async function aggiornaFoto(event: React.ChangeEvent<HTMLInputElement>) {
@@ -146,8 +177,8 @@ function AreaPersonale() {
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
             </p>
-            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao,</h1>
-            <p className="mt-2 font-display text-2xl font-semibold sm:text-3xl">{profilo?.nome || "Benvenuto su SEMI"}</p>
+            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao{profilo?.nome ? `, ${profilo.nome.split(/\\s+/)[0]}` : ""}!</h1>
+            <p className="mt-2 font-display text-xl font-semibold sm:text-2xl">Benvenuta su SEMI</p>
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
             {erroreFoto && <p role="alert" className="mt-2 text-xs text-destructive">{erroreFoto}</p>}
             {caricamentoFoto && <p className="mt-2 text-xs text-muted-foreground">Caricamento foto...</p>}
@@ -165,6 +196,20 @@ function AreaPersonale() {
             {erroreProfilo && <p role="alert" className="text-sm text-destructive">{erroreProfilo}</p>}
             <Button type="submit" disabled={salvataggioProfilo} className="rounded-full">{salvataggioProfilo ? "Salvataggio..." : "Salva modifiche"}</Button>
           </form>}
+        </div>}
+        {user && <div className="mt-6 rounded-3xl border border-border bg-card p-6 sm:p-8">
+          <div className="flex items-center justify-between gap-3">
+            <div><h2 className="text-xl font-bold">Password e sicurezza</h2><p className="mt-1 text-sm text-muted-foreground">La password di SEMI è indipendente da quella della tua email.</p></div>
+            <Button type="button" variant="outline" className="rounded-full" onClick={() => { setModificaPassword(v => !v); setErrorePassword(""); setSuccessoPassword(""); }}>Cambia password</Button>
+          </div>
+          {modificaPassword && <form onSubmit={cambiaPassword} className="mt-5 space-y-4 border-t border-border pt-5">
+            <div><label htmlFor="password-attuale" className="text-sm font-semibold">Password attuale *</label><input id="password-attuale" name="password_attuale" type="password" autoComplete="current-password" required className={inputClass} /></div>
+            <div><label htmlFor="password-nuova" className="text-sm font-semibold">Nuova password *</label><input id="password-nuova" name="password_nuova" type="password" autoComplete="new-password" minLength={8} required className={inputClass} /></div>
+            <div><label htmlFor="password-conferma" className="text-sm font-semibold">Conferma nuova password *</label><input id="password-conferma" name="password_conferma" type="password" autoComplete="new-password" minLength={8} required className={inputClass} /></div>
+            {errorePassword && <p role="alert" className="text-sm text-destructive">{errorePassword}</p>}
+            <Button type="submit" disabled={salvataggioPassword} className="rounded-full">{salvataggioPassword ? "Salvataggio..." : "Salva nuova password"}</Button>
+          </form>}
+          {successoPassword && <p role="status" className="mt-3 text-sm text-primary">{successoPassword}</p>}
         </div>}
         {user && <div className="mt-10 border-t border-border pt-6">
           <h2 className="text-lg font-bold">Gestione account</h2>
