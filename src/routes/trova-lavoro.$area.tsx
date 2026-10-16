@@ -188,6 +188,18 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </div>
       <p className="text-xs text-muted-foreground">Il CV e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta la pagina dedicata alla privacy di SEMI.</p>
       <p className="text-xs"><Link to="/privacy" className="font-semibold text-primary underline">Privacy e trattamento dei dati personali</Link> (informativa completa in preparazione)</p>
+      <fieldset className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
+        <legend className="px-1 text-sm font-semibold">Privacy e trattamento dei dati</legend>
+        <label className="flex items-start gap-3 text-sm leading-relaxed">
+          <input type="checkbox" name="privacy_presa_visione" required className="mt-1 h-4 w-4 shrink-0 accent-primary" />
+          <span>Confermo di aver preso visione delle <Link to="/privacy" className="font-semibold text-primary underline">informazioni sul trattamento dei dati personali</Link> e di sapere che i dati della mia candidatura, compreso il CV, saranno condivisi con il servizio educativo che ha pubblicato l'annuncio. *</span>
+        </label>
+        <label className="flex items-start gap-3 text-sm leading-relaxed">
+          <input type="checkbox" name="privacy_consenso_facoltativo" className="mt-1 h-4 w-4 shrink-0 accent-primary" />
+          <span>Acconsento a essere ricontattato da SEMI per future opportunità professionali, anche oltre questa candidatura. (Facoltativo)</span>
+        </label>
+        <p className="text-xs text-muted-foreground">La prima conferma è necessaria per inviare la candidatura; il consenso per eventuali contatti futuri è facoltativo e non influisce sulla selezione. L'informativa completa e la gestione dei consensi devono essere finalizzate prima della pubblicazione.</p>
+      </fieldset>
       {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
       {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
       <div className="flex justify-end">
