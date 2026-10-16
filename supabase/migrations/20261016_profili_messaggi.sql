@@ -23,13 +23,13 @@ CREATE TABLE IF NOT EXISTS public.messaggi_candidatura (
 );
 CREATE INDEX IF NOT EXISTS messaggi_candidatura_ordine_idx ON public.messaggi_candidatura(candidatura_id,created_at);
 ALTER TABLE public.messaggi_candidatura ENABLE ROW LEVEL SECURITY;
--- Accesso solo quando la candidatura è accettata o è stato fissato un colloquio.
+-- Accesso dopo l'invio della candidatura, solo ai due partecipanti.
 CREATE OR REPLACE FUNCTION public.puo_messaggiare_candidatura(p_candidatura_id uuid)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=''
 AS $$
  SELECT EXISTS (
  SELECT 1 FROM public.candidature c JOIN public.annunci a ON a.id=c.annuncio_id
- WHERE c.id=p_candidatura_id AND c.stato IN ('accettata','colloquio')
+ WHERE c.id=p_candidatura_id
  AND ((select auth.uid())=c.candidato_id OR (select auth.uid())=a.owner_id)
  );
 $$;
