@@ -337,7 +337,8 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
   const queryClient = useQueryClient();
   const [working, setWorking] = useState(false);
   const [errorAction, setErrorAction] = useState("");
-  const stato = annuncio.stato_pubblicazione;
+  // Gli annunci precedenti alla migrazione possono non avere ancora uno stato: non considerarli archiviati.
+  const stato = annuncio.stato_pubblicazione ?? "attivo";
   async function cambiaStato(next: "attivo" | "sospeso" | "archiviato") {
     setWorking(true);
     setErrorAction("");
@@ -367,7 +368,7 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
       <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">{annuncio.area}</span>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <h3 className="text-xl font-bold">{annuncio.mansione}</h3>
-        <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">{stato === "attivo" ? "Attivo" : stato === "sospeso" ? "Sospeso" : "Archiviato"}</span>
+        <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">{stato === "sospeso" ? "Sospeso" : stato === "archiviato" ? "Archiviato" : "Attivo"}</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {stato !== "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("attivo")}><PlayCircle className="h-4 w-4" />Riattiva</Button>}
