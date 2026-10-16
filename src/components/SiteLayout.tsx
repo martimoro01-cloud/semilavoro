@@ -58,9 +58,12 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           <div className="relative ml-auto justify-self-end">
             {user ? (
               <>
-                <button type="button" aria-expanded={accountMenuOpen} aria-controls="menu-area-personale" onClick={() => setAccountMenuOpen(v => !v)} className="flex items-center gap-1 rounded-full border border-border px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-secondary sm:px-5 sm:text-sm">
-                  Area personale <ChevronDown className={`h-4 w-4 transition-transform ${accountMenuOpen ? "rotate-180" : ""}`} />
-                </button>
+                <div className="flex items-center rounded-full border border-border text-xs font-semibold text-foreground sm:text-sm">
+                  <Link to="/area-personale" hash="dashboard" onClick={() => setAccountMenuOpen(false)} className="rounded-l-full px-3 py-2 transition-colors hover:bg-secondary sm:pl-5 sm:pr-3">Area personale</Link>
+                  <button type="button" aria-label="Apri le sezioni dell'area personale" aria-expanded={accountMenuOpen} aria-controls="menu-area-personale" onClick={() => setAccountMenuOpen(v => !v)} className="rounded-r-full border-l border-border px-2 py-2 transition-colors hover:bg-secondary sm:pr-3">
+                    <ChevronDown className={`h-4 w-4 transition-transform ${accountMenuOpen ? "rotate-180" : ""}`} />
+                  </button>
+                </div>
                 {accountMenuOpen && (
                   <>
                     <button type="button" aria-label="Chiudi menu area personale" className="fixed inset-0 z-40 cursor-default" onClick={() => setAccountMenuOpen(false)} />
