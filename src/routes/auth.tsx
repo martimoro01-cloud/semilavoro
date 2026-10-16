@@ -37,6 +37,10 @@ function AuthPage() {
     const password = String(form.get("password"));
     setError("");
     setInfo("");
+    if (mode === "signup") {
+      if (password.length < 8) return setError("Scegli una password di almeno 8 caratteri.");
+      if (password !== String(form.get("conferma_password"))) return setError("Le due password non coincidono.");
+    }
     setBusy(true);
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -98,9 +102,14 @@ function AuthPage() {
               <input id="email" name="email" type="email" required placeholder="tu@email.it" className={inputClass} />
             </div>
             <div>
-              <label htmlFor="password" className="text-sm font-semibold">Password *</label>
-              <input id="password" name="password" type="password" required minLength={6} placeholder="••••••••" className={inputClass} />
+              <label htmlFor="password" className="text-sm font-semibold">{mode === "signup" ? "Crea la tua password *" : "Password *"}</label>
+              <input id="password" name="password" type="password" required minLength={mode === "signup" ? 8 : 6} autoComplete={mode === "signup" ? "new-password" : "current-password"} placeholder="••••••••" className={inputClass} />
             </div>
+            {mode === "signup" && <div>
+              <label htmlFor="conferma_password" className="text-sm font-semibold">Conferma password *</label>
+              <input id="conferma_password" name="conferma_password" type="password" autoComplete="new-password" required minLength={8} className={inputClass} placeholder="Ripeti la password scelta" />
+              <p className="mt-1.5 text-xs text-muted-foreground">Scegli una password personale di almeno 8 caratteri, diversa da quella della tua email.</p>
+            </div>}
             {mode === "signup" && <p className="text-xs text-muted-foreground">Prima di registrarti consulta la <a href="/privacy" className="font-semibold text-primary underline">pagina privacy di SEMI</a>. L'informativa completa è in preparazione.</p>}
             {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
             {info && <p role="status" className="text-sm text-foreground">{info}</p>}
