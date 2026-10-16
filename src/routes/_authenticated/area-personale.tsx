@@ -59,7 +59,7 @@ function AreaPersonale() {
   const { user, tipo, loading } = useAccount();
   const navigate = useNavigate();
   const location = useLocation();
-  const section = location.hash.replace(/^#/, "") || (tipo === "servizio" ? "miei-annunci" : "colloqui-fissati");
+  const section = location.hash.replace(/^#/, "") || "dashboard";
   const queryClient = useQueryClient();
   const { data: profilo } = useQuery({
     queryKey: ["profilo", user?.id],
@@ -186,7 +186,7 @@ function AreaPersonale() {
           </div></div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
         </div>
-        {loading ? null : tipo === "servizio" && section === "miei-annunci" ? <AreaServizio userId={user!.id} /> : tipo !== "servizio" && user && (section === "colloqui-fissati" || section === "mie-candidature") ? <AreaEducatore userId={user.id} section={section} /> : null}
+        {loading ? null : tipo === "servizio" && (section === "dashboard" || section === "miei-annunci") ? <AreaServizio userId={user!.id} /> : tipo !== "servizio" && user && (section === "dashboard" || section === "colloqui-fissati" || section === "mie-candidature") ? <AreaEducatore userId={user.id} section={section} /> : null}
         {user && section === "profilo" && <div id="profilo" className="scroll-mt-8 mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4">
             <div><h2 className="text-xl font-bold">Il mio profilo</h2><p className="mt-1 text-sm text-muted-foreground">Aggiorna il nome visualizzato sul tuo account.</p></div>
@@ -225,7 +225,7 @@ function AreaPersonale() {
   );
 }
 
-function AreaEducatore({ userId, section }: { userId: string; section: "colloqui-fissati" | "mie-candidature" }) {
+function AreaEducatore({ userId, section }: { userId: string; section: "dashboard" | "colloqui-fissati" | "mie-candidature" }) {
   const [aperta, setAperta] = useState<string | null>(null);
   const { data, isLoading } = useQuery({
     queryKey: ["mie-candidature", userId],
@@ -243,7 +243,7 @@ function AreaEducatore({ userId, section }: { userId: string; section: "colloqui
 
   return (
     <>
-      {section === "colloqui-fissati" && <><h2 id="colloqui-fissati" className="scroll-mt-8 mt-10 text-2xl font-bold">Colloqui fissati</h2>
+      {(section === "dashboard" || section === "colloqui-fissati") && <><h2 id="colloqui-fissati" className="scroll-mt-8 mt-10 text-2xl font-bold">Colloqui fissati</h2>
       {colloqui.length === 0 ? (
         <p className="mt-3 text-muted-foreground">Nessun colloquio fissato per ora.</p>
       ) : (
@@ -262,7 +262,7 @@ function AreaEducatore({ userId, section }: { userId: string; section: "colloqui
       )}
 
       </>}
-      {(section === "mie-candidature" || section === "colloqui-fissati") && <><h2 id="mie-candidature" className="scroll-mt-8 mt-10 text-2xl font-bold">Le mie candidature</h2>
+      {(section === "dashboard" || section === "mie-candidature" || section === "colloqui-fissati") && <><h2 id="mie-candidature" className="scroll-mt-8 mt-10 text-2xl font-bold">Le mie candidature</h2>
       {isLoading ? null : (data ?? []).length === 0 ? (
         <div className="mt-4 rounded-3xl border border-border p-8 text-center">
           <p className="font-semibold">Non ti sei ancora candidato a nessun annuncio.</p>
