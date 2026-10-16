@@ -65,6 +65,8 @@ function AreaPersonale() {
     queryFn: async () => (await supabase.from("profiles").select("nome, foto_path").eq("id", user!.id).maybeSingle()).data,
   });
 
+  const [eliminazioneAccount, setEliminazioneAccount] = useState(false);
+  const [erroreEliminazione, setErroreEliminazione] = useState("");
   const [caricamentoFoto, setCaricamentoFoto] = useState(false);
   const [erroreFoto, setErroreFoto] = useState("");
   const [fotoVersione, setFotoVersione] = useState(0);
@@ -102,6 +104,20 @@ function AreaPersonale() {
     if (error) return setErroreFoto("Foto caricata, ma aggiornamento del profilo non riuscito.");
     setFotoVersione(v => v + 1);
     await queryClient.invalidateQueries({ queryKey: ["profilo", user.id] });
+  }
+
+  async function eliminaAccount() {
+    if (!user) return;
+    const conferma = window.prompt("Per eliminare definitivamente il tuo account, gli annunci, le candidature e i messaggi, scrivi ELIMINA. L'operazione non è reversibile.");
+    if (conferma !== "ELIMINA") return;
+    setEliminazioneAccount(true); setErroreEliminazione("");
+    const { data, error } = await supabase.functions.invoke("elimina-account", { method: "POST" });
+    setEliminazioneAccount(false);
+    if (error || !data?.ok) return setErroreEliminazione("Eliminazione non riuscita. La funzione server deve essere attivata e verificata; contatta info@semilavoro.it.");
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
   }
 
   async function esci() {
@@ -149,6 +165,12 @@ function AreaPersonale() {
             {erroreProfilo && <p role="alert" className="text-sm text-destructive">{erroreProfilo}</p>}
             <Button type="submit" disabled={salvataggioProfilo} className="rounded-full">{salvataggioProfilo ? "Salvataggio..." : "Salva modifiche"}</Button>
           </form>}
+        </div>}
+        {user && <div className="mt-10 border-t border-border pt-6">
+          <h2 className="text-lg font-bold">Gestione account</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Puoi richiedere l'eliminazione definitiva del tuo account. Questa operazione elimina anche annunci, candidature e conversazioni associate.</p>
+          <Button type="button" variant="outline" disabled={eliminazioneAccount} onClick={eliminaAccount} className="mt-4 rounded-full text-destructive"><Trash2 className="h-4 w-4" /> {eliminazioneAccount ? "Eliminazione..." : "Elimina account"}</Button>
+          {erroreEliminazione && <p role="alert" className="mt-3 text-sm text-destructive">{erroreEliminazione}</p>}
         </div>}
         {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}
       </section>
