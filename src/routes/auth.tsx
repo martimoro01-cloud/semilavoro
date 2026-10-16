@@ -29,6 +29,8 @@ function AuthPage() {
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [busy, setBusy] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [code, setCode] = useState("");
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,14 +60,57 @@ function AuthPage() {
       });
       setBusy(false);
       if (error) return setError(error.message.includes("registered") ? "Questa email è già registrata." : "Registrazione non riuscita. Controlla i dati e riprova.");
-      setInfo("Ti abbiamo inviato un’email: clicca il link di conferma per attivare l’account.");
+      setVerificationEmail(email);
+      setCode("");
+      setInfo("Ti abbiamo inviato un codice di 6 cifre via email. Inseriscilo qui per attivare l’account.");
     }
+  }
+
+  async function verifyCode(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setInfo("");
+    if (!/^\\d{6}$/.test(code.trim())) return setError("Inserisci il codice di 6 cifre ricevuto via email.");
+    setBusy(true);
+    const { error } = await supabase.auth.verifyOtp({ email: verificationEmail, token: code.trim(), type: "signup" });
+    setBusy(false);
+    if (error) return setError("Codice non valido o scaduto. Controlla l’email o richiedi un nuovo codice.");
+    navigate({ to: "/area-personale" });
+  }
+
+  async function resendCode() {
+    setError("");
+    setInfo("");
+    setBusy(true);
+    const { error } = await supabase.auth.resend({ type: "signup", email: verificationEmail });
+    setBusy(false);
+    if (error) return setError("Non è stato possibile inviare un nuovo codice. Riprova tra poco.");
+    setInfo("Ti abbiamo inviato un nuovo codice. Controlla anche la cartella spam.");
   }
 
   return (
     <SiteLayout>
       <section className="mx-auto max-w-md px-6 py-14">
         <div className="rounded-3xl border border-border bg-card p-8">
+          {verificationEmail ? (
+            <div>
+              <h1 className="text-2xl font-bold">Verifica la tua email</h1>
+              <p className="mt-2 text-sm text-muted-foreground">Abbiamo inviato un codice di 6 cifre a <strong>{verificationEmail}</strong>. Inseriscilo per attivare il tuo account.</p>
+              <form className="mt-6 space-y-4" onSubmit={verifyCode}>
+                <div>
+                  <label htmlFor="verification-code" className="text-sm font-semibold">Codice di verifica *</label>
+                  <input id="verification-code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\\D/g, "").slice(0, 6))} placeholder="000000" className={inputClass} />
+                </div>
+                {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+                {info && <p role="status" className="text-sm text-foreground">{info}</p>}
+                <Button type="submit" disabled={busy} className="w-full rounded-xl py-5 shadow-none">Verifica email <ArrowRight /></Button>
+              </form>
+              <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
+                <button type="button" disabled={busy} onClick={resendCode} className="font-semibold text-primary underline disabled:opacity-50">Invia un nuovo codice</button>
+                <button type="button" disabled={busy} onClick={() => { setVerificationEmail(""); setCode(""); setError(""); setInfo(""); }} className="text-muted-foreground underline">Cambia email</button>
+              </div>
+            </div>
+          ) : <>
           <div className="flex items-center gap-2">
             {mode === "login" ? <LogIn className="h-5 w-5 text-primary" /> : <UserPlus className="h-5 w-5 text-primary" />}
             <h1 className="text-2xl font-bold">{mode === "login" ? "Accedi" : "Registrati"}</h1>
@@ -123,6 +168,7 @@ function AuthPage() {
               {mode === "login" ? "Registrati" : "Accedi"}
             </button>
           </p>
+          </>}
         </div>
       </section>
     </SiteLayout>
