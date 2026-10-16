@@ -11,7 +11,7 @@ export function ChatCandidatura({ candidaturaId, stato }: { candidaturaId: strin
   const [busy, setBusy] = useState(false);
   const [errore, setErrore] = useState("");
   const client = useQueryClient();
-  const aperta = stato === "accettata" || stato === "colloquio";
+  const aperta = true;
   const { data: messaggi = [], isError } = useQuery({
     queryKey: ["messaggi-candidatura", candidaturaId],
     enabled: aperta && !!user,
@@ -33,9 +33,9 @@ export function ChatCandidatura({ candidaturaId, stato }: { candidaturaId: strin
     await client.invalidateQueries({ queryKey: ["messaggi-candidatura", candidaturaId] });
   }
   if (!aperta) return null;
-  return <section className="mt-5 rounded-2xl border border-primary/20 bg-primary/[0.03] p-4" aria-label="Messaggi per organizzare l'incontro">
-    <h4 className="flex items-center gap-2 font-semibold"><MessageCircle className="h-4 w-4 text-primary" /> Messaggi per organizzare l'incontro</h4>
-    <p className="mt-1 text-xs text-muted-foreground">Conversazione privata tra candidato e servizio educativo. Evita di condividere dati sensibili non necessari.</p>
+  return <section className="mt-5 rounded-2xl border border-primary/20 bg-primary/[0.03] p-4" aria-label="Messaggi con il servizio educativo">
+    <h4 className="flex items-center gap-2 font-semibold"><MessageCircle className="h-4 w-4 text-primary" /> Messaggi con il servizio educativo</h4>
+    <p className="mt-1 text-xs text-muted-foreground">Conversazione privata disponibile dopo l’invio della candidatura. Evita di condividere dati sensibili non necessari.</p>
     <div className="mt-4 max-h-72 space-y-2 overflow-y-auto" aria-live="polite">
       {messaggi.length === 0 && <p className="text-sm text-muted-foreground">Nessun messaggio. Scrivi per concordare data, ora e luogo.</p>}
       {messaggi.map(m => <div key={m.id} className={`rounded-xl p-3 text-sm ${m.mittente_id === user?.id ? "ml-8 bg-primary/10" : "mr-8 bg-background"}`}>
