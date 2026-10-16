@@ -262,7 +262,7 @@ function AreaEducatore({ userId, section }: { userId: string; section: "colloqui
       )}
 
       </>}
-      {section === "mie-candidature" && <><h2 id="mie-candidature" className="scroll-mt-8 mt-10 text-2xl font-bold">Le mie candidature</h2>
+      {(section === "mie-candidature" || section === "colloqui-fissati") && <><h2 id="mie-candidature" className="scroll-mt-8 mt-10 text-2xl font-bold">Le mie candidature</h2>
       {isLoading ? null : (data ?? []).length === 0 ? (
         <div className="mt-4 rounded-3xl border border-border p-8 text-center">
           <p className="font-semibold">Non ti sei ancora candidato a nessun annuncio.</p>
