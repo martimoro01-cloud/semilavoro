@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarDays, ChevronDown, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil, Archive, PauseCircle, PlayCircle, Trash2, Camera } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -58,6 +58,8 @@ async function gestisciCv(path: string, mode: "view" | "download") {
 function AreaPersonale() {
   const { user, tipo, loading } = useAccount();
   const navigate = useNavigate();
+  const location = useLocation();
+  const section = location.hash.replace(/^#/, "") || (tipo === "servizio" ? "miei-annunci" : "colloqui-fissati");
   const queryClient = useQueryClient();
   const { data: profilo } = useQuery({
     queryKey: ["profilo", user?.id],
@@ -184,8 +186,8 @@ function AreaPersonale() {
           </div></div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
         </div>
-        {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}
-        {user && <div id="profilo" className="scroll-mt-8 mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
+        {loading ? null : tipo === "servizio" && section === "miei-annunci" ? <AreaServizio userId={user!.id} /> : tipo !== "servizio" && user && (section === "colloqui-fissati" || section === "mie-candidature") ? <AreaEducatore userId={user.id} section={section} /> : null}
+        {user && section === "profilo" && <div id="profilo" className="scroll-mt-8 mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4">
             <div><h2 className="text-xl font-bold">Il mio profilo</h2><p className="mt-1 text-sm text-muted-foreground">Aggiorna il nome visualizzato sul tuo account.</p></div>
             <Button type="button" variant="outline" className="rounded-full" onClick={() => { setNome(profilo?.nome ?? ""); setErroreProfilo(""); setModificaProfilo(!modificaProfilo); }}><Pencil className="h-4 w-4" />Modifica</Button>
@@ -197,7 +199,7 @@ function AreaPersonale() {
             <Button type="submit" disabled={salvataggioProfilo} className="rounded-full">{salvataggioProfilo ? "Salvataggio..." : "Salva modifiche"}</Button>
           </form>}
         </div>}
-        {user && <div id="password-sicurezza" className="scroll-mt-8 mt-6 rounded-3xl border border-border bg-card p-6 sm:p-8">
+        {user && section === "password-sicurezza" && <div id="password-sicurezza" className="scroll-mt-8 mt-6 rounded-3xl border border-border bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between gap-3">
             <div><h2 className="text-xl font-bold">Password e sicurezza</h2></div>
             <Button type="button" variant="outline" className="rounded-full" onClick={() => { setModificaPassword(v => !v); setErrorePassword(""); setSuccessoPassword(""); }}>Cambia password</Button>
@@ -211,7 +213,7 @@ function AreaPersonale() {
           </form>}
           {successoPassword && <p role="status" className="mt-3 text-sm text-primary">{successoPassword}</p>}
         </div>}
-        {user && <div id="gestione-account" className="scroll-mt-8 mt-10 border-t border-border pt-6">
+        {user && section === "gestione-account" && <div id="gestione-account" className="scroll-mt-8 mt-10 border-t border-border pt-6">
           <h2 className="text-lg font-bold">Gestione account</h2>
           <p className="mt-2 text-sm text-muted-foreground">Puoi richiedere l'eliminazione definitiva del tuo account. Questa operazione elimina anche annunci, candidature e conversazioni associate.</p>
           <Button type="button" variant="outline" disabled={eliminazioneAccount} onClick={eliminaAccount} className="mt-4 rounded-full text-destructive"><Trash2 className="h-4 w-4" /> {eliminazioneAccount ? "Eliminazione..." : "Elimina account"}</Button>
@@ -223,7 +225,7 @@ function AreaPersonale() {
   );
 }
 
-function AreaEducatore({ userId }: { userId: string }) {
+function AreaEducatore({ userId, section }: { userId: string; section: "colloqui-fissati" | "mie-candidature" }) {
   const [aperta, setAperta] = useState<string | null>(null);
   const { data, isLoading } = useQuery({
     queryKey: ["mie-candidature", userId],
@@ -241,7 +243,7 @@ function AreaEducatore({ userId }: { userId: string }) {
 
   return (
     <>
-      <h2 id="colloqui-fissati" className="scroll-mt-8 mt-10 text-2xl font-bold">Colloqui fissati</h2>
+      {section === "colloqui-fissati" && <><h2 id="colloqui-fissati" className="scroll-mt-8 mt-10 text-2xl font-bold">Colloqui fissati</h2>
       {colloqui.length === 0 ? (
         <p className="mt-3 text-muted-foreground">Nessun colloquio fissato per ora.</p>
       ) : (
@@ -259,7 +261,8 @@ function AreaEducatore({ userId }: { userId: string }) {
         </div>
       )}
 
-      <h2 id="mie-candidature" className="scroll-mt-8 mt-10 text-2xl font-bold">Le mie candidature</h2>
+      </>}
+      {section === "mie-candidature" && <><h2 id="mie-candidature" className="scroll-mt-8 mt-10 text-2xl font-bold">Le mie candidature</h2>
       {isLoading ? null : (data ?? []).length === 0 ? (
         <div className="mt-4 rounded-3xl border border-border p-8 text-center">
           <p className="font-semibold">Non ti sei ancora candidato a nessun annuncio.</p>
@@ -298,6 +301,7 @@ function AreaEducatore({ userId }: { userId: string }) {
           ))}
         </div>
       )}
+      </>}
     </>
   );
 }
