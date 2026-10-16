@@ -347,9 +347,6 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
 
 function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [errore, setErrore] = useState("");
   const [erroreCv, setErroreCv] = useState("");
   const [cvBusy, setCvBusy] = useState(false);
 
@@ -360,28 +357,6 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
     catch { setErroreCv("Non è stato possibile recuperare il CV. Verifica i permessi e riprova."); }
     finally { setCvBusy(false); }
   }
-
-  async function salva(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const f = new FormData(event.currentTarget);
-    const stato = f.get("stato") as StatoCandidatura;
-    const data = String(f.get("colloquio_at") || "");
-    if (stato === "colloquio" && !data) return setErrore("Indica data e ora del colloquio.");
-    setSaving(true);
-    setErrore("");
-    const { error } = await supabase.from("candidature").update({
-      stato,
-      risposta: String(f.get("risposta") || "") || null,
-      colloquio_at: data ? new Date(data).toISOString() : null,
-      colloquio_luogo: String(f.get("colloquio_luogo") || "") || null,
-    }).eq("id", c.id);
-    setSaving(false);
-    if (error) return setErrore("Salvataggio non riuscito, riprova.");
-    setOpen(false);
-    queryClient.invalidateQueries({ queryKey: ["miei-annunci"] });
-  }
-
-  const localDate = c.colloquio_at ? new Date(new Date(c.colloquio_at).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : "";
 
   return (
     <div className="rounded-2xl border border-border bg-background p-4">
@@ -395,42 +370,16 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
         <StatoBadge stato={c.stato} />
       </div>
       <details className="mt-3 text-sm">
-        <summary className="cursor-pointer font-semibold">Lettera di presentazione</summary>
+        <summary className="cursor-pointer font-semibold">Messaggio del candidato</summary>
         <p className="mt-2 whitespace-pre-line text-muted-foreground">{c.lettera}</p>
       </details>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("view")}><Eye />Visualizza CV</Button>
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />Scarica CV</Button>
-        <Button size="sm" className="rounded-full shadow-none" onClick={() => setOpen((v) => !v)}>Rispondi / fissa colloquio</Button>
       </div>
       <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
       {erroreCv && <p role="alert" className="mt-2 text-sm text-destructive">{erroreCv}</p>}
-      {open && (
-        <form onSubmit={salva} className="mt-4 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
-          <div>
-            <label className="text-sm font-medium" htmlFor={`stato-${c.id}`}>Esito</label>
-            <select id={`stato-${c.id}`} name="stato" defaultValue={c.stato} className={inputClass}>
-              {(Object.keys(statoLabel) as StatoCandidatura[]).map((s) => <option key={s} value={s}>{statoLabel[s]}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-sm font-medium" htmlFor={`data-${c.id}`}>Data e ora colloquio</label>
-            <input id={`data-${c.id}`} name="colloquio_at" type="datetime-local" defaultValue={localDate} className={inputClass} />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="text-sm font-medium" htmlFor={`luogo-${c.id}`}>Luogo o link del colloquio</label>
-            <input id={`luogo-${c.id}`} name="colloquio_luogo" defaultValue={c.colloquio_luogo ?? ""} className={inputClass} />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="text-sm font-medium" htmlFor={`risposta-${c.id}`}>Messaggio al candidato</label>
-            <textarea id={`risposta-${c.id}`} name="risposta" rows={3} defaultValue={c.risposta ?? ""} className={inputClass} />
-          </div>
-          {errore && <p role="alert" className="text-sm text-destructive sm:col-span-2">{errore}</p>}
-          <div className="flex justify-end sm:col-span-2">
-            <Button type="submit" disabled={saving} className="rounded-full shadow-none">Salva risposta</Button>
-          </div>
-        </form>
-      )}
+
     </div>
   );
 }
