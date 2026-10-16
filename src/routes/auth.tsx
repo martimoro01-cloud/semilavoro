@@ -101,6 +101,7 @@ function AuthPage() {
               <label htmlFor="password" className="text-sm font-semibold">Password *</label>
               <input id="password" name="password" type="password" required minLength={6} placeholder="••••••••" className={inputClass} />
             </div>
+            {mode === "signup" && <p className="text-xs text-muted-foreground">Prima di registrarti consulta la <a href="/privacy" className="font-semibold text-primary underline">pagina privacy di SEMI</a>. L'informativa completa è in preparazione.</p>}
             {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
             {info && <p role="status" className="text-sm text-foreground">{info}</p>}
             <Button type="submit" disabled={busy} className="w-full rounded-xl py-5 shadow-none">
