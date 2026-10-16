@@ -112,6 +112,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <footer className="border-t border-border py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-center px-6 text-center text-sm text-muted-foreground">
           <p>© 2026 semi — Il lavoro educativo cresce qui</p>
+          <a href="/privacy" className="mt-3 underline">Privacy e dati personali</a>
         </div>
       </footer>
     </div>
