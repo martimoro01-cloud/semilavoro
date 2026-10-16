@@ -177,7 +177,7 @@ function AreaPersonale() {
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
             </p>
-            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao{profilo?.nome ? `, ${profilo.nome.split(/\\s+/)[0]}` : ""}!</h1>
+            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao{profilo?.nome ? `, ${profilo.nome.trim().split(" ")[0]}` : ""}!</h1>
             <p className="mt-2 font-display text-xl font-semibold sm:text-2xl">Benvenuta su SEMI</p>
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
             {erroreFoto && <p role="alert" className="mt-2 text-xs text-destructive">{erroreFoto}</p>}
