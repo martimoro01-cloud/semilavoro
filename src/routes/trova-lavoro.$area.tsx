@@ -117,7 +117,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       nome: prof?.nome ?? "",
       email: String(f.get("email")),
       cellulare: String(f.get("telefono")),
-      lettera: String(f.get("messaggio")),
+      lettera: String(f.get("messaggio") || ""),
       cv_path: path,
     });
     if (error) return setStato(error.code === "23505" ? "doppia" : "errore");
@@ -127,7 +127,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   return (
     <form className="mt-6 space-y-4 border-t border-border pt-6" onSubmit={invia}>
       <p className="text-sm text-muted-foreground">
-        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Compila i recapiti, scrivi un messaggio e allega il CV.
+        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Compila i recapiti, allega il CV e, se vuoi, aggiungi un messaggio.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -176,12 +176,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </div>
       <div>
         <label htmlFor={`messaggio-${annuncio.id}`} className={labelClass}>
-          Messaggio *
+          Messaggio (facoltativo)
         </label>
         <textarea
           id={`messaggio-${annuncio.id}`}
           name="messaggio"
-          required
           rows={5}
           placeholder="Scrivi un messaggio al servizio educativo..."
           className={inputClass}
