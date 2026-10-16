@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, ChevronDown, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil, Archive, PauseCircle, PlayCircle, Trash2 } from "lucide-react";
+import { CalendarDays, ChevronDown, Download, Eye, LogOut, Mail, MapPin, Phone, Users, Pencil, Archive, PauseCircle, PlayCircle, Trash2, Camera } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
 import { statoLabel, type AnnuncioRow, type CandidaturaRow, type StatoCandidatura } from "@/lib/annunci-db";
 import { Button } from "@/components/ui/button";
+import { ChatCandidatura } from "@/components/ChatCandidatura";
 
 export const Route = createFileRoute("/_authenticated/area-personale")({
   head: () => ({
@@ -61,9 +62,12 @@ function AreaPersonale() {
   const { data: profilo } = useQuery({
     queryKey: ["profilo", user?.id],
     enabled: !!user,
-    queryFn: async () => (await supabase.from("profiles").select("nome").eq("id", user!.id).maybeSingle()).data,
+    queryFn: async () => (await supabase.from("profiles").select("nome, foto_path").eq("id", user!.id).maybeSingle()).data,
   });
 
+  const [caricamentoFoto, setCaricamentoFoto] = useState(false);
+  const [erroreFoto, setErroreFoto] = useState("");
+  const [fotoVersione, setFotoVersione] = useState(0);
   const [modificaProfilo, setModificaProfilo] = useState(false);
   const [nome, setNome] = useState("");
   const [salvataggioProfilo, setSalvataggioProfilo] = useState(false);
@@ -81,6 +85,25 @@ function AreaPersonale() {
     setModificaProfilo(false);
   }
 
+  async function aggiornaFoto(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!user || !file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 2 * 1024 * 1024) {
+      setErroreFoto("Seleziona una foto JPG, PNG o WebP di massimo 2 MB.");
+      return;
+    }
+    setCaricamentoFoto(true); setErroreFoto("");
+    const estensione = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+    const path = `${user.id}/profilo-${Date.now()}.${estensione}`;
+    const { error: uploadError } = await supabase.storage.from("foto-profilo").upload(path, file, { contentType: file.type });
+    if (uploadError) { setCaricamentoFoto(false); return setErroreFoto("Caricamento non riuscito. Verifica che la migrazione delle foto sia stata applicata."); }
+    const { error } = await supabase.from("profiles").update({ foto_path: path }).eq("id", user.id);
+    setCaricamentoFoto(false);
+    if (error) return setErroreFoto("Foto caricata, ma aggiornamento del profilo non riuscito.");
+    setFotoVersione(v => v + 1);
+    await queryClient.invalidateQueries({ queryKey: ["profilo", user.id] });
+  }
+
   async function esci() {
     await queryClient.cancelQueries();
     queryClient.clear();
@@ -92,6 +115,17 @@ function AreaPersonale() {
     <SiteLayout>
       <section className="mx-auto max-w-4xl px-6 py-12">
         <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex items-center gap-5">
+            {user && <div className="relative shrink-0">
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-border bg-secondary text-2xl font-bold text-primary">
+                {profilo?.foto_path ? <img key={fotoVersione} src={supabase.storage.from("foto-profilo").getPublicUrl(profilo.foto_path).data.publicUrl} alt="Foto profilo" className="h-full w-full object-cover" /> : (profilo?.nome || user.email || "S").charAt(0).toUpperCase()}
+              </div>
+              <label title="Cambia foto profilo" className="absolute -bottom-1 -right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-border bg-card shadow-sm">
+                <Camera className="h-4 w-4" />
+                <span className="sr-only">Carica o cambia foto profilo</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={aggiornaFoto} disabled={caricamentoFoto} className="sr-only" />
+              </label>
+            </div>}
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
@@ -99,7 +133,9 @@ function AreaPersonale() {
             <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao,</h1>
             <p className="mt-2 font-display text-2xl font-semibold sm:text-3xl">{profilo?.nome || "Benvenuto su SEMI"}</p>
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
-          </div>
+            {erroreFoto && <p role="alert" className="mt-2 text-xs text-destructive">{erroreFoto}</p>}
+            {caricamentoFoto && <p className="mt-2 text-xs text-muted-foreground">Caricamento foto...</p>}
+          </div></div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
         </div>
         {user && <div className="mt-8 rounded-3xl border border-border bg-card p-6 sm:p-8">
@@ -179,10 +215,12 @@ function AreaEducatore({ userId }: { userId: string }) {
                 <p><strong>Annuncio:</strong> {c.annunci?.mansione} — {c.annunci?.servizio}</p>
                 <p><strong>Email utilizzata:</strong> {c.email}</p>
                 <p><strong>Cellulare:</strong> {c.cellulare}</p>
-                <div><p className="font-semibold">Lettera di presentazione</p><p className="mt-1 whitespace-pre-line text-muted-foreground">{c.lettera}</p></div>
+                <div><p className="font-semibold">Messaggio</p><p className="mt-1 whitespace-pre-line text-muted-foreground">{c.lettera}</p></div>
+                <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
                 {c.colloquio_at && <p><strong>Colloquio:</strong> {formatData(c.colloquio_at)}{c.colloquio_luogo ? ` · ${c.colloquio_luogo}` : ""}</p>}
                 <p className="text-xs text-muted-foreground">Stato: {statoLabel[c.stato]}</p>
               </div>}
+              <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
               {c.risposta && (
                 <div className="mt-4 rounded-xl bg-secondary p-4 text-sm">
                   <p className="font-semibold">Risposta del servizio</p>
@@ -267,7 +305,7 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
         <Button size="sm" variant="outline" disabled={working || candidature.length > 0} title={candidature.length ? "Archivia per conservare le candidature" : "Elimina definitivamente"} onClick={elimina}><Trash2 className="h-4 w-4" />Elimina</Button>
       </div>
       {errorAction && <p role="alert" className="mt-3 text-sm text-destructive">{errorAction}</p>}
-      {candidature.length > 0 && <p className="mt-2 text-xs text-muted-foreground">Per conservare le candidature ricevute, puoi archiviare questo annuncio ma non eliminarlo.</p>}
+
       <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" />{annuncio.provincia}, {annuncio.regione} · {annuncio.impegno}</p>
       <p className="mt-4 flex items-center gap-2 text-sm font-semibold"><Users className="h-4 w-4 text-primary" />{candidature.length} {candidature.length === 1 ? "candidato" : "candidati"}</p>
       {candidature.length === 0 ? (
@@ -339,6 +377,7 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />Scarica CV</Button>
         <Button size="sm" className="rounded-full shadow-none" onClick={() => setOpen((v) => !v)}>Rispondi / fissa colloquio</Button>
       </div>
+      <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
       {erroreCv && <p role="alert" className="mt-2 text-sm text-destructive">{erroreCv}</p>}
       {open && (
         <form onSubmit={salva} className="mt-4 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
