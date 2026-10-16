@@ -184,23 +184,8 @@ function AreaPersonale() {
           </div></div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
         </div>
-        {!loading && user && (tipo === "servizio" || tipo === "educatore") && (
-          <nav aria-label="Indice area personale" className="mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
-            <h2 className="text-xl font-bold">La tua area personale</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Seleziona una sezione per raggiungerla rapidamente.</p>
-            <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              {(tipo === "servizio"
-                ? [["I miei annunci", "miei-annunci"], ["Profilo", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
-                : [["Colloqui fissati", "colloqui-fissati"], ["Le mie candidature", "mie-candidature"], ["Account", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
-              ).map(([label, id]) => (
-                <a key={id} href={`#${id}`} className="flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm font-semibold transition-colors hover:bg-secondary">
-                  {label}<ChevronDown className="h-4 w-4 -rotate-90 text-primary" />
-                </a>
-              ))}
-            </div>
-          </nav>
-        )}
-        {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}        {user && <div id="profilo" className="scroll-mt-8 mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
+        {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}
+        {user && <div id="profilo" className="scroll-mt-8 mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4">
             <div><h2 className="text-xl font-bold">Il mio profilo</h2><p className="mt-1 text-sm text-muted-foreground">Aggiorna il nome visualizzato sul tuo account.</p></div>
             <Button type="button" variant="outline" className="rounded-full" onClick={() => { setNome(profilo?.nome ?? ""); setErroreProfilo(""); setModificaProfilo(!modificaProfilo); }}><Pencil className="h-4 w-4" />Modifica</Button>
