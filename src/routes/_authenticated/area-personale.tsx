@@ -184,7 +184,23 @@ function AreaPersonale() {
           </div></div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
         </div>
-        {user && <div className="mt-8 rounded-3xl border border-border bg-card p-6 sm:p-8">
+        {!loading && user && (tipo === "servizio" || tipo === "educatore") && (
+          <nav aria-label="Indice area personale" className="mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
+            <h2 className="text-xl font-bold">La tua area personale</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Seleziona una sezione per raggiungerla rapidamente.</p>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              {(tipo === "servizio"
+                ? [["I miei annunci", "miei-annunci"], ["Profilo", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
+                : [["Colloqui fissati", "colloqui-fissati"], ["Le mie candidature", "mie-candidature"], ["Account", "profilo"], ["Password e sicurezza", "password-sicurezza"], ["Gestione account", "gestione-account"]]
+              ).map(([label, id]) => (
+                <a key={id} href={`#${id}`} className="flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm font-semibold transition-colors hover:bg-secondary">
+                  {label}<ChevronDown className="h-4 w-4 -rotate-90 text-primary" />
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
+        {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}        {user && <div id="profilo" className="scroll-mt-8 mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between gap-4">
             <div><h2 className="text-xl font-bold">Il mio profilo</h2><p className="mt-1 text-sm text-muted-foreground">Aggiorna il nome visualizzato sul tuo account.</p></div>
             <Button type="button" variant="outline" className="rounded-full" onClick={() => { setNome(profilo?.nome ?? ""); setErroreProfilo(""); setModificaProfilo(!modificaProfilo); }}><Pencil className="h-4 w-4" />Modifica</Button>
@@ -196,7 +212,7 @@ function AreaPersonale() {
             <Button type="submit" disabled={salvataggioProfilo} className="rounded-full">{salvataggioProfilo ? "Salvataggio..." : "Salva modifiche"}</Button>
           </form>}
         </div>}
-        {user && <div className="mt-6 rounded-3xl border border-border bg-card p-6 sm:p-8">
+        {user && <div id="password-sicurezza" className="scroll-mt-8 mt-6 rounded-3xl border border-border bg-card p-6 sm:p-8">
           <div className="flex items-center justify-between gap-3">
             <div><h2 className="text-xl font-bold">Password e sicurezza</h2></div>
             <Button type="button" variant="outline" className="rounded-full" onClick={() => { setModificaPassword(v => !v); setErrorePassword(""); setSuccessoPassword(""); }}>Cambia password</Button>
@@ -210,13 +226,13 @@ function AreaPersonale() {
           </form>}
           {successoPassword && <p role="status" className="mt-3 text-sm text-primary">{successoPassword}</p>}
         </div>}
-        {user && <div className="mt-10 border-t border-border pt-6">
+        {user && <div id="gestione-account" className="scroll-mt-8 mt-10 border-t border-border pt-6">
           <h2 className="text-lg font-bold">Gestione account</h2>
           <p className="mt-2 text-sm text-muted-foreground">Puoi richiedere l'eliminazione definitiva del tuo account. Questa operazione elimina anche annunci, candidature e conversazioni associate.</p>
           <Button type="button" variant="outline" disabled={eliminazioneAccount} onClick={eliminaAccount} className="mt-4 rounded-full text-destructive"><Trash2 className="h-4 w-4" /> {eliminazioneAccount ? "Eliminazione..." : "Elimina account"}</Button>
           {erroreEliminazione && <p role="alert" className="mt-3 text-sm text-destructive">{erroreEliminazione}</p>}
         </div>}
-        {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}
+
       </section>
     </SiteLayout>
   );
@@ -240,7 +256,7 @@ function AreaEducatore({ userId }: { userId: string }) {
 
   return (
     <>
-      <h2 className="mt-10 text-2xl font-bold">Colloqui fissati</h2>
+      <h2 id="colloqui-fissati" className="scroll-mt-8 mt-10 text-2xl font-bold">Colloqui fissati</h2>
       {colloqui.length === 0 ? (
         <p className="mt-3 text-muted-foreground">Nessun colloquio fissato per ora.</p>
       ) : (
@@ -258,7 +274,7 @@ function AreaEducatore({ userId }: { userId: string }) {
         </div>
       )}
 
-      <h2 className="mt-10 text-2xl font-bold">Le mie candidature</h2>
+      <h2 id="mie-candidature" className="scroll-mt-8 mt-10 text-2xl font-bold">Le mie candidature</h2>
       {isLoading ? null : (data ?? []).length === 0 ? (
         <div className="mt-4 rounded-3xl border border-border p-8 text-center">
           <p className="font-semibold">Non ti sei ancora candidato a nessun annuncio.</p>
@@ -317,7 +333,7 @@ function AreaServizio({ userId }: { userId: string }) {
 
   return (
     <>
-      <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
+      <div id="miei-annunci" className="scroll-mt-8 mt-10 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">I miei annunci</h2>
         <Button asChild className="rounded-full shadow-none"><Link to="/pubblica-annuncio">Pubblica un annuncio</Link></Button>
       </div>
