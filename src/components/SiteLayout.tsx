@@ -1,4 +1,6 @@
 import { useState, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Link } from "@tanstack/react-router";
 import {
   Menu,
@@ -38,6 +40,13 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const { user, tipo } = useAccount();
+  const { data: profilo } = useQuery({
+    queryKey: ["profilo", user?.id],
+    enabled: !!user,
+    queryFn: async () => (await supabase.from("profiles").select("nome, foto_path").eq("id", user!.id).maybeSingle()).data,
+  });
+  const iniziale = (profilo?.nome?.trim() || String(user?.user_metadata?.nome || "").trim() || user?.email?.split("@")[0] || "U").charAt(0).toUpperCase();
+  const fotoUrl = profilo?.foto_path ? supabase.storage.from("foto-profilo").getPublicUrl(profilo.foto_path).data.publicUrl : null;
   const accountTo = user ? "/area-personale" : "/auth";
   const accountLabel = user ? "Area personale" : "Accedi";
 
@@ -59,7 +68,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             {user ? (
               <>
                 <div className="flex items-center rounded-full border border-border text-xs font-semibold text-foreground sm:text-sm">
-                  <Link to="/area-personale" hash="dashboard" onClick={() => setAccountMenuOpen(false)} className="rounded-l-full px-3 py-2 transition-colors hover:bg-secondary sm:pl-5 sm:pr-3">Area personale</Link>
+                  <Link to="/area-personale" hash="dashboard" onClick={() => setAccountMenuOpen(false)} aria-label="Apri la dashboard dell’area personale" title="Area personale" className="flex items-center justify-center rounded-l-full px-2 py-1 transition-colors hover:bg-secondary sm:pl-3 sm:pr-2"><span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-sm font-bold text-primary">{fotoUrl ? <img src={fotoUrl} alt="Foto profilo" className="h-full w-full object-cover" /> : iniziale}</span></Link>
                   <button type="button" aria-label="Apri le sezioni dell'area personale" aria-expanded={accountMenuOpen} aria-controls="menu-area-personale" onClick={() => setAccountMenuOpen(v => !v)} className="rounded-r-full border-l border-border px-2 py-2 transition-colors hover:bg-secondary sm:pr-3">
                     <ChevronDown className={`h-4 w-4 transition-transform ${accountMenuOpen ? "rotate-180" : ""}`} />
                   </button>
