@@ -232,7 +232,7 @@ function AreaEducatore({ userId, section }: { userId: string; section: "dashboar
     queryFn: async () => {
       const { data, error } = await supabase
         .from("candidature")
-        .select("*, annunci(mansione, servizio, area, provincia, impegno)")
+        .select("*, annunci(mansione, servizio, area, provincia, impegno, tipo_opportunita)")
         .eq("candidato_id", userId)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -369,7 +369,7 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
   }
   return (
     <article className="rounded-3xl border border-border bg-card p-6">
-      <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">{annuncio.area}</span>
+      <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">{annuncio.tipo_opportunita === "volontario" ? "Volontariato · " : ""}{annuncio.area}</span>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <h3 className="text-xl font-bold">{annuncio.mansione}</h3>
         <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">{stato === "sospeso" ? "Sospeso" : stato === "archiviato" ? "Archiviato" : "Attivo"}</span>
@@ -388,14 +388,14 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
         <p className="mt-2 text-sm text-muted-foreground">Ancora nessuna candidatura.</p>
       ) : (
         <div className="mt-3 grid gap-3">
-          {candidature.map((c) => <CandidatoRow key={c.id} candidatura={c} />)}
+          {candidature.map((c) => <CandidatoRow key={c.id} candidatura={c} volontario={annuncio.tipo_opportunita === "volontario"} />)}
         </div>
       )}
     </article>
   );
 }
 
-function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
+function CandidatoRow({ candidatura: c, volontario = false }: { candidatura: CandidaturaRow; volontario?: boolean }) {
   const queryClient = useQueryClient();
   const [erroreCv, setErroreCv] = useState("");
   const [cvBusy, setCvBusy] = useState(false);
@@ -404,7 +404,7 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
     setErroreCv("");
     setCvBusy(true);
     try { await gestisciCv(c.cv_path, mode); }
-    catch { setErroreCv("Non è stato possibile recuperare il CV. Verifica i permessi e riprova."); }
+    catch { setErroreCv("Non è stato possibile recuperare l’allegato. Verifica i permessi e riprova."); }
     finally { setCvBusy(false); }
   }
 
@@ -424,8 +424,8 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
         <p className="mt-2 whitespace-pre-line text-muted-foreground">{c.lettera}</p>
       </details>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("view")}><Eye />Visualizza CV</Button>
-        <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />Scarica CV</Button>
+        <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("view")}><Eye />{volontario ? "Visualizza lettera" : "Visualizza CV"}</Button>
+        <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />{volontario ? "Scarica lettera" : "Scarica CV"}</Button>
       </div>
       <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
       {erroreCv && <p role="alert" className="mt-2 text-sm text-destructive">{erroreCv}</p>}
