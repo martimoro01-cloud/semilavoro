@@ -105,7 +105,8 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   async function invia(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const f = new FormData(event.currentTarget);
-    const file = f.get("cv") as File;
+    const file = f.get("allegato") as File;
+    if (!file || file.size === 0) return setStato("errore");
     setStato("invio");
     const path = `${user!.id}/${annuncio.id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
     const up = await supabase.storage.from("cv").upload(path, file);
@@ -127,7 +128,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   return (
     <form className="mt-6 space-y-4 border-t border-border pt-6" onSubmit={invia}>
       <p className="text-sm text-muted-foreground">
-        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Compila i recapiti, allega il CV e, se vuoi, aggiungi un messaggio.
+        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Compila i recapiti, allega {annuncio.tipo_opportunita === "volontario" ? "obbligatoriamente una lettera di presentazione" : "il CV"} e, se vuoi, aggiungi un messaggio.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -160,11 +161,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </div>
       <div>
         <label htmlFor={`cv-${annuncio.id}`} className={labelClass}>
-          Curriculum vitae *
+          {annuncio.tipo_opportunita === "volontario" ? "Lettera di presentazione *" : "Curriculum vitae *"}
         </label>
         <input
           id={`cv-${annuncio.id}`}
-          name="cv"
+          name="allegato"
           type="file"
           required
           accept=".pdf,.doc,.docx"
@@ -186,13 +187,13 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
           className={inputClass}
         />
       </div>
-      <p className="text-xs text-muted-foreground">Il CV e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta la pagina dedicata alla privacy di SEMI.</p>
-      <p className="text-xs"><Link to="/privacy" className="font-semibold text-primary underline">Privacy e trattamento dei dati personali</Link> (informativa completa in preparazione)</p>
+      <p className="text-xs text-muted-foreground">{annuncio.tipo_opportunita === "volontario" ? "La lettera di presentazione" : "Il CV"} e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta la pagina dedicata alla privacy di SEMI.</p>
+      <p className="text-xs"><Link to="/privacy" className="font-semibold text-primary underline">Privacy e trattamento dei dati personali</Link></p>
       <fieldset className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
         <legend className="px-1 text-sm font-semibold">Privacy e trattamento dei dati</legend>
         <label className="flex items-start gap-3 text-sm leading-relaxed">
           <input type="checkbox" name="privacy_presa_visione" required className="mt-1 h-4 w-4 shrink-0 accent-primary" />
-          <span>Confermo di aver preso visione delle <Link to="/privacy" className="font-semibold text-primary underline">informazioni sul trattamento dei dati personali</Link> e di sapere che i dati della mia candidatura, compreso il CV, saranno condivisi con il servizio educativo che ha pubblicato l'annuncio. *</span>
+          <span>Confermo di aver preso visione delle <Link to="/privacy" className="font-semibold text-primary underline">informazioni sul trattamento dei dati personali</Link> e di sapere che i dati della mia candidatura, compreso {annuncio.tipo_opportunita === "volontario" ? "la lettera di presentazione" : "il CV"}, saranno condivisi con il servizio educativo che ha pubblicato l'annuncio. *</span>
         </label>
         <label className="flex items-start gap-3 text-sm leading-relaxed">
           <input type="checkbox" name="privacy_consenso_facoltativo" className="mt-1 h-4 w-4 shrink-0 accent-primary" />
@@ -216,7 +217,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   );
 }
 
-function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
+export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -253,7 +254,7 @@ function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
 
 function AreaPage() {
   const { area } = Route.useLoaderData();
-  const { data: annunci = [], isLoading } = useQuery({ queryKey: ["annunci", area.nome], queryFn: () => fetchAnnunci({ area: area.nome }) });
+  const { data: annunci = [], isLoading } = useQuery({ queryKey: ["annunci", area.nome], queryFn: () => fetchAnnunci({ area: area.nome, tipo: "operatore" }) });
 
   return (
     <SiteLayout>
