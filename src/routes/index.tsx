@@ -145,9 +145,9 @@ function Index() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Non solo annunci di lavoro</p>
             <h2 className="mt-3 max-w-2xl text-4xl font-bold leading-tight md:text-5xl">Nuove opportunità. <span className="font-display italic text-primary">Nuove strade.</span></h2>
-            <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">Concorsi pubblici e bandi per chi lavora nell'educazione e nel sociale. Con scadenze e collegamenti alle fonti ufficiali.</p>
+            <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">Scopri le opportunità di volontariato nel terzo settore e metti le tue competenze al servizio della comunità.</p>
           </div>
-          <Link to="/concorsi-bandi" className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-7 py-4 font-bold text-primary-foreground transition-transform hover:-translate-y-1"><CalendarClock className="h-5 w-5" /> Esplora concorsi e bandi <ArrowRight className="h-5 w-5" /></Link>
+          <Link to="/volontariato" className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-7 py-4 font-bold text-primary-foreground transition-transform hover:-translate-y-1"><CalendarClock className="h-5 w-5" /> Esplora il volontariato <ArrowRight className="h-5 w-5" /></Link>
         </div>
       </section>
       {/* Recensioni autentiche, pubblicate dopo moderazione */}
