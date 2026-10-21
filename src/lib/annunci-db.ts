@@ -22,6 +22,7 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     sede: row.provincia,
     orario: row.impegno,
     tipo_opportunita: row.tipo_opportunita,
+    in_primo_piano: row.in_primo_piano,
   };
 }
 
