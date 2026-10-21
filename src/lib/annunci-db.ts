@@ -21,11 +21,13 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     area: row.area,
     sede: row.provincia,
     orario: row.impegno,
+    tipo_opportunita: row.tipo_opportunita,
   };
 }
 
-export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean } = {}) {
+export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean; tipo?: "operatore" | "volontario" } = {}) {
   let query = supabase.from("annunci").select("*").eq("stato_pubblicazione", "attivo").order("created_at", { ascending: false });
+  query = query.eq("tipo_opportunita", filter.tipo ?? "operatore");
   if (filter.area) query = query.eq("area", filter.area);
   if (filter.primoPiano) query = query.eq("in_primo_piano", true).limit(3);
   const { data, error } = await query;
