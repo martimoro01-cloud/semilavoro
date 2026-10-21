@@ -5,6 +5,7 @@ export type Annuncio = {
   area: string;
   sede: string;
   orario: string;
+  tipo_opportunita?: "operatore" | "volontario";
 };
 
 export type AreaDiIntervento = {
