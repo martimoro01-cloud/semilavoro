@@ -31,6 +31,7 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
+          tipo_opportunita: "operatore" | "volontario"
           stato_pubblicazione: "attivo" | "sospeso" | "archiviato"
         }
         Insert: {
