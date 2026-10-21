@@ -158,7 +158,6 @@ function PubblicaAnnuncio() {
           <div>
             <label htmlFor="informazioni" className={labelClass}>Altre informazioni <span className="text-muted-foreground">(facoltative)</span></label>
             <textarea id="informazioni" name="informazioni" rows={4} placeholder="Scrivi liberamente..." className={inputClass} />
-            <p className="mt-1.5 text-xs text-muted-foreground">Benefit, requisiti preferenziali, modalità di candidatura, scadenze.</p>
           </div>
           <div className="flex items-start gap-3 rounded-md border border-border p-4">
             <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
