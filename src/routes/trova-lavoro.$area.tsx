@@ -226,6 +226,7 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
         {annuncio.area}
       </span>
       <h2 className="mt-4 text-xl font-bold leading-snug">{annuncio.titolo}</h2>
+      {annuncio.tipo_opportunita === "volontario" && annuncio.informazioni && <p className="mt-3 whitespace-pre-line text-sm text-muted-foreground">{annuncio.informazioni}</p>}
       <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <MapPin className="h-4 w-4 text-primary" />
