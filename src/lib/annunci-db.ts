@@ -23,6 +23,7 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     orario: row.impegno,
     tipo_opportunita: row.tipo_opportunita,
     in_primo_piano: row.in_primo_piano,
+    informazioni: row.informazioni,
   };
 }
 
