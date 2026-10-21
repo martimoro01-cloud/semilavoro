@@ -6,7 +6,7 @@ import { fetchAnnunci } from "@/lib/annunci-db";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail, Star, CalendarClock } from "lucide-react";
+import { Megaphone, Search, MapPin, Clock, ArrowRight, Mail, Star, HeartHandshake } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -145,9 +145,9 @@ function Index() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Non solo annunci di lavoro</p>
             <h2 className="mt-3 max-w-2xl text-4xl font-bold leading-tight md:text-5xl">Nuove opportunità. <span className="font-display italic text-primary">Nuove strade.</span></h2>
-            <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">Scopri le opportunità di volontariato nel terzo settore e metti le tue competenze al servizio della comunità.</p>
+            <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">Scopri le opportunità di volontariato nel terzo settore e metti la tua motivazione al servizio della comunità.</p>
           </div>
-          <Link to="/volontariato" className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-7 py-4 font-bold text-primary-foreground transition-transform hover:-translate-y-1"><CalendarClock className="h-5 w-5" /> Esplora il volontariato <ArrowRight className="h-5 w-5" /></Link>
+          <Link to="/volontariato" className="inline-flex items-center justify-center gap-3 rounded-full bg-primary px-7 py-4 font-bold text-primary-foreground transition-transform hover:-translate-y-1"><HeartHandshake className="h-5 w-5" /> Esplora il volontariato <ArrowRight className="h-5 w-5" /></Link>
         </div>
       </section>
       {/* Recensioni autentiche, pubblicate dopo moderazione */}
