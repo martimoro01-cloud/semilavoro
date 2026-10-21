@@ -38,6 +38,7 @@ const locations: Record<string, string[]> = regioniProvince;
 function PubblicaAnnuncio() {
   const [regione, setRegione] = useState("");
   const [provincia, setProvincia] = useState("");
+  const [tipoOpportunita, setTipoOpportunita] = useState<"operatore" | "volontario">("operatore");
   const [impegno, setImpegno] = useState("Full-time");
   const [inPrimoPiano, setInPrimoPiano] = useState(false);
   const [errore, setErrore] = useState("");
@@ -50,20 +51,21 @@ function PubblicaAnnuncio() {
     const f = new FormData(event.currentTarget);
     const min = Number(f.get("guadagno_min"));
     const max = Number(f.get("guadagno_max"));
-    if (max < min) return setErrore("Il guadagno massimo deve essere uguale o superiore al minimo.");
+    if (tipoOpportunita === "operatore" && max < min) return setErrore("Il guadagno massimo deve essere uguale o superiore al minimo.");
     setErrore("");
     setInvio(true);
     const { error } = await supabase.from("annunci").insert({
       owner_id: user!.id,
+      tipo_opportunita: tipoOpportunita,
       servizio: String(f.get("servizio")),
       area: String(f.get("area")),
       regione,
       provincia,
       mansione: String(f.get("mansione")),
       impegno,
-      guadagno_min: min,
-      guadagno_max: max,
-      note_retribuzione: String(f.get("note_retribuzione") || ""),
+      guadagno_min: tipoOpportunita === "volontario" ? 0 : min,
+      guadagno_max: tipoOpportunita === "volontario" ? 0 : max,
+      note_retribuzione: tipoOpportunita === "volontario" ? "" : String(f.get("note_retribuzione") || ""),
       email: String(f.get("email")),
       informazioni: String(f.get("informazioni") || ""),
       in_primo_piano: inPrimoPiano,
@@ -90,6 +92,14 @@ function PubblicaAnnuncio() {
           </div>
         ) : (
         <form className="mt-8 space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-9" onSubmit={pubblica}>
+          <fieldset>
+            <legend className={labelClass}>Cerchi operatori o volontari? *</legend>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button type="button" variant={tipoOpportunita === "operatore" ? "default" : "outline"} aria-pressed={tipoOpportunita === "operatore"} onClick={() => setTipoOpportunita("operatore")} className="rounded-full">Operatori</Button>
+              <Button type="button" variant={tipoOpportunita === "volontario" ? "default" : "outline"} aria-pressed={tipoOpportunita === "volontario"} onClick={() => setTipoOpportunita("volontario")} className="rounded-full">Volontari</Button>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">Gli annunci per volontari appariranno nella sezione Opportunità di volontariato.</p>
+          </fieldset>
           <div>
             <label htmlFor="servizio" className={labelClass}>Nome del servizio *</label>
             <input id="servizio" name="servizio" required placeholder="Es. Cooperativa sociale La Rondine" className={inputClass} />
@@ -129,14 +139,14 @@ function PubblicaAnnuncio() {
               ))}
             </div>
           </fieldset>
-          <div>
+          {tipoOpportunita === "operatore" && <div>
             <label htmlFor="guadagno-min" className={labelClass}>Guadagno annuale lordo (€) *</label>
             <div className="grid grid-cols-2 gap-3">
               <input id="guadagno-min" name="guadagno_min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
               <input id="guadagno-max" name="guadagno_max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
             <input name="note_retribuzione" aria-label="Note sulla retribuzione (facoltative)" placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
-          </div>
+          </div>}
           <div>
             <label htmlFor="email" className={labelClass}>Email di contatto *</label>
             <input id="email" name="email" type="email" required placeholder="candidature@tuoservizio.it" className={inputClass} />
