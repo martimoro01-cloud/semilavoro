@@ -12,7 +12,7 @@ import {
   MessageCircle,
   LogIn,
   Mail,
-  CalendarClock,
+  HeartHandshake,
   ChevronDown,
 } from "lucide-react";
 import { useAccount } from "@/hooks/use-account";
@@ -23,7 +23,7 @@ const navItems = [
   { to: "/pubblica-annuncio", label: "Pubblica annuncio", icon: Megaphone },
   { to: "/trova-lavoro", label: "Trova lavoro", icon: Search },
   { to: "/#annunci", label: "Annunci in primo piano", icon: Star, hash: "annunci" },
-  { to: "/concorsi-bandi", label: "Concorsi e bandi", icon: CalendarClock },
+  { to: "/volontariato", label: "Opportunità di volontariato", icon: HeartHandshake },
   { to: "/#dicono-di-noi", label: "Dicono di noi", icon: MessageCircle, hash: "dicono-di-noi" },
   { to: "/#contatti", label: "Contatti", icon: Mail, hash: "contatti" },
 ] as const;
