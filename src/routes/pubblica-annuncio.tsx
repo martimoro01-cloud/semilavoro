@@ -40,6 +40,7 @@ function PubblicaAnnuncio() {
   const [provincia, setProvincia] = useState("");
   const [tipoOpportunita, setTipoOpportunita] = useState<"operatore" | "volontario">("operatore");
   const [impegno, setImpegno] = useState("Full-time");
+  const [durataContratto, setDurataContratto] = useState<"determinato" | "indeterminato">("indeterminato");
   const [inPrimoPiano, setInPrimoPiano] = useState(false);
   const [errore, setErrore] = useState("");
   const [invio, setInvio] = useState(false);
@@ -52,6 +53,9 @@ function PubblicaAnnuncio() {
     const min = Number(f.get("guadagno_min"));
     const max = Number(f.get("guadagno_max"));
     if (tipoOpportunita === "operatore" && max < min) return setErrore("Il guadagno massimo deve essere uguale o superiore al minimo.");
+    const inizio = String(f.get("contratto_dal") || "");
+    const fine = String(f.get("contratto_al") || "");
+    if (tipoOpportunita === "operatore" && durataContratto === "determinato" && (!inizio || !fine || fine < inizio)) return setErrore("Indica le date di inizio e fine del contratto, con la fine successiva all’inizio.");
     setErrore("");
     setInvio(true);
     const { error } = await supabase.from("annunci").insert({
@@ -66,6 +70,9 @@ function PubblicaAnnuncio() {
       guadagno_min: tipoOpportunita === "volontario" ? 0 : min,
       guadagno_max: tipoOpportunita === "volontario" ? 0 : max,
       tipologia_contratto: tipoOpportunita === "operatore" ? String(f.get("tipologia_contratto") || "") : "",
+      durata_contratto: tipoOpportunita === "operatore" ? durataContratto : null,
+      contratto_dal: tipoOpportunita === "operatore" && durataContratto === "determinato" ? inizio : null,
+      contratto_al: tipoOpportunita === "operatore" && durataContratto === "determinato" ? fine : null,
       note_retribuzione: tipoOpportunita === "volontario" ? "" : String(f.get("note_retribuzione") || ""),
       email: String(f.get("email")),
       informazioni: tipoOpportunita === "volontario" ? String(f.get("descrizione_attivita") || "") + (f.get("informazioni") ? "\n\n" + String(f.get("informazioni")) : "") : String(f.get("informazioni") || ""),
@@ -155,6 +162,17 @@ function PubblicaAnnuncio() {
               <option value="">Seleziona la tipologia</option>
               {["Tempo indeterminato", "Tempo determinato", "Apprendistato", "Collaborazione", "Partita IVA", "Altro"].map(v => <option key={v} value={v}>{v}</option>)}
             </select>
+            <fieldset className="mt-5">
+              <legend className={labelClass}>Durata del contratto *</legend>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Button type="button" variant={durataContratto === "indeterminato" ? "default" : "outline"} aria-pressed={durataContratto === "indeterminato"} onClick={() => setDurataContratto("indeterminato")} className="rounded-full">Indeterminato</Button>
+                <Button type="button" variant={durataContratto === "determinato" ? "default" : "outline"} aria-pressed={durataContratto === "determinato"} onClick={() => setDurataContratto("determinato")} className="rounded-full">Determinato</Button>
+              </div>
+            </fieldset>
+            {durataContratto === "determinato" && <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div><label htmlFor="contratto-dal" className={labelClass}>Dal *</label><input id="contratto-dal" name="contratto_dal" type="date" required className={inputClass} /></div>
+              <div><label htmlFor="contratto-al" className={labelClass}>Al *</label><input id="contratto-al" name="contratto_al" type="date" required className={inputClass} /></div>
+            </div>}
             <input name="note_retribuzione" aria-label="Note sulla retribuzione (facoltative)" placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
           </div>}
           <div>
