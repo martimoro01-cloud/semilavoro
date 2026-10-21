@@ -73,7 +73,7 @@ function PubblicaAnnuncio() {
       durata_contratto: tipoOpportunita === "operatore" ? durataContratto : null,
       contratto_dal: tipoOpportunita === "operatore" && durataContratto === "determinato" ? inizio : null,
       contratto_al: tipoOpportunita === "operatore" && durataContratto === "determinato" ? fine : null,
-      note_retribuzione: tipoOpportunita === "volontario" ? "" : String(f.get("note_retribuzione") || ""),
+      note_retribuzione: "",
       email: String(f.get("email")),
       informazioni: tipoOpportunita === "volontario" ? String(f.get("descrizione_attivita") || "") + (f.get("informazioni") ? "\n\n" + String(f.get("informazioni")) : "") : String(f.get("informazioni") || ""),
       in_primo_piano: inPrimoPiano,
@@ -106,7 +106,7 @@ function PubblicaAnnuncio() {
               <Button type="button" variant={tipoOpportunita === "operatore" ? "default" : "outline"} aria-pressed={tipoOpportunita === "operatore"} onClick={() => setTipoOpportunita("operatore")} className="rounded-full">Operatori</Button>
               <Button type="button" variant={tipoOpportunita === "volontario" ? "default" : "outline"} aria-pressed={tipoOpportunita === "volontario"} onClick={() => setTipoOpportunita("volontario")} className="rounded-full">Volontari</Button>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Gli annunci per volontari appariranno nella sezione Opportunità di volontariato.</p>
+            {tipoOpportunita === "volontario" && <p className="mt-2 text-xs text-muted-foreground">Gli annunci per volontari appariranno nella sezione Opportunità di volontariato.</p>}
           </fieldset>
           <div>
             <label htmlFor="servizio" className={labelClass}>Nome del servizio *</label>
@@ -158,10 +158,7 @@ function PubblicaAnnuncio() {
               <input id="guadagno-max" name="guadagno_max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
             <label htmlFor="tipologia-contratto" className="mt-5 block text-sm font-medium">Tipologia di contratto *</label>
-            <select id="tipologia-contratto" name="tipologia_contratto" required defaultValue="" className={inputClass}>
-              <option value="">Seleziona la tipologia</option>
-              {["Tempo indeterminato", "Tempo determinato", "Apprendistato", "Collaborazione", "Partita IVA", "Altro"].map(v => <option key={v} value={v}>{v}</option>)}
-            </select>
+            <input id="tipologia-contratto" name="tipologia_contratto" type="text" required placeholder="Es. CCNL Cooperative Sociali, AGIDAE..." className={inputClass} />
             <fieldset className="mt-5">
               <legend className={labelClass}>Durata del contratto *</legend>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -173,6 +170,7 @@ function PubblicaAnnuncio() {
               <div><label htmlFor="contratto-dal" className={labelClass}>Dal *</label><input id="contratto-dal" name="contratto_dal" type="date" required className={inputClass} /></div>
               <div><label htmlFor="contratto-al" className={labelClass}>Al *</label><input id="contratto-al" name="contratto_al" type="date" required className={inputClass} /></div>
             </div>}
+          </div>}
             <input name="note_retribuzione" aria-label="Note sulla retribuzione (facoltative)" placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
           </div>}
           <div>
