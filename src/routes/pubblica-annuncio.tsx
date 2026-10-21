@@ -171,8 +171,6 @@ function PubblicaAnnuncio() {
               <div><label htmlFor="contratto-al" className={labelClass}>Al *</label><input id="contratto-al" name="contratto_al" type="date" required className={inputClass} /></div>
             </div>}
           </div>}
-            <input name="note_retribuzione" aria-label="Note sulla retribuzione (facoltative)" placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
-          </div>}
           <div>
             <label htmlFor="email" className={labelClass}>Email di contatto *</label>
             <input id="email" name="email" type="email" required placeholder="candidature@tuoservizio.it" className={inputClass} />
