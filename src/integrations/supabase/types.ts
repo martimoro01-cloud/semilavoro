@@ -17,7 +17,10 @@ export type Database = {
       annunci: {
         Row: {
           area: string
+          contratto_al: string | null
+          contratto_dal: string | null
           created_at: string
+          durata_contratto: string | null
           email: string
           guadagno_max: number
           guadagno_min: number
@@ -31,10 +34,16 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
+          stato_pubblicazione: string
+          tipo_opportunita: string | null
+          tipologia_contratto: string | null
         }
         Insert: {
           area: string
+          contratto_al?: string | null
+          contratto_dal?: string | null
           created_at?: string
+          durata_contratto?: string | null
           email: string
           guadagno_max: number
           guadagno_min: number
@@ -48,10 +57,16 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
+          stato_pubblicazione?: string
+          tipo_opportunita?: string | null
+          tipologia_contratto?: string | null
         }
         Update: {
           area?: string
+          contratto_al?: string | null
+          contratto_dal?: string | null
           created_at?: string
+          durata_contratto?: string | null
           email?: string
           guadagno_max?: number
           guadagno_min?: number
@@ -65,6 +80,9 @@ export type Database = {
           provincia?: string
           regione?: string
           servizio?: string
+          stato_pubblicazione?: string
+          tipo_opportunita?: string | null
+          tipologia_contratto?: string | null
         }
         Relationships: []
       }
@@ -126,19 +144,40 @@ export type Database = {
       }
       profiles: {
         Row: {
+          citta: string | null
           created_at: string
+          cv_path: string | null
+          descrizione: string | null
+          esperienza: string | null
           id: string
           nome: string
+          qualifica: string | null
+          sito_web: string | null
+          telefono: string | null
         }
         Insert: {
+          citta?: string | null
           created_at?: string
+          cv_path?: string | null
+          descrizione?: string | null
+          esperienza?: string | null
           id: string
           nome?: string
+          qualifica?: string | null
+          sito_web?: string | null
+          telefono?: string | null
         }
         Update: {
+          citta?: string | null
           created_at?: string
+          cv_path?: string | null
+          descrizione?: string | null
+          esperienza?: string | null
           id?: string
           nome?: string
+          qualifica?: string | null
+          sito_web?: string | null
+          telefono?: string | null
         }
         Relationships: []
       }
@@ -165,6 +204,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      annuncio_aperto: { Args: { _annuncio_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

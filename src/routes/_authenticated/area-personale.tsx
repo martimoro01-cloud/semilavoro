@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, FileText, LogOut, Mail, MapPin, Phone, Users } from "lucide-react";
+import { CalendarDays, Eye, FileText, Lock, LogOut, Mail, MapPin, Pause, Pencil, Phone, Play, Trash2, UserCog, Users } from "lucide-react";
+import { CvViewer } from "@/components/CvViewer";
+import { ModificaProfilo } from "@/components/ModificaProfilo";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
-import { statoLabel, type AnnuncioRow, type CandidaturaRow, type StatoCandidatura } from "@/lib/annunci-db";
+import { statoLabel, statoPubblicazioneLabel, type StatoPubblicazione, type AnnuncioRow, type CandidaturaRow, type StatoCandidatura } from "@/lib/annunci-db";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/area-personale")({
@@ -34,10 +37,6 @@ function StatoBadge({ stato }: { stato: StatoCandidatura }) {
   return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${tone}`}>{statoLabel[stato]}</span>;
 }
 
-async function apriCv(path: string) {
-  const { data } = await supabase.storage.from("cv").createSignedUrl(path, 300);
-  if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener");
-}
 
 function AreaPersonale() {
   const { user, tipo, loading } = useAccount();
@@ -69,6 +68,7 @@ function AreaPersonale() {
           </div>
           <Button variant="outline" className="rounded-full shadow-none" onClick={esci}><LogOut />Esci</Button>
         </div>
+        {!loading && user && tipo && <ModificaProfilo userId={user.id} tipo={tipo} />}
         {loading ? null : tipo === "servizio" ? <AreaServizio userId={user!.id} /> : user ? <AreaEducatore userId={user.id} /> : null}
       </section>
     </SiteLayout>
@@ -174,13 +174,73 @@ function AreaServizio({ userId }: { userId: string }) {
 }
 
 function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; candidature: CandidaturaRow[] }) {
+  const queryClient = useQueryClient();
+  const [dettagli, setDettagli] = useState(false);
+  const [mostraCandidati, setMostraCandidati] = useState(false);
+  const [errore, setErrore] = useState("");
+  const stato = annuncio.stato_pubblicazione as StatoPubblicazione;
+
+  async function cambiaStato(nuovo: StatoPubblicazione) {
+    setErrore("");
+    const { error } = await supabase.from("annunci").update({ stato_pubblicazione: nuovo }).eq("id", annuncio.id).eq("owner_id", annuncio.owner_id!);
+    if (error) return setErrore("Operazione non riuscita, riprova.");
+    queryClient.invalidateQueries({ queryKey: ["miei-annunci"] });
+  }
+  async function elimina() {
+    setErrore("");
+    const { error } = await supabase.from("annunci").delete().eq("id", annuncio.id).eq("owner_id", annuncio.owner_id!);
+    if (error) return setErrore("Eliminazione non riuscita, riprova.");
+    queryClient.invalidateQueries({ queryKey: ["miei-annunci"] });
+  }
+
+  const tonoStato = stato === "attivo" ? "bg-brand-green text-primary-foreground" : stato === "sospeso" ? "bg-secondary text-secondary-foreground" : "border border-border text-muted-foreground";
+
   return (
     <article className="rounded-3xl border border-border bg-card p-6">
-      <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">{annuncio.area}</span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">{annuncio.area}</span>
+        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${tonoStato}`}>{statoPubblicazioneLabel[stato] ?? stato}</span>
+      </div>
       <h3 className="mt-3 text-xl font-bold">{annuncio.mansione}</h3>
       <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" />{annuncio.provincia}, {annuncio.regione} · {annuncio.impegno}</p>
-      <p className="mt-4 flex items-center gap-2 text-sm font-semibold"><Users className="h-4 w-4 text-primary" />{candidature.length} {candidature.length === 1 ? "candidato" : "candidati"}</p>
-      {candidature.length === 0 ? (
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" className="rounded-full shadow-none" onClick={() => setDettagli((v) => !v)}><Eye />{dettagli ? "Nascondi annuncio" : "Visualizza annuncio"}</Button>
+        <Button asChild size="sm" variant="outline" className="rounded-full shadow-none"><Link to="/pubblica-annuncio" search={{ id: annuncio.id }}><Pencil />Modifica</Link></Button>
+        {stato === "attivo" && <Button size="sm" variant="outline" className="rounded-full shadow-none" onClick={() => cambiaStato("sospeso")}><Pause />Sospendi</Button>}
+        {stato !== "attivo" && <Button size="sm" variant="outline" className="rounded-full shadow-none" onClick={() => cambiaStato("attivo")}><Play />Riattiva</Button>}
+        {stato !== "chiuso" && <Button size="sm" variant="outline" className="rounded-full shadow-none" onClick={() => cambiaStato("chiuso")}><Lock />Chiudi candidature</Button>}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button size="sm" variant="outline" className="rounded-full text-destructive shadow-none"><Trash2 />Elimina</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Eliminare questo annuncio?</AlertDialogTitle>
+              <AlertDialogDescription>
+                L’annuncio “{annuncio.mansione}” verrà eliminato definitivamente{candidature.length > 0 ? `, insieme alle ${candidature.length} candidature ricevute` : ""}. L’operazione non si può annullare.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annulla</AlertDialogCancel>
+              <AlertDialogAction onClick={elimina}>Elimina</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+      {errore && <p role="alert" className="mt-2 text-sm text-destructive">{errore}</p>}
+      {dettagli && (
+        <dl className="mt-4 grid gap-2 rounded-2xl border border-border bg-background p-4 text-sm sm:grid-cols-2">
+          <div><dt className="font-semibold">Servizio</dt><dd>{annuncio.servizio}</dd></div>
+          <div><dt className="font-semibold">Contratto</dt><dd>{annuncio.tipologia_contratto || "—"}{annuncio.durata_contratto ? ` · ${annuncio.durata_contratto}` : ""}</dd></div>
+          {(annuncio.contratto_dal || annuncio.contratto_al) && <div><dt className="font-semibold">Periodo</dt><dd>{annuncio.contratto_dal ?? "…"} → {annuncio.contratto_al ?? "…"}</dd></div>}
+          <div><dt className="font-semibold">Guadagno annuo lordo</dt><dd>€ {annuncio.guadagno_min.toLocaleString("it-IT")} – {annuncio.guadagno_max.toLocaleString("it-IT")} · {annuncio.note_retribuzione}</dd></div>
+          <div><dt className="font-semibold">Email di contatto</dt><dd>{annuncio.email}</dd></div>
+          <div><dt className="font-semibold">In primo piano</dt><dd>{annuncio.in_primo_piano ? "Sì" : "No"}</dd></div>
+          <div className="sm:col-span-2"><dt className="font-semibold">Altre informazioni</dt><dd className="whitespace-pre-line">{annuncio.informazioni}</dd></div>
+        </dl>
+      )}
+      <button type="button" onClick={() => setMostraCandidati((v) => !v)} aria-expanded={mostraCandidati} className="mt-4 flex items-center gap-2 text-sm font-semibold underline decoration-primary underline-offset-4"><Users className="h-4 w-4 text-primary" />{candidature.length} {candidature.length === 1 ? "candidato" : "candidati"} · {mostraCandidati ? "nascondi" : "visualizza candidature"}</button>
+      {!mostraCandidati ? null : candidature.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Ancora nessuna candidatura.</p>
       ) : (
         <div className="mt-3 grid gap-3">
@@ -196,6 +256,7 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errore, setErrore] = useState("");
+  const [cvAperto, setCvAperto] = useState(false);
 
   async function salva(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -235,9 +296,10 @@ function CandidatoRow({ candidatura: c }: { candidatura: CandidaturaRow }) {
         <p className="mt-2 whitespace-pre-line text-muted-foreground">{c.lettera}</p>
       </details>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" variant="outline" className="rounded-full shadow-none" onClick={() => apriCv(c.cv_path)}><FileText />Apri CV</Button>
+        <Button size="sm" variant="outline" className="rounded-full shadow-none" onClick={() => setCvAperto(true)}><FileText />Apri CV</Button>
         <Button size="sm" className="rounded-full shadow-none" onClick={() => setOpen((v) => !v)}>Rispondi / fissa colloquio</Button>
       </div>
+      <CvViewer path={c.cv_path} open={cvAperto} onOpenChange={setCvAperto} title={`CV di ${c.nome || c.email}`} />
       {open && (
         <form onSubmit={salva} className="mt-4 grid gap-3 border-t border-border pt-4 sm:grid-cols-2">
           <div>

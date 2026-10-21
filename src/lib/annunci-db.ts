@@ -21,14 +21,22 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     area: row.area,
     sede: row.provincia,
     orario: row.impegno,
+    chiuso: row.stato_pubblicazione === "chiuso",
   };
 }
 
 export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean } = {}) {
-  let query = supabase.from("annunci").select("*").order("created_at", { ascending: false });
+  let query = supabase.from("annunci").select("*").neq("stato_pubblicazione", "sospeso").order("created_at", { ascending: false });
   if (filter.area) query = query.eq("area", filter.area);
   if (filter.primoPiano) query = query.eq("in_primo_piano", true).limit(3);
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []).map(toAnnuncio);
 }
+
+export type StatoPubblicazione = "attivo" | "sospeso" | "chiuso";
+export const statoPubblicazioneLabel: Record<StatoPubblicazione, string> = {
+  attivo: "Attivo",
+  sospeso: "Sospeso",
+  chiuso: "Chiuso",
+};
