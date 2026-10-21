@@ -7,6 +7,7 @@ export type Annuncio = {
   orario: string;
   tipo_opportunita?: "operatore" | "volontario";
   in_primo_piano?: boolean;
+  informazioni?: string;
 };
 
 export type AreaDiIntervento = {
