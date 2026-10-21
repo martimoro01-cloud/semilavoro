@@ -31,6 +31,9 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
+          durata_contratto: "determinato" | "indeterminato" | null
+          contratto_dal: string | null
+          contratto_al: string | null
           tipologia_contratto: string
           tipo_opportunita: "operatore" | "volontario"
           stato_pubblicazione: "attivo" | "sospeso" | "archiviato"
@@ -51,6 +54,9 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
+          durata_contratto?: "determinato" | "indeterminato" | null
+          contratto_dal?: string | null
+          contratto_al?: string | null
           tipologia_contratto?: string
           tipo_opportunita?: "operatore" | "volontario"
           stato_pubblicazione?: "attivo" | "sospeso" | "archiviato"
@@ -71,6 +77,9 @@ export type Database = {
           provincia?: string
           regione?: string
           servizio?: string
+          durata_contratto?: "determinato" | "indeterminato" | null
+          contratto_dal?: string | null
+          contratto_al?: string | null
           tipologia_contratto?: string
           tipo_opportunita?: "operatore" | "volontario"
           stato_pubblicazione?: "attivo" | "sospeso" | "archiviato"
