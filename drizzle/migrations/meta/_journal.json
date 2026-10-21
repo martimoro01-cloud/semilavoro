@@ -8,6 +8,13 @@
       "when": 1791739505712,
       "tag": "0000_area_personale",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792572847914,
+      "tag": "0001_gestione_annunci_profili",
+      "breakpoints": true
     }
   ]
 }
