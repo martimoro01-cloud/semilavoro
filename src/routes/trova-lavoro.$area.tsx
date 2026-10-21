@@ -223,18 +223,24 @@ function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
           {annuncio.orario}
         </span>
       </div>
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        aria-expanded={open}
-        className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-primary px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-      >
-        Candidati
-        <ChevronDown
-          className={`h-4 w-4 text-primary transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      {open && <CandidaturaForm annuncio={annuncio} />}
+      {annuncio.chiuso ? (
+        <p className="mt-6 text-sm font-semibold text-muted-foreground">Candidature chiuse</p>
+      ) : (
+        <>
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            aria-expanded={open}
+            className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-primary px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+          >
+            Candidati
+            <ChevronDown
+              className={`h-4 w-4 text-primary transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </button>
+          {open && <CandidaturaForm annuncio={annuncio} />}
+        </>
+      )}
     </article>
   );
 }

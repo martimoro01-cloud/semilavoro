@@ -5,6 +5,7 @@ export type Annuncio = {
   area: string;
   sede: string;
   orario: string;
+  chiuso?: boolean;
 };
 
 export type AreaDiIntervento = {
