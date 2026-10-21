@@ -61,13 +61,13 @@ function PubblicaAnnuncio() {
       area: String(f.get("area")),
       regione,
       provincia,
-      mansione: String(f.get("mansione")),
-      impegno,
+      mansione: tipoOpportunita === "volontario" ? "Attività di volontariato" : String(f.get("mansione")),
+      impegno: tipoOpportunita === "volontario" ? "Da concordare" : impegno,
       guadagno_min: tipoOpportunita === "volontario" ? 0 : min,
       guadagno_max: tipoOpportunita === "volontario" ? 0 : max,
       note_retribuzione: tipoOpportunita === "volontario" ? "" : String(f.get("note_retribuzione") || ""),
       email: String(f.get("email")),
-      informazioni: String(f.get("informazioni") || ""),
+      informazioni: tipoOpportunita === "volontario" ? String(f.get("descrizione_attivita") || "") + (f.get("informazioni") ? "\n\n" + String(f.get("informazioni")) : "") : String(f.get("informazioni") || ""),
       in_primo_piano: inPrimoPiano,
     });
     setInvio(false);
@@ -127,18 +127,22 @@ function PubblicaAnnuncio() {
               </select>
             </div>
           </div>
-          <div>
+          {tipoOpportunita === "volontario" && <div>
+            <label htmlFor="descrizione-attivita" className={labelClass}>Descrizione dell’attività e impegno richiesto *</label>
+            <textarea id="descrizione-attivita" name="descrizione_attivita" rows={5} required placeholder="Descrivi le attività previste, i giorni, gli orari e la disponibilità richiesta..." className={inputClass} />
+          </div>}
+          {tipoOpportunita === "operatore" && <div>
             <label htmlFor="mansione" className={labelClass}>Tipo di mansione *</label>
             <input id="mansione" name="mansione" required placeholder="Es. Educatore/trice per centro diurno" className={inputClass} />
-          </div>
-          <fieldset>
+          </div>}
+          {tipoOpportunita === "operatore" && <fieldset>
             <legend className={labelClass}>Impegno *</legend>
             <div className="mt-2 flex gap-2" role="group" aria-label="Impegno">
               {["Full-time", "Part-time"].map((value) => (
                 <Button key={value} type="button" size="sm" variant={impegno === value ? "default" : "outline"} aria-pressed={impegno === value} onClick={() => setImpegno(value)} className="rounded-full shadow-none">{value}</Button>
               ))}
             </div>
-          </fieldset>
+          </fieldset>}
           {tipoOpportunita === "operatore" && <div>
             <label htmlFor="guadagno-min" className={labelClass}>Guadagno annuale lordo (€) *</label>
             <div className="grid grid-cols-2 gap-3">
