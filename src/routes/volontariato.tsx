@@ -23,6 +23,6 @@ function Volontariato() {
     {isLoading && <p className="mt-10 text-muted-foreground">Caricamento opportunità...</p>}
     {isError && <p role="alert" className="mt-10 text-destructive">Impossibile caricare le opportunità. Verifica l'attivazione della nuova categoria nel database.</p>}
     {!isLoading && !isError && annunci.length === 0 && <div className="mt-12 rounded-3xl border border-border bg-card p-12 text-center"><SearchX className="mx-auto h-7 w-7 text-primary" /><p className="mt-4 font-bold">Nessuna opportunità disponibile per ora.</p></div>}
-    <div className="mt-10 grid gap-6">{annunci.map(annuncio => <AnnuncioCard key={annuncio.id} annuncio={annuncio} />)}</div>
+    <div className="mt-10 grid gap-6">{[...annunci].sort((a,b) => Number(!!b.in_primo_piano) - Number(!!a.in_primo_piano)).map(annuncio => <AnnuncioCard key={annuncio.id} annuncio={annuncio} />)}</div>
   </section></SiteLayout>;
 }
