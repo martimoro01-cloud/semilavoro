@@ -65,6 +65,7 @@ function PubblicaAnnuncio() {
       impegno: tipoOpportunita === "volontario" ? "Da concordare" : impegno,
       guadagno_min: tipoOpportunita === "volontario" ? 0 : min,
       guadagno_max: tipoOpportunita === "volontario" ? 0 : max,
+      tipologia_contratto: tipoOpportunita === "operatore" ? String(f.get("tipologia_contratto") || "") : "",
       note_retribuzione: tipoOpportunita === "volontario" ? "" : String(f.get("note_retribuzione") || ""),
       email: String(f.get("email")),
       informazioni: tipoOpportunita === "volontario" ? String(f.get("descrizione_attivita") || "") + (f.get("informazioni") ? "\n\n" + String(f.get("informazioni")) : "") : String(f.get("informazioni") || ""),
@@ -144,11 +145,16 @@ function PubblicaAnnuncio() {
             </div>
           </fieldset>}
           {tipoOpportunita === "operatore" && <div>
-            <label htmlFor="guadagno-min" className={labelClass}>Guadagno annuale lordo (€) *</label>
+            <label htmlFor="guadagno-min" className={labelClass}>RAL — Retribuzione annua lorda (€) *</label>
             <div className="grid grid-cols-2 gap-3">
               <input id="guadagno-min" name="guadagno_min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
               <input id="guadagno-max" name="guadagno_max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
+            <label htmlFor="tipologia-contratto" className="mt-5 block text-sm font-medium">Tipologia di contratto *</label>
+            <select id="tipologia-contratto" name="tipologia_contratto" required defaultValue="" className={inputClass}>
+              <option value="">Seleziona la tipologia</option>
+              {["Tempo indeterminato", "Tempo determinato", "Apprendistato", "Collaborazione", "Partita IVA", "Altro"].map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
             <input name="note_retribuzione" aria-label="Note sulla retribuzione (facoltative)" placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
           </div>}
           <div>
