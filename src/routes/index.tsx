@@ -91,54 +91,6 @@ function Index() {
         </div>
       </section>
 
-      {/* Annunci in primo piano */}
-      <section id="annunci" className="scroll-mt-24 border-t border-border bg-muted/30 py-20 md:py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="flex items-end justify-between gap-4">
-            <h2 className="text-3xl font-bold md:text-4xl">
-              <span className="mb-3 block font-sans text-xs font-bold uppercase tracking-[0.2em] text-brand-green">Opportunità selezionate</span>
-              Annunci in primo piano
-            </h2>
-            <Link
-              to="/trova-lavoro"
-              className="hidden items-center gap-1 text-sm font-semibold text-muted-foreground decoration-primary decoration-2 underline-offset-4 transition-colors hover:text-foreground sm:inline-flex"
-            >
-              <span className="underline decoration-primary decoration-2 underline-offset-4">Vedi tutti gli annunci</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {annunciInPrimoPiano.map((annuncio) => (
-              <article
-                key={annuncio.id}
-                className="group flex flex-col rounded-[2rem] border border-border bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
-              >
-                <span className="inline-flex w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
-                  {annuncio.area}
-                </span>
-                <h3 className="mt-4 flex-1 text-xl font-bold leading-snug">
-                  {annuncio.titolo}
-                </h3>
-                <div className="mt-5 flex items-center gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    {annuncio.sede}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="h-4 w-4 text-primary" />
-                    {annuncio.orario}
-                  </span>
-                </div>
-                <span className="mt-6 flex h-9 w-9 items-center justify-center self-end rounded-full bg-primary/15 text-primary transition-transform group-hover:translate-x-1">
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Concorsi e bandi */}
       <section className="border-t border-border bg-primary/[0.06] py-20 md:py-24">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 md:grid-cols-[1fr_auto]">
