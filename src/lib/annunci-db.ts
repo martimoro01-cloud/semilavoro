@@ -28,8 +28,12 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
   };
 }
 
+// Gli annunci di prova precedenti al lancio non devono essere mostrati sul sito.
+// Le nuove pubblicazioni rimangono visibili normalmente.
+const DATA_INIZIO_ANNUNCI_REALI = "2026-10-22T09:30:00.000Z";
+
 export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean; tipo?: "operatore" | "volontario" } = {}) {
-  let query = supabase.from("annunci").select("*").eq("stato_pubblicazione", "attivo").order("created_at", { ascending: false });
+  let query = supabase.from("annunci").select("*").eq("stato_pubblicazione", "attivo").gte("created_at", DATA_INIZIO_ANNUNCI_REALI).order("created_at", { ascending: false });
   query = query.eq("tipo_opportunita", filter.tipo ?? "operatore");
   if (filter.area) query = query.eq("area", filter.area);
   if (filter.primoPiano) query = query.eq("in_primo_piano", true).limit(3);
