@@ -105,6 +105,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   async function invia(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const f = new FormData(event.currentTarget);
+    if (f.get("privacy_candidatura") !== "on") return setStato("errore");
     const file = f.get("cv") as File;
     setStato("invio");
     const path = `${user!.id}/${annuncio.id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
@@ -127,8 +128,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   return (
     <form className="mt-6 space-y-4 border-t border-border pt-6" onSubmit={invia}>
       <p className="text-sm text-muted-foreground">
-        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Tutti i campi
-        sono obbligatori.
+        Ti stai candidando per <strong>{annuncio.titolo}</strong>. I campi contrassegnati con * sono obbligatori.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -177,17 +177,20 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </div>
       <div>
         <label htmlFor={`lettera-${annuncio.id}`} className={labelClass}>
-          Lettera di presentazione *
+          Messaggio (facoltativo)
         </label>
         <textarea
           id={`lettera-${annuncio.id}`}
           name="lettera"
-          required
           rows={5}
-          placeholder="Raccontaci chi sei e perché vuoi lavorare con noi..."
+          placeholder="Scrivi un messaggio per l’ente, se desideri..."
           className={inputClass}
         />
       </div>
+      <label className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
+        <input type="checkbox" name="privacy_candidatura" required className="mt-1 h-4 w-4 shrink-0 accent-primary" />
+        <span>Ho letto e compreso l’<Link to="/privacy" target="_blank" className="font-semibold text-primary underline underline-offset-2">Informativa sulla Privacy</Link> e acconsento al trattamento dei miei dati personali, inclusi quelli contenuti nel CV, per le finalità di gestione della candidatura e di contatto da parte dei datori di lavoro.</span>
+      </label>
       {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
       {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
       <div className="flex justify-end">
