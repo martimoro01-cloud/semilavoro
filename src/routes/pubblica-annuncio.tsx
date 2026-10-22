@@ -40,7 +40,9 @@ const locations: Record<string, string[]> = regioniProvince;
 function PubblicaAnnuncio() {
   const [regione, setRegione] = useState("");
   const [provincia, setProvincia] = useState("");
+  const [tipoOpportunita, setTipoOpportunita] = useState<"operatore" | "volontario">("operatore");
   const [impegno, setImpegno] = useState("Full-time");
+  const [durataContratto, setDurataContratto] = useState<"determinato" | "indeterminato">("indeterminato");
   const [inPrimoPiano, setInPrimoPiano] = useState(false);
   const [errore, setErrore] = useState("");
   const [invio, setInvio] = useState(false);
@@ -49,7 +51,6 @@ function PubblicaAnnuncio() {
   const { id } = Route.useSearch();
   const [esistente, setEsistente] = useState<AnnuncioRow | null>(null);
   const [caricato, setCaricato] = useState(!id);
-
   useEffect(() => {
     if (!id || !user) return;
     supabase.from("annunci").select("*").eq("id", id).eq("owner_id", user.id).maybeSingle().then(({ data }) => {
@@ -59,6 +60,8 @@ function PubblicaAnnuncio() {
         setProvincia(data.provincia);
         setImpegno(data.impegno);
         setInPrimoPiano(data.in_primo_piano);
+        setTipoOpportunita(data.tipo_opportunita === "volontario" ? "volontario" : "operatore");
+        setDurataContratto(data.durata_contratto === "determinato" ? "determinato" : "indeterminato");
       }
       setCaricato(true);
     });
@@ -69,26 +72,30 @@ function PubblicaAnnuncio() {
     const f = new FormData(event.currentTarget);
     const min = Number(f.get("guadagno_min"));
     const max = Number(f.get("guadagno_max"));
-    if (max < min) return setErrore("Il guadagno massimo deve essere uguale o superiore al minimo.");
+    if (tipoOpportunita === "operatore" && max < min) return setErrore("Il guadagno massimo deve essere uguale o superiore al minimo.");
+    const inizio = String(f.get("contratto_dal") || "");
+    const fine = String(f.get("contratto_al") || "");
+    if (tipoOpportunita === "operatore" && durataContratto === "determinato" && (!inizio || !fine || fine < inizio)) return setErrore("Indica le date di inizio e fine del contratto, con la fine successiva all’inizio.");
     setErrore("");
     setInvio(true);
     const valori = {
+      tipo_opportunita: tipoOpportunita,
       servizio: String(f.get("servizio")),
       area: String(f.get("area")),
       regione,
       provincia,
-      mansione: String(f.get("mansione")),
-      impegno,
-      guadagno_min: min,
-      guadagno_max: max,
-      note_retribuzione: String(f.get("note_retribuzione")),
+      mansione: tipoOpportunita === "volontario" ? "Attività di volontariato" : String(f.get("mansione")),
+      impegno: tipoOpportunita === "volontario" ? "Da concordare" : impegno,
+      guadagno_min: tipoOpportunita === "volontario" ? 0 : min,
+      guadagno_max: tipoOpportunita === "volontario" ? 0 : max,
+      tipologia_contratto: tipoOpportunita === "operatore" ? String(f.get("tipologia_contratto") || "") : "",
+      durata_contratto: tipoOpportunita === "operatore" ? durataContratto : null,
+      contratto_dal: tipoOpportunita === "operatore" && durataContratto === "determinato" ? inizio : null,
+      contratto_al: tipoOpportunita === "operatore" && durataContratto === "determinato" ? fine : null,
+      note_retribuzione: "",
       email: String(f.get("email")),
-      informazioni: String(f.get("informazioni")),
+      informazioni: tipoOpportunita === "volontario" ? String(f.get("descrizione_attivita") || "") + (f.get("informazioni") ? "\n\n" + String(f.get("informazioni")) : "") : String(f.get("informazioni") || ""),
       in_primo_piano: inPrimoPiano,
-      tipologia_contratto: String(f.get("tipologia_contratto")),
-      durata_contratto: String(f.get("durata_contratto") || "") || null,
-      contratto_dal: String(f.get("contratto_dal") || "") || null,
-      contratto_al: String(f.get("contratto_al") || "") || null,
     };
     const { error } = esistente
       ? await supabase.from("annunci").update(valori).eq("id", esistente.id).eq("owner_id", user!.id)
@@ -100,7 +107,7 @@ function PubblicaAnnuncio() {
 
   return (
     <SiteLayout>
-      <section className="mx-auto max-w-2xl px-6 py-12">
+      <section className="mx-auto max-w-3xl px-6 py-16">
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Torna alla home
         </Link>
@@ -116,14 +123,22 @@ function PubblicaAnnuncio() {
         ) : !caricato ? null : id && !esistente ? (
           <p className="mt-6 text-sm text-muted-foreground">Annuncio non trovato o non modificabile.</p>
         ) : (
-        <form key={esistente?.id ?? "nuovo"} className="mt-6 space-y-5 rounded-lg border border-border bg-card p-5 sm:p-7" onSubmit={pubblica}>
+        <form key={esistente?.id ?? "nuovo"} className="mt-8 space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-9" onSubmit={pubblica}>
+          <fieldset>
+            <legend className={labelClass}>Cerchi operatori o volontari? *</legend>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button type="button" variant={tipoOpportunita === "operatore" ? "default" : "outline"} aria-pressed={tipoOpportunita === "operatore"} onClick={() => setTipoOpportunita("operatore")} className="rounded-full">Operatori</Button>
+              <Button type="button" variant={tipoOpportunita === "volontario" ? "default" : "outline"} aria-pressed={tipoOpportunita === "volontario"} onClick={() => setTipoOpportunita("volontario")} className="rounded-full">Volontari</Button>
+            </div>
+            {tipoOpportunita === "volontario" && <p className="mt-2 text-xs text-muted-foreground">Gli annunci per volontari appariranno nella sezione Opportunità di volontariato.</p>}
+          </fieldset>
           <div>
             <label htmlFor="servizio" className={labelClass}>Nome del servizio *</label>
             <input id="servizio" name="servizio" defaultValue={esistente?.servizio} required placeholder="Es. Cooperativa sociale La Rondine" className={inputClass} />
           </div>
           <div>
             <label htmlFor="area" className={labelClass}>Area di intervento *</label>
-            <select id="area" name="area" required className={inputClass} defaultValue={esistente?.area ?? ""}>
+            <select id="area" name="area" defaultValue={esistente?.area ?? ""} required className={inputClass}>
               <option value="">Scegli un’area</option>
               {areeDiIntervento.map((area) => <option key={area.nome}>{area.nome}</option>)}
             </select>
@@ -144,55 +159,49 @@ function PubblicaAnnuncio() {
               </select>
             </div>
           </div>
-          <div>
+          {tipoOpportunita === "volontario" && <div>
+            <label htmlFor="descrizione-attivita" className={labelClass}>Descrizione dell’attività e impegno richiesto *</label>
+            <textarea id="descrizione-attivita" name="descrizione_attivita" defaultValue={esistente?.tipo_opportunita === "volontario" ? esistente.informazioni : ""} rows={5} required placeholder="Descrivi le attività previste, i giorni, gli orari e la disponibilità richiesta..." className={inputClass} />
+          </div>}
+          {tipoOpportunita === "operatore" && <div>
             <label htmlFor="mansione" className={labelClass}>Tipo di mansione *</label>
             <input id="mansione" name="mansione" defaultValue={esistente?.mansione} required placeholder="Es. Educatore/trice per centro diurno" className={inputClass} />
-          </div>
-          <fieldset>
+          </div>}
+          {tipoOpportunita === "operatore" && <fieldset>
             <legend className={labelClass}>Impegno *</legend>
             <div className="mt-2 flex gap-2" role="group" aria-label="Impegno">
               {["Full-time", "Part-time"].map((value) => (
                 <Button key={value} type="button" size="sm" variant={impegno === value ? "default" : "outline"} aria-pressed={impegno === value} onClick={() => setImpegno(value)} className="rounded-full shadow-none">{value}</Button>
               ))}
             </div>
-          </fieldset>
-          <div>
-            <label htmlFor="tipologia" className={labelClass}>Tipologia di contratto *</label>
-            <select id="tipologia" name="tipologia_contratto" required defaultValue={esistente?.tipologia_contratto ?? ""} className={inputClass}>
-              <option value="">Scegli la tipologia</option>
-              {["Tempo indeterminato", "Tempo determinato", "Libera professione", "Collaborazione", "Stage / tirocinio", "Sostituzione"].map((t) => <option key={t}>{t}</option>)}
-            </select>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-3">
-            <div>
-              <label htmlFor="durata" className={labelClass}>Durata</label>
-              <input id="durata" name="durata_contratto" defaultValue={esistente?.durata_contratto ?? ""} placeholder="Es. 12 mesi" className={inputClass} />
-            </div>
-            <div>
-              <label htmlFor="dal" className={labelClass}>Dal</label>
-              <input id="dal" name="contratto_dal" type="date" defaultValue={esistente?.contratto_dal ?? ""} className={inputClass} />
-            </div>
-            <div>
-              <label htmlFor="al" className={labelClass}>Al</label>
-              <input id="al" name="contratto_al" type="date" defaultValue={esistente?.contratto_al ?? ""} className={inputClass} />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="guadagno-min" className={labelClass}>Guadagno annuale lordo (€) *</label>
+          </fieldset>}
+          {tipoOpportunita === "operatore" && <div>
+            <label htmlFor="guadagno-min" className={labelClass}>RAL — Retribuzione annua lorda (€) *</label>
             <div className="grid grid-cols-2 gap-3">
               <input id="guadagno-min" name="guadagno_min" defaultValue={esistente?.guadagno_min} aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
               <input id="guadagno-max" name="guadagno_max" defaultValue={esistente?.guadagno_max} aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
-            <input name="note_retribuzione" defaultValue={esistente?.note_retribuzione} aria-label="Note sulla retribuzione" required placeholder="Note (es. CCNL Coop. Sociali, da concordare...)" className={inputClass} />
-          </div>
+            <label htmlFor="tipologia-contratto" className="mt-5 block text-sm font-medium">Tipologia di contratto *</label>
+            <input id="tipologia-contratto" name="tipologia_contratto" defaultValue={esistente?.tipologia_contratto ?? ""} type="text" required placeholder="Es. CCNL Cooperative Sociali, AGIDAE..." className={inputClass} />
+            <fieldset className="mt-5">
+              <legend className={labelClass}>Durata del contratto *</legend>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Button type="button" variant={durataContratto === "indeterminato" ? "default" : "outline"} aria-pressed={durataContratto === "indeterminato"} onClick={() => setDurataContratto("indeterminato")} className="rounded-full">Indeterminato</Button>
+                <Button type="button" variant={durataContratto === "determinato" ? "default" : "outline"} aria-pressed={durataContratto === "determinato"} onClick={() => setDurataContratto("determinato")} className="rounded-full">Determinato</Button>
+              </div>
+            </fieldset>
+            {durataContratto === "determinato" && <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div><label htmlFor="contratto-dal" className={labelClass}>Dal *</label><input id="contratto-dal" name="contratto_dal" defaultValue={esistente?.contratto_dal ?? ""} type="date" required className={inputClass} /></div>
+              <div><label htmlFor="contratto-al" className={labelClass}>Al *</label><input id="contratto-al" name="contratto_al" defaultValue={esistente?.contratto_al ?? ""} type="date" required className={inputClass} /></div>
+            </div>}
+          </div>}
           <div>
             <label htmlFor="email" className={labelClass}>Email di contatto *</label>
             <input id="email" name="email" defaultValue={esistente?.email} type="email" required placeholder="candidature@tuoservizio.it" className={inputClass} />
           </div>
           <div>
-            <label htmlFor="informazioni" className={labelClass}>Altre informazioni *</label>
-            <textarea id="informazioni" name="informazioni" defaultValue={esistente?.informazioni} rows={4} required placeholder="Scrivi liberamente..." className={inputClass} />
-            <p className="mt-1.5 text-xs text-muted-foreground">Benefit, requisiti preferenziali, modalità di candidatura, scadenze.</p>
+            <label htmlFor="informazioni" className={labelClass}>Altre informazioni <span className="text-muted-foreground">(facoltative)</span></label>
+            <textarea id="informazioni" name="informazioni" defaultValue={esistente?.tipo_opportunita === "volontario" ? "" : esistente?.informazioni} rows={4} placeholder="Scrivi liberamente..." className={inputClass} />
           </div>
           <div className="flex items-start gap-3 rounded-md border border-border p-4">
             <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

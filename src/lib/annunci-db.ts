@@ -21,12 +21,16 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     area: row.area,
     sede: row.provincia,
     orario: row.impegno,
-    chiuso: row.stato_pubblicazione === "chiuso",
+    tipo_opportunita: row.tipo_opportunita,
+    in_primo_piano: row.in_primo_piano,
+    informazioni: row.informazioni,
+    chiuso: row.stato_pubblicazione !== "attivo",
   };
 }
 
-export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean } = {}) {
-  let query = supabase.from("annunci").select("*").neq("stato_pubblicazione", "sospeso").order("created_at", { ascending: false });
+export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean; tipo?: "operatore" | "volontario" } = {}) {
+  let query = supabase.from("annunci").select("*").eq("stato_pubblicazione", "attivo").order("created_at", { ascending: false });
+  query = query.eq("tipo_opportunita", filter.tipo ?? "operatore");
   if (filter.area) query = query.eq("area", filter.area);
   if (filter.primoPiano) query = query.eq("in_primo_piano", true).limit(3);
   const { data, error } = await query;
@@ -34,9 +38,9 @@ export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean
   return (data ?? []).map(toAnnuncio);
 }
 
-export type StatoPubblicazione = "attivo" | "sospeso" | "chiuso";
+export type StatoPubblicazione = "attivo" | "sospeso" | "archiviato";
 export const statoPubblicazioneLabel: Record<StatoPubblicazione, string> = {
   attivo: "Attivo",
   sospeso: "Sospeso",
-  chiuso: "Chiuso",
+  archiviato: "Archiviato",
 };
