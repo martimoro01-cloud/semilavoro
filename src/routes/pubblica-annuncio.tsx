@@ -4,7 +4,8 @@ import { useAccount } from "@/hooks/use-account";
 import { SiteLayout } from "@/components/SiteLayout";
 import { areeDiIntervento } from "@/lib/annunci";
 import { ArrowLeft, Send, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { AnnuncioRow } from "@/lib/annunci-db";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import regioniProvince from "@/lib/regioni-province.json";
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/pubblica-annuncio")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>): { id?: string } => (typeof search["id"] === "string" ? { id: search["id"] } : {}),
   component: PubblicaAnnuncio,
 });
 
@@ -46,6 +48,24 @@ function PubblicaAnnuncio() {
   const [invio, setInvio] = useState(false);
   const { user, tipo, loading } = useAccount();
   const navigate = useNavigate();
+  const { id } = Route.useSearch();
+  const [esistente, setEsistente] = useState<AnnuncioRow | null>(null);
+  const [caricato, setCaricato] = useState(!id);
+  useEffect(() => {
+    if (!id || !user) return;
+    supabase.from("annunci").select("*").eq("id", id).eq("owner_id", user.id).maybeSingle().then(({ data }) => {
+      if (data) {
+        setEsistente(data);
+        setRegione(data.regione);
+        setProvincia(data.provincia);
+        setImpegno(data.impegno);
+        setInPrimoPiano(data.in_primo_piano);
+        setTipoOpportunita(data.tipo_opportunita === "volontario" ? "volontario" : "operatore");
+        setDurataContratto(data.durata_contratto === "determinato" ? "determinato" : "indeterminato");
+      }
+      setCaricato(true);
+    });
+  }, [id, user]);
 
   async function pubblica(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,8 +78,7 @@ function PubblicaAnnuncio() {
     if (tipoOpportunita === "operatore" && durataContratto === "determinato" && (!inizio || !fine || fine < inizio)) return setErrore("Indica le date di inizio e fine del contratto, con la fine successiva all’inizio.");
     setErrore("");
     setInvio(true);
-    const { error } = await supabase.from("annunci").insert({
-      owner_id: user!.id,
+    const valori = {
       tipo_opportunita: tipoOpportunita,
       servizio: String(f.get("servizio")),
       area: String(f.get("area")),
@@ -77,9 +96,12 @@ function PubblicaAnnuncio() {
       email: String(f.get("email")),
       informazioni: tipoOpportunita === "volontario" ? String(f.get("descrizione_attivita") || "") + (f.get("informazioni") ? "\n\n" + String(f.get("informazioni")) : "") : String(f.get("informazioni") || ""),
       in_primo_piano: inPrimoPiano,
-    });
+    };
+    const { error } = esistente
+      ? await supabase.from("annunci").update(valori).eq("id", esistente.id).eq("owner_id", user!.id)
+      : await supabase.from("annunci").insert({ ...valori, owner_id: user!.id });
     setInvio(false);
-    if (error) return setErrore("Pubblicazione non riuscita, riprova.");
+    if (error) return setErrore("Salvataggio non riuscito, riprova.");
     navigate({ to: "/area-personale" });
   }
 
@@ -89,7 +111,7 @@ function PubblicaAnnuncio() {
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Torna alla home
         </Link>
-        <h1 className="mt-6 text-3xl font-bold sm:text-4xl">Pubblica un annuncio</h1>
+        <h1 className="mt-6 text-3xl font-bold sm:text-4xl">{id ? "Modifica annuncio" : "Pubblica un annuncio"}</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           {"\n"}
         </p>
@@ -98,8 +120,10 @@ function PubblicaAnnuncio() {
             <p className="text-muted-foreground">{user ? "La pubblicazione è riservata agli account dei servizi educativi." : "Per pubblicare un annuncio accedi o registrati come servizio educativo."}</p>
             {!user && <Button asChild className="mt-4 rounded-full shadow-none"><Link to="/auth">Accedi o registrati</Link></Button>}
           </div>
+        ) : !caricato ? null : id && !esistente ? (
+          <p className="mt-6 text-sm text-muted-foreground">Annuncio non trovato o non modificabile.</p>
         ) : (
-        <form className="mt-8 space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-9" onSubmit={pubblica}>
+        <form key={esistente?.id ?? "nuovo"} className="mt-8 space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-9" onSubmit={pubblica}>
           <fieldset>
             <legend className={labelClass}>Cerchi operatori o volontari? *</legend>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -110,11 +134,11 @@ function PubblicaAnnuncio() {
           </fieldset>
           <div>
             <label htmlFor="servizio" className={labelClass}>Nome del servizio *</label>
-            <input id="servizio" name="servizio" required placeholder="Es. Cooperativa sociale La Rondine" className={inputClass} />
+            <input id="servizio" name="servizio" defaultValue={esistente?.servizio} required placeholder="Es. Cooperativa sociale La Rondine" className={inputClass} />
           </div>
           <div>
             <label htmlFor="area" className={labelClass}>Area di intervento *</label>
-            <select id="area" name="area" required className={inputClass} defaultValue="">
+            <select id="area" name="area" defaultValue={esistente?.area ?? ""} required className={inputClass} defaultValue="">
               <option value="">Scegli un’area</option>
               {areeDiIntervento.map((area) => <option key={area.nome}>{area.nome}</option>)}
             </select>
@@ -141,7 +165,7 @@ function PubblicaAnnuncio() {
           </div>}
           {tipoOpportunita === "operatore" && <div>
             <label htmlFor="mansione" className={labelClass}>Tipo di mansione *</label>
-            <input id="mansione" name="mansione" required placeholder="Es. Educatore/trice per centro diurno" className={inputClass} />
+            <input id="mansione" name="mansione" defaultValue={esistente?.mansione} required placeholder="Es. Educatore/trice per centro diurno" className={inputClass} />
           </div>}
           {tipoOpportunita === "operatore" && <fieldset>
             <legend className={labelClass}>Impegno *</legend>
@@ -154,8 +178,8 @@ function PubblicaAnnuncio() {
           {tipoOpportunita === "operatore" && <div>
             <label htmlFor="guadagno-min" className={labelClass}>RAL — Retribuzione annua lorda (€) *</label>
             <div className="grid grid-cols-2 gap-3">
-              <input id="guadagno-min" name="guadagno_min" aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
-              <input id="guadagno-max" name="guadagno_max" aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
+              <input id="guadagno-min" name="guadagno_min" defaultValue={esistente?.guadagno_min} aria-label="Guadagno annuale lordo minimo" type="number" min="0" required placeholder="Min (es. 22000)" className={inputClass} />
+              <input id="guadagno-max" name="guadagno_max" defaultValue={esistente?.guadagno_max} aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
             <label htmlFor="tipologia-contratto" className="mt-5 block text-sm font-medium">Tipologia di contratto *</label>
             <input id="tipologia-contratto" name="tipologia_contratto" type="text" required placeholder="Es. CCNL Cooperative Sociali, AGIDAE..." className={inputClass} />
@@ -173,7 +197,7 @@ function PubblicaAnnuncio() {
           </div>}
           <div>
             <label htmlFor="email" className={labelClass}>Email di contatto *</label>
-            <input id="email" name="email" type="email" required placeholder="candidature@tuoservizio.it" className={inputClass} />
+            <input id="email" name="email" defaultValue={esistente?.email} type="email" required placeholder="candidature@tuoservizio.it" className={inputClass} />
           </div>
           <div>
             <label htmlFor="informazioni" className={labelClass}>Altre informazioni <span className="text-muted-foreground">(facoltative)</span></label>
@@ -190,7 +214,7 @@ function PubblicaAnnuncio() {
           {errore && <p role="alert" className="text-sm text-destructive">{errore}</p>}
           <div className="flex flex-wrap items-center justify-end gap-3 pt-1">
             <Button asChild variant="ghost" className="rounded-full"><Link to="/">Annulla</Link></Button>
-            <Button type="submit" disabled={invio} className="rounded-full px-5 shadow-none"><Send />Pubblica annuncio</Button>
+            <Button type="submit" disabled={invio} className="rounded-full px-5 shadow-none"><Send />{esistente ? "Salva modifiche" : "Pubblica annuncio"}</Button>
           </div>
         </form>
         )}
