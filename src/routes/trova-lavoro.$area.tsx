@@ -204,7 +204,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   );
 }
 
-function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
+export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
   const [open, setOpen] = useState(false);
 
   return (
