@@ -10,3 +10,7 @@
 - [x] Modulo di candidatura per ogni annuncio (email, cellulare, CV, lettera di presentazione — tutti obbligatori).
 - [x] Tutti i campi di "Pubblica annuncio" obbligatori.
 - [x] Area personale: educatore (candidature, risposte, colloqui) e servizio (annunci con candidati, risposte, colloqui).
+- [ ] Visualizzatore CV integrato (senza popup) + download; verifica accessi CV
+- [ ] Dashboard servizio: I miei annunci (visualizza, modifica, sospendi/riattiva, chiudi, elimina, candidature)
+- [ ] Modifica profilo servizio e candidato (con CV sostituibile/eliminabile)
+- [ ] Colonne annunci: tipo_opportunita, stato_pubblicazione, tipologia_contratto, durata_contratto, contratto_dal, contratto_al — in attesa di conferma utente

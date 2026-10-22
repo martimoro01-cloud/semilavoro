@@ -105,8 +105,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   async function invia(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const f = new FormData(event.currentTarget);
-    const file = f.get("allegato") as File;
-    if (!file || file.size === 0) return setStato("errore");
+    const file = f.get("cv") as File;
     setStato("invio");
     const path = `${user!.id}/${annuncio.id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
     const up = await supabase.storage.from("cv").upload(path, file);
@@ -118,7 +117,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       nome: prof?.nome ?? "",
       email: String(f.get("email")),
       cellulare: String(f.get("telefono")),
-      lettera: String(f.get("messaggio") || ""),
+      lettera: String(f.get("lettera")),
       cv_path: path,
     });
     if (error) return setStato(error.code === "23505" ? "doppia" : "errore");
@@ -128,7 +127,8 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   return (
     <form className="mt-6 space-y-4 border-t border-border pt-6" onSubmit={invia}>
       <p className="text-sm text-muted-foreground">
-        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Compila i recapiti, allega {annuncio.tipo_opportunita === "volontario" ? "obbligatoriamente una lettera di presentazione" : "il CV"} e, se vuoi, aggiungi un messaggio.
+        Ti stai candidando per <strong>{annuncio.titolo}</strong>. Tutti i campi
+        sono obbligatori.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -161,11 +161,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </div>
       <div>
         <label htmlFor={`cv-${annuncio.id}`} className={labelClass}>
-          {annuncio.tipo_opportunita === "volontario" ? "Lettera di presentazione *" : "Curriculum vitae *"}
+          Curriculum vitae *
         </label>
         <input
           id={`cv-${annuncio.id}`}
-          name="allegato"
+          name="cv"
           type="file"
           required
           accept=".pdf,.doc,.docx"
@@ -176,31 +176,18 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
         </p>
       </div>
       <div>
-        <label htmlFor={`messaggio-${annuncio.id}`} className={labelClass}>
-          Messaggio (facoltativo)
+        <label htmlFor={`lettera-${annuncio.id}`} className={labelClass}>
+          Lettera di presentazione *
         </label>
         <textarea
-          id={`messaggio-${annuncio.id}`}
-          name="messaggio"
+          id={`lettera-${annuncio.id}`}
+          name="lettera"
+          required
           rows={5}
-          placeholder="Scrivi un messaggio al servizio educativo..."
+          placeholder="Raccontaci chi sei e perché vuoi lavorare con noi..."
           className={inputClass}
         />
       </div>
-      <p className="text-xs text-muted-foreground">{annuncio.tipo_opportunita === "volontario" ? "La lettera di presentazione" : "Il CV"} e i recapiti saranno condivisi con il servizio educativo che ha pubblicato l'annuncio, esclusivamente per gestire la candidatura. Non inserire dati sensibili non necessari. Prima dell'invio consulta la pagina dedicata alla privacy di SEMI.</p>
-      <p className="text-xs"><Link to="/privacy" className="font-semibold text-primary underline">Privacy e trattamento dei dati personali</Link></p>
-      <fieldset className="space-y-3 rounded-2xl border border-border bg-secondary/30 p-4">
-        <legend className="px-1 text-sm font-semibold">Privacy e trattamento dei dati</legend>
-        <label className="flex items-start gap-3 text-sm leading-relaxed">
-          <input type="checkbox" name="privacy_presa_visione" required className="mt-1 h-4 w-4 shrink-0 accent-primary" />
-          <span>Confermo di aver preso visione delle <Link to="/privacy" className="font-semibold text-primary underline">informazioni sul trattamento dei dati personali</Link> e di sapere che i dati della mia candidatura, compreso {annuncio.tipo_opportunita === "volontario" ? "la lettera di presentazione" : "il CV"}, saranno condivisi con il servizio educativo che ha pubblicato l'annuncio. *</span>
-        </label>
-        <label className="flex items-start gap-3 text-sm leading-relaxed">
-          <input type="checkbox" name="privacy_consenso_facoltativo" className="mt-1 h-4 w-4 shrink-0 accent-primary" />
-          <span>Acconsento a essere ricontattato da SEMI per future opportunità professionali, anche oltre questa candidatura. (Facoltativo)</span>
-        </label>
-        <p className="text-xs text-muted-foreground">La prima conferma è necessaria per inviare la candidatura; il consenso per eventuali contatti futuri è facoltativo e non influisce sulla selezione. L'informativa completa e la gestione dei consensi devono essere finalizzate prima della pubblicazione.</p>
-      </fieldset>
       {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
       {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
       <div className="flex justify-end">
@@ -217,7 +204,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   );
 }
 
-export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
+function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -226,7 +213,6 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
         {annuncio.area}
       </span>
       <h2 className="mt-4 text-xl font-bold leading-snug">{annuncio.titolo}</h2>
-      {annuncio.tipo_opportunita === "volontario" && annuncio.informazioni && <p className="mt-3 whitespace-pre-line text-sm text-muted-foreground">{annuncio.informazioni}</p>}
       <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <MapPin className="h-4 w-4 text-primary" />
@@ -237,25 +223,31 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
           {annuncio.orario}
         </span>
       </div>
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        aria-expanded={open}
-        className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-primary px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-      >
-        Candidati
-        <ChevronDown
-          className={`h-4 w-4 text-primary transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      {open && <CandidaturaForm annuncio={annuncio} />}
+      {annuncio.chiuso ? (
+        <p className="mt-6 text-sm font-semibold text-muted-foreground">Candidature chiuse</p>
+      ) : (
+        <>
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            aria-expanded={open}
+            className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-primary px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+          >
+            Candidati
+            <ChevronDown
+              className={`h-4 w-4 text-primary transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </button>
+          {open && <CandidaturaForm annuncio={annuncio} />}
+        </>
+      )}
     </article>
   );
 }
 
 function AreaPage() {
   const { area } = Route.useLoaderData();
-  const { data: annunci = [], isLoading } = useQuery({ queryKey: ["annunci", area.nome], queryFn: () => fetchAnnunci({ area: area.nome, tipo: "operatore" }) });
+  const { data: annunci = [], isLoading } = useQuery({ queryKey: ["annunci", area.nome], queryFn: () => fetchAnnunci({ area: area.nome }) });
 
   return (
     <SiteLayout>
