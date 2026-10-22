@@ -24,6 +24,7 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     tipo_opportunita: row.tipo_opportunita,
     in_primo_piano: row.in_primo_piano,
     informazioni: row.informazioni,
+    chiuso: row.stato_pubblicazione !== "attivo",
   };
 }
 
@@ -36,3 +37,10 @@ export async function fetchAnnunci(filter: { area?: string; primoPiano?: boolean
   if (error) throw error;
   return (data ?? []).map(toAnnuncio);
 }
+
+export type StatoPubblicazione = "attivo" | "sospeso" | "archiviato";
+export const statoPubblicazioneLabel: Record<StatoPubblicazione, string> = {
+  attivo: "Attivo",
+  sospeso: "Sospeso",
+  archiviato: "Archiviato",
+};
