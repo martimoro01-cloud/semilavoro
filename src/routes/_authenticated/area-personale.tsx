@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, Eye, FileText, Lock, LogOut, Mail, MapPin, Pause, Pencil, Phone, Play, Trash2, UserCog, Users } from "lucide-react";
+import { CalendarDays, Eye, FileText, Lock, LogOut, Mail, MapPin, Pause, Pencil, Phone, Play, Trash2, Users } from "lucide-react";
 import { CvViewer } from "@/components/CvViewer";
 import { ModificaProfilo } from "@/components/ModificaProfilo";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";

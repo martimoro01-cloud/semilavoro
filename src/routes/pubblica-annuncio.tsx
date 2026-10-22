@@ -28,7 +28,7 @@ export const Route = createFileRoute("/pubblica-annuncio")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  validateSearch: (search: Record<string, unknown>): { id?: string } => (typeof search.id === "string" ? { id: search.id } : {}),
+  validateSearch: (search: Record<string, unknown>): { id?: string } => (typeof search["id"] === "string" ? { id: search["id"] } : {}),
   component: PubblicaAnnuncio,
 });
 
