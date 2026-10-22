@@ -211,12 +211,26 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          citta: string | null
+          cv_path: string | null
+          descrizione: string | null
+          esperienza: string | null
+          qualifica: string | null
+          sito_web: string | null
+          telefono: string | null
           id: string
           nome: string
           foto_path: string | null
         }
         Insert: {
           created_at?: string
+          citta?: string | null
+          cv_path?: string | null
+          descrizione?: string | null
+          esperienza?: string | null
+          qualifica?: string | null
+          sito_web?: string | null
+          telefono?: string | null
           id: string
           nome?: string
           foto_path?: string | null
@@ -285,6 +299,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      annuncio_aperto: { Args: { _annuncio_id: string }; Returns: boolean }
       puo_messaggiare_candidatura: { Args: { p_candidatura_id: string }; Returns: boolean }
       is_bandi_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
       has_role: {
