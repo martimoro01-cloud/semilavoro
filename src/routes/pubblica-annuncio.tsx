@@ -138,7 +138,7 @@ function PubblicaAnnuncio() {
           </div>
           <div>
             <label htmlFor="area" className={labelClass}>Area di intervento *</label>
-            <select id="area" name="area" defaultValue={esistente?.area ?? ""} required className={inputClass} defaultValue="">
+            <select id="area" name="area" defaultValue={esistente?.area ?? ""} required className={inputClass}>
               <option value="">Scegli un’area</option>
               {areeDiIntervento.map((area) => <option key={area.nome}>{area.nome}</option>)}
             </select>
@@ -161,7 +161,7 @@ function PubblicaAnnuncio() {
           </div>
           {tipoOpportunita === "volontario" && <div>
             <label htmlFor="descrizione-attivita" className={labelClass}>Descrizione dell’attività e impegno richiesto *</label>
-            <textarea id="descrizione-attivita" name="descrizione_attivita" rows={5} required placeholder="Descrivi le attività previste, i giorni, gli orari e la disponibilità richiesta..." className={inputClass} />
+            <textarea id="descrizione-attivita" name="descrizione_attivita" defaultValue={esistente?.tipo_opportunita === "volontario" ? esistente.informazioni : ""} rows={5} required placeholder="Descrivi le attività previste, i giorni, gli orari e la disponibilità richiesta..." className={inputClass} />
           </div>}
           {tipoOpportunita === "operatore" && <div>
             <label htmlFor="mansione" className={labelClass}>Tipo di mansione *</label>
@@ -182,7 +182,7 @@ function PubblicaAnnuncio() {
               <input id="guadagno-max" name="guadagno_max" defaultValue={esistente?.guadagno_max} aria-label="Guadagno annuale lordo massimo" type="number" min="0" required placeholder="Max (es. 28000)" className={inputClass} />
             </div>
             <label htmlFor="tipologia-contratto" className="mt-5 block text-sm font-medium">Tipologia di contratto *</label>
-            <input id="tipologia-contratto" name="tipologia_contratto" type="text" required placeholder="Es. CCNL Cooperative Sociali, AGIDAE..." className={inputClass} />
+            <input id="tipologia-contratto" name="tipologia_contratto" defaultValue={esistente?.tipologia_contratto ?? ""} type="text" required placeholder="Es. CCNL Cooperative Sociali, AGIDAE..." className={inputClass} />
             <fieldset className="mt-5">
               <legend className={labelClass}>Durata del contratto *</legend>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -191,8 +191,8 @@ function PubblicaAnnuncio() {
               </div>
             </fieldset>
             {durataContratto === "determinato" && <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div><label htmlFor="contratto-dal" className={labelClass}>Dal *</label><input id="contratto-dal" name="contratto_dal" type="date" required className={inputClass} /></div>
-              <div><label htmlFor="contratto-al" className={labelClass}>Al *</label><input id="contratto-al" name="contratto_al" type="date" required className={inputClass} /></div>
+              <div><label htmlFor="contratto-dal" className={labelClass}>Dal *</label><input id="contratto-dal" name="contratto_dal" defaultValue={esistente?.contratto_dal ?? ""} type="date" required className={inputClass} /></div>
+              <div><label htmlFor="contratto-al" className={labelClass}>Al *</label><input id="contratto-al" name="contratto_al" defaultValue={esistente?.contratto_al ?? ""} type="date" required className={inputClass} /></div>
             </div>}
           </div>}
           <div>
@@ -201,7 +201,7 @@ function PubblicaAnnuncio() {
           </div>
           <div>
             <label htmlFor="informazioni" className={labelClass}>Altre informazioni <span className="text-muted-foreground">(facoltative)</span></label>
-            <textarea id="informazioni" name="informazioni" rows={4} placeholder="Scrivi liberamente..." className={inputClass} />
+            <textarea id="informazioni" name="informazioni" defaultValue={esistente?.tipo_opportunita === "volontario" ? "" : esistente?.informazioni} rows={4} placeholder="Scrivi liberamente..." className={inputClass} />
           </div>
           <div className="flex items-start gap-3 rounded-md border border-border p-4">
             <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
