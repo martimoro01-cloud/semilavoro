@@ -375,6 +375,7 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
         <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">{stato === "sospeso" ? "Sospeso" : stato === "archiviato" ? "Archiviato" : "Attivo"}</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
+        <Button asChild size="sm" variant="outline" disabled={working}><Link to="/pubblica-annuncio" search={{ id: annuncio.id }}><Pencil className="h-4 w-4" />Modifica</Link></Button>
         {stato !== "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("attivo")}><PlayCircle className="h-4 w-4" />Riattiva</Button>}
         {stato === "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("sospeso")}><PauseCircle className="h-4 w-4" />Sospendi</Button>}
         {stato !== "archiviato" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("archiviato")}><Archive className="h-4 w-4" />Archivia</Button>}
@@ -382,6 +383,16 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
       </div>
       {errorAction && <p role="alert" className="mt-3 text-sm text-destructive">{errorAction}</p>}
 
+      <details className="mt-3 rounded-xl border border-border p-3 text-sm">
+        <summary className="cursor-pointer font-semibold">Visualizza dettagli annuncio</summary>
+        <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+          <div><dt className="font-semibold">Servizio</dt><dd>{annuncio.servizio}</dd></div>
+          <div><dt className="font-semibold">Contratto</dt><dd>{annuncio.tipo_opportunita === "volontario" ? "Volontariato" : (annuncio.tipologia_contratto || "—")}</dd></div>
+          {annuncio.tipo_opportunita !== "volontario" && <div><dt className="font-semibold">Retribuzione annua lorda</dt><dd>€ {annuncio.guadagno_min.toLocaleString("it-IT")} – € {annuncio.guadagno_max.toLocaleString("it-IT")}</dd></div>}
+          <div><dt className="font-semibold">Email</dt><dd>{annuncio.email}</dd></div>
+          <div className="sm:col-span-2"><dt className="font-semibold">Informazioni</dt><dd className="whitespace-pre-line">{annuncio.informazioni}</dd></div>
+        </dl>
+      </details>
       <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="h-4 w-4 text-primary" />{annuncio.provincia}, {annuncio.regione} · {annuncio.impegno}</p>
       <p className="mt-4 flex items-center gap-2 text-sm font-semibold"><Users className="h-4 w-4 text-primary" />{candidature.length} {candidature.length === 1 ? "candidato" : "candidati"}</p>
       {candidature.length === 0 ? (
