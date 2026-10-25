@@ -375,9 +375,6 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
         <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">{stato === "sospeso" ? "Sospeso" : stato === "archiviato" ? "Archiviato" : "Attivo"}</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Button asChild size="sm" variant="outline" disabled={working}><Link to="/pubblica-annuncio" search={{ id: annuncio.id }}><Pencil className="h-4 w-4" />Modifica</Link></Button>
-        {stato !== "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("attivo")}><PlayCircle className="h-4 w-4" />Riattiva</Button>}
-        {stato === "attivo" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("sospeso")}><PauseCircle className="h-4 w-4" />Sospendi</Button>}
         {stato !== "archiviato" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("archiviato")}><Archive className="h-4 w-4" />Archivia</Button>}
         <Button size="sm" variant="outline" disabled={working} title="Elimina definitivamente annuncio e candidature" onClick={elimina}><Trash2 className="h-4 w-4" />Elimina</Button>
       </div>
