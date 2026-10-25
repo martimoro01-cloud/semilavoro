@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Menu,
   X,
@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Users,
   LogIn,
+  LogOut,
   Mail,
   HeartHandshake,
   ChevronDown,
@@ -39,6 +40,7 @@ function Logo() {
 }
 
 export function SiteLayout({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const { user, tipo } = useAccount();
@@ -51,6 +53,12 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const fotoUrl = profilo?.foto_path ? supabase.storage.from("foto-profilo").getPublicUrl(profilo.foto_path).data.publicUrl : null;
   const accountTo = user ? "/area-personale" : "/auth";
   const accountLabel = user ? "Area personale" : "Accedi";
+  async function esci() {
+    const { error } = await supabase.auth.signOut();
+    if (error) return;
+    setAccountMenuOpen(false);
+    navigate({ to: "/auth", replace: true });
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -85,6 +93,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
                       ).map(([label, id]) => (
                         <a key={id} href={`/area-personale#${id}`} onClick={() => setAccountMenuOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-semibold hover:bg-secondary">{label}</a>
                       ))}
+                      <button type="button" onClick={esci} className="mt-1 flex w-full items-center gap-2 rounded-xl border-t border-border px-4 py-3 text-left text-sm font-semibold hover:bg-secondary"><LogOut className="h-4 w-4 text-primary" />Esci</button>
                     </nav>
                   </>
                 )}
