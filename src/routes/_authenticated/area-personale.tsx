@@ -343,7 +343,7 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
   const [errorAction, setErrorAction] = useState("");
   // Gli annunci precedenti alla migrazione possono non avere ancora uno stato: non considerarli archiviati.
   const stato = annuncio.stato_pubblicazione ?? "attivo";
-  async function cambiaStato(next: "attivo" | "sospeso" | "archiviato") {
+  async function cambiaStato(next: "attivo" | "sospeso") {
     setWorking(true);
     setErrorAction("");
     const { error } = await supabase.from("annunci").update({ stato_pubblicazione: next }).eq("id", annuncio.id).eq("owner_id", annuncio.owner_id!);
@@ -375,7 +375,7 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
         <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">{stato === "sospeso" ? "Sospeso" : stato === "archiviato" ? "Archiviato" : "Attivo"}</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        {stato !== "archiviato" && <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato("archiviato")}><Archive className="h-4 w-4" />Archivia</Button>}
+        <Button size="sm" variant="outline" disabled={working} onClick={() => cambiaStato(stato === "sospeso" ? "attivo" : "sospeso")}>{stato === "sospeso" ? "Riattiva" : "Sospendi"}</Button>
         <Button size="sm" variant="outline" disabled={working} title="Elimina definitivamente annuncio e candidature" onClick={elimina}><Trash2 className="h-4 w-4" />Elimina</Button>
       </div>
       {errorAction && <p role="alert" className="mt-3 text-sm text-destructive">{errorAction}</p>}
