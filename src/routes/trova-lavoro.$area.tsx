@@ -78,6 +78,7 @@ const labelClass = "text-sm font-medium";
 
 function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
   const { user, tipo, loading } = useAccount();
+  const volontariato = annuncio.tipo_opportunita === "volontario";
   const [stato, setStato] = useState<"idle" | "invio" | "ok" | "errore" | "doppia">("idle");
 
   if (loading) return null;
@@ -106,7 +107,8 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
     event.preventDefault();
     const f = new FormData(event.currentTarget);
     if (f.get("privacy_candidatura") !== "on") return setStato("errore");
-    const file = f.get("cv") as File;
+    const file = f.get(volontariato ? "lettera_motivazionale" : "cv") as File;
+    if (!file || file.size === 0) return setStato("errore");
     setStato("invio");
     const path = `${user!.id}/${annuncio.id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
     const up = await supabase.storage.from("cv").upload(path, file);
@@ -161,11 +163,11 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </div>
       <div>
         <label htmlFor={`cv-${annuncio.id}`} className={labelClass}>
-          Curriculum vitae *
+          {volontariato ? "Lettera motivazionale *" : "Curriculum vitae *"}
         </label>
         <input
           id={`cv-${annuncio.id}`}
-          name="cv"
+          name={volontariato ? "lettera_motivazionale" : "cv"}
           type="file"
           required
           accept=".pdf,.doc,.docx"
@@ -189,7 +191,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       </div>
       <label className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
         <input type="checkbox" name="privacy_candidatura" required className="mt-1 h-4 w-4 shrink-0 accent-primary" />
-        <span>Ho letto e compreso l’<Link to="/privacy" target="_blank" className="font-semibold text-primary underline underline-offset-2">Informativa sulla Privacy</Link> e acconsento al trattamento dei miei dati personali, inclusi quelli contenuti nel CV, per le finalità di gestione della candidatura e di contatto da parte dei datori di lavoro.</span>
+        <span>Ho letto e compreso l’<Link to="/privacy" target="_blank" className="font-semibold text-primary underline underline-offset-2">Informativa sulla Privacy</Link> e acconsento al trattamento dei miei dati personali, inclusi quelli contenuti {volontariato ? "nella lettera motivazionale" : "nel CV"}, per le finalità di gestione della candidatura e di contatto da parte dei datori di lavoro.</span>
       </label>
       {stato === "errore" && <p role="alert" className="text-sm text-destructive">Invio non riuscito, riprova.</p>}
       {stato === "doppia" && <p role="alert" className="text-sm text-destructive">Ti sei già candidato a questo annuncio.</p>}
