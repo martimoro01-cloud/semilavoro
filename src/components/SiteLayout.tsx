@@ -10,6 +10,7 @@ import {
   Search,
   Star,
   MessageCircle,
+  Users,
   LogIn,
   Mail,
   HeartHandshake,
@@ -25,6 +26,7 @@ const navItems = [
   { to: "/#annunci", label: "Annunci in primo piano", icon: Star, hash: "annunci" },
   { to: "/volontariato", label: "Opportunità di volontariato", icon: HeartHandshake },
   { to: "/#dicono-di-noi", label: "Dicono di noi", icon: MessageCircle, hash: "dicono-di-noi" },
+  { to: "/chi-siamo", label: "Chi siamo", icon: Users },
   { to: "/#contatti", label: "Contatti", icon: Mail, hash: "contatti" },
 ] as const;
 
