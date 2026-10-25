@@ -286,11 +286,11 @@ function AreaEducatore({ userId, section }: { userId: string; section: "dashboar
                 <p><strong>Email utilizzata:</strong> {c.email}</p>
                 <p><strong>Cellulare:</strong> {c.cellulare}</p>
                 <div><p className="font-semibold">Messaggio</p><p className="mt-1 whitespace-pre-line text-muted-foreground">{c.lettera}</p></div>
-                <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
+                <ChatCandidatura candidaturaId={c.id} stato={c.stato} nomeServizio={c.annunci?.servizio} />
                 {c.colloquio_at && <p><strong>Colloquio:</strong> {formatData(c.colloquio_at)}{c.colloquio_luogo ? ` · ${c.colloquio_luogo}` : ""}</p>}
                 <p className="text-xs text-muted-foreground">Stato: {statoLabel[c.stato]}</p>
               </div>}
-              <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
+              <ChatCandidatura candidaturaId={c.id} stato={c.stato} nomeServizio={c.annunci?.servizio} />
               {c.risposta && (
                 <div className="mt-4 rounded-xl bg-secondary p-4 text-sm">
                   <p className="font-semibold">Risposta del servizio</p>
@@ -399,14 +399,14 @@ function AnnuncioCandidati({ annuncio, candidature }: { annuncio: AnnuncioRow; c
         <p className="mt-2 text-sm text-muted-foreground">Ancora nessuna candidatura.</p>
       ) : (
         <div className="mt-3 grid gap-3">
-          {candidature.map((c) => <CandidatoRow key={c.id} candidatura={c} volontario={annuncio.tipo_opportunita === "volontario"} />)}
+          {candidature.map((c) => <CandidatoRow key={c.id} candidatura={c} volontario={annuncio.tipo_opportunita === "volontario"} nomeServizio={annuncio.servizio} />)}
         </div>
       )}
     </article>
   );
 }
 
-function CandidatoRow({ candidatura: c, volontario = false }: { candidatura: CandidaturaRow; volontario?: boolean }) {
+function CandidatoRow({ candidatura: c, volontario = false, nomeServizio }: { candidatura: CandidaturaRow; volontario?: boolean; nomeServizio?: string }) {
   const queryClient = useQueryClient();
   const [erroreCv, setErroreCv] = useState("");
   const [cvBusy, setCvBusy] = useState(false);
@@ -438,7 +438,7 @@ function CandidatoRow({ candidatura: c, volontario = false }: { candidatura: Can
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("view")}><Eye />{volontario ? "Visualizza lettera" : "Visualizza CV"}</Button>
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />{volontario ? "Scarica lettera" : "Scarica CV"}</Button>
       </div>
-      <ChatCandidatura candidaturaId={c.id} stato={c.stato} />
+      <ChatCandidatura candidaturaId={c.id} stato={c.stato} nomeCandidato={c.nome || c.email} nomeServizio={nomeServizio} />
       {erroreCv && <p role="alert" className="mt-2 text-sm text-destructive">{erroreCv}</p>}
 
     </div>
