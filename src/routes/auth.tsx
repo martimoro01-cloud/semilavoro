@@ -24,7 +24,7 @@ const inputClass =
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [tipo, setTipo] = useState<"educatore" | "servizio">("educatore");
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
@@ -64,6 +64,21 @@ function AuthPage() {
       setCode("");
       setInfo("Ti abbiamo inviato un codice di 6 cifre via email. Inseriscilo qui per attivare l’account.");
     }
+  }
+
+  async function inviaRecupero(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const email = String(form.get("email") || "").trim();
+    setError("");
+    setInfo("");
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reimposta-password`,
+    });
+    setBusy(false);
+    if (error) return setError("Non è stato possibile inviare l’email di recupero. Riprova tra poco.");
+    setInfo("Se l’indirizzo è registrato, riceverai un’email con il link per impostare una nuova password. Controlla anche lo spam.");
   }
 
   async function verifyCode(event: React.FormEvent<HTMLFormElement>) {
@@ -110,7 +125,17 @@ function AuthPage() {
                 <button type="button" disabled={busy} onClick={() => { setVerificationEmail(""); setCode(""); setError(""); setInfo(""); }} className="text-muted-foreground underline">Cambia email</button>
               </div>
             </div>
-          ) : <>
+          ) : mode === "forgot" ? <div>
+            <h1 className="text-2xl font-bold">Password dimenticata?</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Inserisci l’email associata al tuo account SEMI. Ti invieremo un link per creare una nuova password.</p>
+            <form onSubmit={inviaRecupero} className="mt-6 space-y-4">
+              <div><label htmlFor="recupero-email" className="text-sm font-semibold">Email *</label><input id="recupero-email" name="email" type="email" required autoComplete="email" className={inputClass} /></div>
+              {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+              {info && <p role="status" className="text-sm text-foreground">{info}</p>}
+              <Button type="submit" disabled={busy} className="w-full rounded-xl py-5 shadow-none">{busy ? "Invio..." : "Invia link di recupero"}</Button>
+            </form>
+            <button type="button" className="mt-5 text-sm font-semibold text-primary underline" onClick={() => { setMode("login"); setError(""); setInfo(""); }}>Torna all’accesso</button>
+          </div> : <>
           <div className="flex items-center gap-2">
             {mode === "login" ? <LogIn className="h-5 w-5 text-primary" /> : <UserPlus className="h-5 w-5 text-primary" />}
             <h1 className="text-2xl font-bold">{mode === "login" ? "Accedi" : "Registrati"}</h1>
@@ -150,6 +175,7 @@ function AuthPage() {
               <label htmlFor="password" className="text-sm font-semibold">{mode === "signup" ? "Crea la tua password *" : "Password *"}</label>
               <input id="password" name="password" type="password" required minLength={mode === "signup" ? 8 : 6} autoComplete={mode === "signup" ? "new-password" : "current-password"} placeholder="••••••••" className={inputClass} />
             </div>
+            {mode === "login" && <button type="button" onClick={() => { setMode("forgot"); setError(""); setInfo(""); }} className="text-sm font-semibold text-primary underline underline-offset-2">Password dimenticata?</button>}
             {mode === "signup" && <div>
               <label htmlFor="conferma_password" className="text-sm font-semibold">Conferma password *</label>
               <input id="conferma_password" name="conferma_password" type="password" autoComplete="new-password" required minLength={8} className={inputClass} placeholder="Ripeti la password scelta" />
