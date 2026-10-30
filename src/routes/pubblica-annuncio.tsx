@@ -42,6 +42,7 @@ function PubblicaAnnuncio() {
   const [provincia, setProvincia] = useState("");
   const [tipoOpportunita, setTipoOpportunita] = useState<"operatore" | "volontario">("operatore");
   const [impegno, setImpegno] = useState("Full-time");
+  const [oreSettimanali, setOreSettimanali] = useState("");
   const [durataContratto, setDurataContratto] = useState<"determinato" | "indeterminato">("indeterminato");
   const [inPrimoPiano, setInPrimoPiano] = useState(false);
   const [errore, setErrore] = useState("");
@@ -58,7 +59,8 @@ function PubblicaAnnuncio() {
         setEsistente(data);
         setRegione(data.regione);
         setProvincia(data.provincia);
-        setImpegno(data.impegno);
+        setImpegno(data.impegno.startsWith("Part-time") ? "Part-time" : "Full-time");
+        setOreSettimanali(data.impegno.match(/(\d+)\s*ore/)?.[1] ?? "");
         setInPrimoPiano(data.in_primo_piano);
         setTipoOpportunita(data.tipo_opportunita === "volontario" ? "volontario" : "operatore");
         setDurataContratto(data.durata_contratto === "determinato" ? "determinato" : "indeterminato");
@@ -71,6 +73,7 @@ function PubblicaAnnuncio() {
     event.preventDefault();
     const f = new FormData(event.currentTarget);
     const min = Number(f.get("guadagno_min"));
+    if (tipoOpportunita === "operatore" && impegno === "Part-time" && (!oreSettimanali || Number(oreSettimanali) < 1 || Number(oreSettimanali) > 40)) return setErrore("Indica il numero di ore settimanali previste per il part-time (da 1 a 40).");
     const max = Number(f.get("guadagno_max"));
     if (tipoOpportunita === "operatore" && max < min) return setErrore("Il guadagno massimo deve essere uguale o superiore al minimo.");
     const inizio = String(f.get("contratto_dal") || "");
@@ -85,7 +88,7 @@ function PubblicaAnnuncio() {
       regione,
       provincia,
       mansione: tipoOpportunita === "volontario" ? "Attività di volontariato" : String(f.get("mansione")),
-      impegno: tipoOpportunita === "volontario" ? "Da concordare" : impegno,
+      impegno: tipoOpportunita === "volontario" ? "Da concordare" : impegno === "Part-time" ? `Part-time · ${oreSettimanali} ore settimanali` : impegno,
       guadagno_min: tipoOpportunita === "volontario" ? 0 : min,
       guadagno_max: tipoOpportunita === "volontario" ? 0 : max,
       tipologia_contratto: tipoOpportunita === "operatore" ? String(f.get("tipologia_contratto") || "") : "",
@@ -175,6 +178,10 @@ function PubblicaAnnuncio() {
               ))}
             </div>
           </fieldset>}
+          {tipoOpportunita === "operatore" && impegno === "Part-time" && <div>
+            <label htmlFor="ore-settimanali" className={labelClass}>Ore settimanali previste *</label>
+            <input id="ore-settimanali" name="ore_settimanali" type="number" min="1" max="40" step="1" required value={oreSettimanali} onChange={event => setOreSettimanali(event.target.value)} placeholder="Es. 24" className={inputClass} />
+          </div>}
           {tipoOpportunita === "operatore" && <div>
             <label htmlFor="guadagno-min" className={labelClass}>RAL — Retribuzione annua lorda (€) *</label>
             <div className="grid grid-cols-2 gap-3">
