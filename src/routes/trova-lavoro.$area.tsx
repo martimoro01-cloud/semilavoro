@@ -219,7 +219,8 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
       <span className="inline-flex w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
         {annuncio.area}
       </span>
-      <h2 className="mt-4 text-xl font-bold leading-snug">{annuncio.titolo}</h2>
+      <h2 className="mt-4 text-2xl font-bold leading-snug break-words">{annuncio.servizio}</h2>
+      <p className="mt-2 text-lg font-semibold leading-snug text-foreground/85">{annuncio.titolo}</p>
       <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <MapPin className="h-4 w-4 text-primary" />
@@ -230,7 +231,6 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
           {annuncio.orario}
         </span>
       </div>
-      <p className="mt-4 text-sm font-semibold text-foreground">{annuncio.servizio}</p>
       <button type="button" onClick={() => setDettagliAperti(v => !v)} aria-expanded={dettagliAperti} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
         {dettagliAperti ? "Nascondi dettagli" : "Visualizza dettagli dell’annuncio"}
         <ChevronDown className={`h-4 w-4 transition-transform ${dettagliAperti ? "rotate-180" : ""}`} />
