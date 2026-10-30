@@ -1,0 +1,19 @@
+{
+  "name": "SEMI – Il lavoro educativo cresce qui",
+  "short_name": "SEMI",
+  "description": "Il punto d'incontro per il lavoro educativo e sociale.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFF6D8",
+  "theme_color": "#FFF6D8",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
