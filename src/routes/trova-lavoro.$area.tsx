@@ -211,6 +211,8 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
 
 export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
   const [open, setOpen] = useState(false);
+  const [dettagliAperti, setDettagliAperti] = useState(false);
+  const volontario = annuncio.tipo_opportunita === "volontario";
 
   return (
     <article className="flex flex-col rounded-3xl border border-border bg-card p-7 transition-all hover:shadow-xl hover:shadow-primary/10">
@@ -228,6 +230,23 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
           {annuncio.orario}
         </span>
       </div>
+      <p className="mt-4 text-sm font-semibold text-foreground">{annuncio.servizio}</p>
+      <button type="button" onClick={() => setDettagliAperti(v => !v)} aria-expanded={dettagliAperti} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
+        {dettagliAperti ? "Nascondi dettagli" : "Visualizza dettagli dell’annuncio"}
+        <ChevronDown className={`h-4 w-4 transition-transform ${dettagliAperti ? "rotate-180" : ""}`} />
+      </button>
+      {dettagliAperti && <div className="mt-4 space-y-3 rounded-2xl border border-border bg-background/60 p-5 text-sm">
+        <p><strong>Servizio:</strong> {annuncio.servizio}</p>
+        <p><strong>Sede:</strong> {annuncio.sede}{annuncio.regione ? `, ${annuncio.regione}` : ""}</p>
+        {!volontario && <>
+          <p><strong>Impegno:</strong> {annuncio.orario}</p>
+          <p><strong>Retribuzione annua lorda:</strong> {annuncio.ralMin?.toLocaleString("it-IT")} € – {annuncio.ralMax?.toLocaleString("it-IT")} €</p>
+          <p><strong>Tipologia di contratto:</strong> {annuncio.contratto || "Non indicata"}</p>
+          <p><strong>Durata:</strong> {annuncio.durataContratto === "determinato" ? "Tempo determinato" : "Tempo indeterminato"}</p>
+          {annuncio.durataContratto === "determinato" && annuncio.contrattoDal && annuncio.contrattoAl && <p><strong>Periodo:</strong> {new Date(annuncio.contrattoDal + "T12:00:00").toLocaleDateString("it-IT")} – {new Date(annuncio.contrattoAl + "T12:00:00").toLocaleDateString("it-IT")}</p>}
+        </>}
+        {annuncio.informazioni?.trim() && <div><p className="font-semibold">{volontario ? "Descrizione dell’attività e impegno richiesto" : "Altre informazioni"}</p><p className="mt-1 whitespace-pre-line text-muted-foreground">{annuncio.informazioni}</p></div>}
+      </div>}
       {annuncio.chiuso ? (
         <p className="mt-6 text-sm font-semibold text-muted-foreground">Candidature chiuse</p>
       ) : (
