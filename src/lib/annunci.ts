@@ -1,6 +1,7 @@
 export type Annuncio = {
   id: string;
   servizio: string;
+  emailServizio?: string;
   titolo: string;
   area: string;
   sede: string;
