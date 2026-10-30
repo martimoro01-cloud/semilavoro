@@ -9,6 +9,13 @@ export type Annuncio = {
   tipo_opportunita?: "operatore" | "volontario";
   in_primo_piano?: boolean;
   informazioni?: string;
+  regione?: string;
+  ralMin?: number;
+  ralMax?: number;
+  contratto?: string;
+  durataContratto?: string | null;
+  contrattoDal?: string | null;
+  contrattoAl?: string | null;
 };
 
 export type AreaDiIntervento = {
