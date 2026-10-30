@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,6 @@ export const Route = createFileRoute("/reimposta-password")({
 });
 
 function ReimpostaPassword() {
-  const navigate = useNavigate();
   const [pronto, setPronto] = useState(false);
   const [autorizzato, setAutorizzato] = useState(false);
   const [busy, setBusy] = useState(false);
