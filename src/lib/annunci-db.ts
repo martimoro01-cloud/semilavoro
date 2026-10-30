@@ -24,6 +24,13 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     tipo_opportunita: row.tipo_opportunita,
     in_primo_piano: row.in_primo_piano,
     informazioni: row.informazioni,
+    regione: row.regione,
+    ralMin: row.guadagno_min,
+    ralMax: row.guadagno_max,
+    contratto: row.tipologia_contratto,
+    durataContratto: row.durata_contratto,
+    contrattoDal: row.contratto_dal,
+    contrattoAl: row.contratto_al,
     chiuso: row.stato_pubblicazione !== "attivo",
   };
 }
