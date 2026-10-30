@@ -17,6 +17,7 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
   return {
     id: row.id,
     servizio: row.servizio,
+    emailServizio: row.email,
     titolo: row.mansione,
     area: row.area,
     sede: row.provincia,
