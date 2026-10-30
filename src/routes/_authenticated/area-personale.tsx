@@ -114,7 +114,22 @@ function AreaPersonale() {
     }
     const { error } = await supabase.auth.updateUser({ password: nuova });
     setSalvataggioPassword(false);
-    if (error) return setErrorePassword("Non è stato possibile modificare la password. Riprova.");
+    if (error) {
+      const messaggio = error.message.toLowerCase();
+      if (messaggio.includes("same password") || messaggio.includes("different from the old")) {
+        return setErrorePassword("La nuova password deve essere diversa da quella precedente.");
+      }
+      if (messaggio.includes("weak") || messaggio.includes("password should") || messaggio.includes("password must") || messaggio.includes("password is too")) {
+        return setErrorePassword("La nuova password non rispetta i requisiti di sicurezza. Prova una combinazione più lunga di lettere, numeri e simboli.");
+      }
+      if (messaggio.includes("reauth") || messaggio.includes("nonce") || messaggio.includes("recent login")) {
+        return setErrorePassword("Per sicurezza è richiesta una nuova verifica dell’accesso. Esci, accedi nuovamente e riprova a cambiare password.");
+      }
+      if (messaggio.includes("rate limit") || messaggio.includes("too many requests")) {
+        return setErrorePassword("Troppi tentativi ravvicinati. Attendi qualche minuto prima di riprovare.");
+      }
+      return setErrorePassword(`Modifica non riuscita: ${error.message}`);
+    }
     form.reset();
     setModificaPassword(false);
     setSuccessoPassword("Password aggiornata correttamente.");
