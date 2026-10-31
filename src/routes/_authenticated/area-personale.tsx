@@ -112,7 +112,7 @@ function AreaPersonale() {
       setSalvataggioPassword(false);
       return setErrorePassword(verifica.error.message.toLowerCase().includes("invalid login credentials") ? "La password attuale non è corretta." : `Verifica della password non riuscita: ${verifica.error.message}`);
     }
-    const { error } = await supabase.auth.updateUser({ password: nuova });
+    const { error } = await supabase.auth.updateUser({ password: nuova, current_password: attuale });
     setSalvataggioPassword(false);
     if (error) {
       const messaggio = error.message.toLowerCase();
