@@ -237,7 +237,6 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
       </button>
       {dettagliAperti && <div className="mt-4 space-y-3 rounded-2xl border border-border bg-background/60 p-5 text-sm">
         <p><strong>Servizio:</strong> {annuncio.servizio}</p>
-        {annuncio.emailServizio && <p><strong>Email del servizio:</strong> <a className="break-all text-primary underline underline-offset-2" href={`mailto:${annuncio.emailServizio}`}>{annuncio.emailServizio}</a></p>
         <p><strong>Sede:</strong> {annuncio.sede}{annuncio.regione ? `, ${annuncio.regione}` : ""}</p>
         {!volontario && <>
           <p><strong>Impegno:</strong> {annuncio.orario}</p>
