@@ -110,7 +110,7 @@ function AreaPersonale() {
     const verifica = await supabase.auth.signInWithPassword({ email: user.email, password: attuale });
     if (verifica.error) {
       setSalvataggioPassword(false);
-      return setErrorePassword("La password attuale non è corretta.");
+      return setErrorePassword(verifica.error.message.toLowerCase().includes("invalid login credentials") ? "La password attuale non è corretta." : `Verifica della password non riuscita: ${verifica.error.message}`);
     }
     const { error } = await supabase.auth.updateUser({ password: nuova });
     setSalvataggioPassword(false);
@@ -225,6 +225,7 @@ function AreaPersonale() {
             <div><label htmlFor="password-conferma" className="text-sm font-semibold">Conferma nuova password *</label><input id="password-conferma" name="password_conferma" type="password" autoComplete="new-password" minLength={8} required className={inputClass} /></div>
             {errorePassword && <p role="alert" className="text-sm text-destructive">{errorePassword}</p>}
             <Button type="submit" disabled={salvataggioPassword} className="rounded-full">{salvataggioPassword ? "Salvataggio..." : "Salva nuova password"}</Button>
+            <p className="text-sm text-muted-foreground">Non riesci a cambiare password? <a href="/auth" className="font-semibold text-primary underline underline-offset-2">Usa “Password dimenticata?” dalla pagina di accesso</a> per reimpostarla tramite email.</p>
           </form>}
           {successoPassword && <p role="status" className="mt-3 text-sm text-primary">{successoPassword}</p>}
         </div>}
