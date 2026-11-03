@@ -6,9 +6,10 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
 import { Button } from "@/components/ui/button";
-import type { Database } from "@/integrations/supabase/types";
-
-type Bando = Database["public"]["Tables"]["bandi"]["Row"];
+// La tabella "bandi" non è ancora attiva nel database (vedi docs/concorsi-bandi.md): client non tipizzato.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = supabase as any;
+type Bando = { id: string; titolo: string; tipo: keyof typeof tipi; regione: string | null; scadenza: string; pubblicato: boolean; verificato: boolean; [key: string]: any };
 const tipi = { concorso: "Concorso pubblico", avviso: "Avviso pubblico", bando_enti: "Bando per enti" } as const;
 const dateIt = (value: string) => new Date(value).toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
 const isExpired = (value: string) => new Date(value).getTime() < Date.now();
@@ -29,14 +30,14 @@ function ConcorsiBandi() {
   const [feedback, setFeedback] = useState("");
   const { data: admin = false } = useQuery({
     queryKey: ["bandi-admin", user?.id], enabled: !!user,
-    queryFn: async () => { const { data, error } = await supabase.rpc("is_bandi_admin"); if (error) return false; return data === true; },
+    queryFn: async () => { const { data, error } = await db.rpc("is_bandi_admin"); if (error) return false; return data === true; },
   });
   const { data: bandi = [], isLoading, isError } = useQuery({
     queryKey: ["bandi", admin],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bandi").select("*").order("scadenza", { ascending: true }).limit(300);
+      const { data, error } = await db.from("bandi").select("*").order("scadenza", { ascending: true }).limit(300);
       if (error) throw error;
-      return data;
+      return (data ?? []) as Bando[];
     },
   });
   const pubblici = bandi.filter(b => admin || b.pubblicato);
@@ -51,7 +52,7 @@ function ConcorsiBandi() {
     const url = String(f.get("url_ufficiale")).trim();
     if (!url.startsWith("https://") || !scadenza) return setFeedback("Inserisci una scadenza e un link HTTPS alla fonte ufficiale.");
     setSaving(true); setFeedback("");
-    const { error } = await supabase.from("bandi").insert({
+    const { error } = await db.from("bandi").insert({
       titolo: String(f.get("titolo")).trim(), ente: String(f.get("ente")).trim(),
       tipo: String(f.get("tipo")) as Bando["tipo"], regione: String(f.get("regione")).trim(),
       professione: String(f.get("professione")).trim(), descrizione: String(f.get("descrizione")).trim(),
@@ -66,13 +67,13 @@ function ConcorsiBandi() {
   async function setPubblicato(b: Bando, pubblicato: boolean) {
     if (!admin) return;
     if (pubblicato && !b.verificato) return setFeedback("Verifica prima il bando e la fonte ufficiale.");
-    const { error } = await supabase.from("bandi").update({ pubblicato, updated_at: new Date().toISOString() }).eq("id", b.id);
+    const { error } = await db.from("bandi").update({ pubblicato, updated_at: new Date().toISOString() }).eq("id", b.id);
     if (error) return setFeedback("Aggiornamento non riuscito.");
     await client.invalidateQueries({ queryKey: ["bandi"] });
   }
   async function verifica(b: Bando) {
     if (!admin) return;
-    const { error } = await supabase.from("bandi").update({ verificato: true, updated_at: new Date().toISOString() }).eq("id", b.id);
+    const { error } = await db.from("bandi").update({ verificato: true, updated_at: new Date().toISOString() }).eq("id", b.id);
     if (error) return setFeedback("Verifica non riuscita.");
     await client.invalidateQueries({ queryKey: ["bandi"] });
   }

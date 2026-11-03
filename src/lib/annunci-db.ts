@@ -22,7 +22,7 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     area: row.area,
     sede: row.provincia,
     orario: row.impegno,
-    tipo_opportunita: row.tipo_opportunita,
+    tipo_opportunita: row.tipo_opportunita === "volontario" ? "volontario" : "operatore",
     in_primo_piano: row.in_primo_piano,
     informazioni: row.informazioni,
     regione: row.regione,
