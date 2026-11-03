@@ -451,7 +451,7 @@ function CandidatoRow({ candidatura: c, volontario = false, nomeServizio }: { ca
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("view")}><Eye />{volontario ? "Visualizza lettera" : "Visualizza CV"}</Button>
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />{volontario ? "Scarica lettera" : "Scarica CV"}</Button>
       </div>
-      <ChatCandidatura candidaturaId={c.id} stato={c.stato} nomeCandidato={c.nome || c.email} nomeServizio={nomeServizio} />
+      <ChatCandidatura candidaturaId={c.id} stato={c.stato} nomeCandidato={c.nome || c.email} nomeServizio={nomeServizio ?? null} />
       {erroreCv && <p role="alert" className="mt-2 text-sm text-destructive">{erroreCv}</p>}
 
     </div>

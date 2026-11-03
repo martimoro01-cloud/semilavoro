@@ -28,7 +28,7 @@ export function toAnnuncio(row: AnnuncioRow): Annuncio {
     regione: row.regione,
     ralMin: row.guadagno_min,
     ralMax: row.guadagno_max,
-    contratto: row.tipologia_contratto,
+    contratto: row.tipologia_contratto ?? "",
     durataContratto: row.durata_contratto,
     contrattoDal: row.contratto_dal,
     contrattoAl: row.contratto_al,
