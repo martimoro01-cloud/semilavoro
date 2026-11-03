@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 // La tabella "bandi" non è ancora attiva nel database (vedi docs/concorsi-bandi.md): client non tipizzato.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
-type Bando = { id: string; titolo: string; tipo: keyof typeof tipi; regione: string | null; scadenza: string; pubblicato: boolean; verificato: boolean; [key: string]: any };
+type Bando = { id: string; titolo: string; tipo: keyof typeof tipi; regione: string; scadenza: string; pubblicato: boolean; verificato: boolean; ente: string; professione: string | null; descrizione: string | null; fonte: string; url_ufficiale: string };
 const tipi = { concorso: "Concorso pubblico", avviso: "Avviso pubblico", bando_enti: "Bando per enti" } as const;
 const dateIt = (value: string) => new Date(value).toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
 const isExpired = (value: string) => new Date(value).getTime() < Date.now();
