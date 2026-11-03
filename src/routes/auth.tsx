@@ -62,7 +62,7 @@ function AuthPage() {
       if (error) return setError(error.message.includes("registered") ? "Questa email è già registrata." : "Registrazione non riuscita. Controlla i dati e riprova.");
       setVerificationEmail(email);
       setCode("");
-      setInfo("Ti abbiamo inviato un codice di 6 cifre via email. Inseriscilo qui per attivare l’account.");
+      setInfo("Ti abbiamo inviato un codice di 8 cifre via email. Inseriscilo qui per attivare l’account.");
     }
   }
 
@@ -85,7 +85,7 @@ function AuthPage() {
     event.preventDefault();
     setError("");
     setInfo("");
-    if (!/^\\d{6}$/.test(code.trim())) return setError("Inserisci il codice di 6 cifre ricevuto via email.");
+    if (!/^\\d{8}$/.test(code.trim())) return setError("Inserisci il codice di 8 cifre ricevuto via email.");
     setBusy(true);
     const { error } = await supabase.auth.verifyOtp({ email: verificationEmail, token: code.trim(), type: "signup" });
     setBusy(false);
@@ -114,7 +114,7 @@ function AuthPage() {
               <form className="mt-6 space-y-4" onSubmit={verifyCode}>
                 <div>
                   <label htmlFor="verification-code" className="text-sm font-semibold">Codice di verifica *</label>
-                  <input id="verification-code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={(event) => setCode(event.target.value.replace(/\\D/g, "").slice(0, 6))} placeholder="000000" className={inputClass} />
+                  <input id="verification-code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{8}" maxLength={8} required value={code} onChange={(event) => setCode(event.target.value.replace(/\\D/g, "").slice(0, 8))} placeholder="000000" className={inputClass} />
                 </div>
                 {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
                 {info && <p role="status" className="text-sm text-foreground">{info}</p>}
