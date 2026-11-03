@@ -193,7 +193,7 @@ function AreaPersonale() {
             <p className="text-sm font-semibold uppercase tracking-wide text-primary">
               {tipo === "servizio" ? "Servizio educativo" : tipo === "educatore" ? "Educatore / operatore" : ""}
             </p>
-            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao, {(profilo?.nome?.trim() || String(user?.user_metadata?.nome || "").trim() || user?.email?.split("@")[0] || "utente").split(/\s+/)[0]}!</h1>
+            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Ciao, {(profilo?.nome?.trim() || String(user?.user_metadata?.["nome"] || "").trim() || user?.email?.split("@")[0] || "utente").split(/\s+/)[0]}!</h1>
             <p className="mt-2 font-display text-xl font-semibold sm:text-2xl">Benvenuta su SEMI</p>
             <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
             {erroreFoto && <p role="alert" className="mt-2 text-xs text-destructive">{erroreFoto}</p>}
@@ -451,7 +451,7 @@ function CandidatoRow({ candidatura: c, volontario = false, nomeServizio }: { ca
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("view")}><Eye />{volontario ? "Visualizza lettera" : "Visualizza CV"}</Button>
         <Button size="sm" variant="outline" disabled={cvBusy || !c.cv_path} className="rounded-full shadow-none" onClick={() => azioneCv("download")}><Download />{volontario ? "Scarica lettera" : "Scarica CV"}</Button>
       </div>
-      <ChatCandidatura candidaturaId={c.id} stato={c.stato} nomeCandidato={c.nome || c.email} nomeServizio={nomeServizio} />
+      <ChatCandidatura candidaturaId={c.id} stato={c.stato} nomeCandidato={c.nome || c.email} nomeServizio={nomeServizio ?? null} />
       {erroreCv && <p role="alert" className="mt-2 text-sm text-destructive">{erroreCv}</p>}
 
     </div>

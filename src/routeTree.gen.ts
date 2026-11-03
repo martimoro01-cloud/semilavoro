@@ -12,8 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ChiSiamoRouteImport } from './routes/chi-siamo'
+import { Route as ConcorsiBandiRouteImport } from './routes/concorsi-bandi'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PubblicaAnnuncioRouteImport } from './routes/pubblica-annuncio'
+import { Route as ReimpostaPasswordRouteImport } from './routes/reimposta-password'
 import { Route as TrovaLavoroRouteImport } from './routes/trova-lavoro'
+import { Route as VolontariatoRouteImport } from './routes/volontariato'
 import { Route as AuthenticatedAreaPersonaleRouteImport } from './routes/_authenticated/area-personale'
 import { Route as TrovaLavoroIndexRouteImport } from './routes/trova-lavoro.index'
 import { Route as TrovaLavoroAreaRouteImport } from './routes/trova-lavoro.$area'
@@ -32,14 +37,39 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChiSiamoRoute = ChiSiamoRouteImport.update({
+  id: '/chi-siamo',
+  path: '/chi-siamo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConcorsiBandiRoute = ConcorsiBandiRouteImport.update({
+  id: '/concorsi-bandi',
+  path: '/concorsi-bandi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PubblicaAnnuncioRoute = PubblicaAnnuncioRouteImport.update({
   id: '/pubblica-annuncio',
   path: '/pubblica-annuncio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReimpostaPasswordRoute = ReimpostaPasswordRouteImport.update({
+  id: '/reimposta-password',
+  path: '/reimposta-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrovaLavoroRoute = TrovaLavoroRouteImport.update({
   id: '/trova-lavoro',
   path: '/trova-lavoro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolontariatoRoute = VolontariatoRouteImport.update({
+  id: '/volontariato',
+  path: '/volontariato',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAreaPersonaleRoute =
@@ -62,8 +92,13 @@ const TrovaLavoroAreaRoute = TrovaLavoroAreaRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/chi-siamo': typeof ChiSiamoRoute
+  '/concorsi-bandi': typeof ConcorsiBandiRoute
+  '/privacy': typeof PrivacyRoute
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
+  '/reimposta-password': typeof ReimpostaPasswordRoute
   '/trova-lavoro': typeof TrovaLavoroRouteWithChildren
+  '/volontariato': typeof VolontariatoRoute
   '/area-personale': typeof AuthenticatedAreaPersonaleRoute
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
   '/trova-lavoro/': typeof TrovaLavoroIndexRoute
@@ -71,7 +106,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/chi-siamo': typeof ChiSiamoRoute
+  '/concorsi-bandi': typeof ConcorsiBandiRoute
+  '/privacy': typeof PrivacyRoute
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
+  '/reimposta-password': typeof ReimpostaPasswordRoute
+  '/volontariato': typeof VolontariatoRoute
   '/area-personale': typeof AuthenticatedAreaPersonaleRoute
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
   '/trova-lavoro': typeof TrovaLavoroIndexRoute
@@ -81,8 +121,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/chi-siamo': typeof ChiSiamoRoute
+  '/concorsi-bandi': typeof ConcorsiBandiRoute
+  '/privacy': typeof PrivacyRoute
   '/pubblica-annuncio': typeof PubblicaAnnuncioRoute
+  '/reimposta-password': typeof ReimpostaPasswordRoute
   '/trova-lavoro': typeof TrovaLavoroRouteWithChildren
+  '/volontariato': typeof VolontariatoRoute
   '/_authenticated/area-personale': typeof AuthenticatedAreaPersonaleRoute
   '/trova-lavoro/$area': typeof TrovaLavoroAreaRoute
   '/trova-lavoro/': typeof TrovaLavoroIndexRoute
@@ -92,8 +137,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/chi-siamo'
+    | '/concorsi-bandi'
+    | '/privacy'
     | '/pubblica-annuncio'
+    | '/reimposta-password'
     | '/trova-lavoro'
+    | '/volontariato'
     | '/area-personale'
     | '/trova-lavoro/$area'
     | '/trova-lavoro/'
@@ -101,7 +151,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/chi-siamo'
+    | '/concorsi-bandi'
+    | '/privacy'
     | '/pubblica-annuncio'
+    | '/reimposta-password'
+    | '/volontariato'
     | '/area-personale'
     | '/trova-lavoro/$area'
     | '/trova-lavoro'
@@ -110,8 +165,13 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/chi-siamo'
+    | '/concorsi-bandi'
+    | '/privacy'
     | '/pubblica-annuncio'
+    | '/reimposta-password'
     | '/trova-lavoro'
+    | '/volontariato'
     | '/_authenticated/area-personale'
     | '/trova-lavoro/$area'
     | '/trova-lavoro/'
@@ -121,8 +181,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ChiSiamoRoute: typeof ChiSiamoRoute
+  ConcorsiBandiRoute: typeof ConcorsiBandiRoute
+  PrivacyRoute: typeof PrivacyRoute
   PubblicaAnnuncioRoute: typeof PubblicaAnnuncioRoute
+  ReimpostaPasswordRoute: typeof ReimpostaPasswordRoute
   TrovaLavoroRoute: typeof TrovaLavoroRouteWithChildren
+  VolontariatoRoute: typeof VolontariatoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -148,6 +213,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chi-siamo': {
+      id: '/chi-siamo'
+      path: '/chi-siamo'
+      fullPath: '/chi-siamo'
+      preLoaderRoute: typeof ChiSiamoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/concorsi-bandi': {
+      id: '/concorsi-bandi'
+      path: '/concorsi-bandi'
+      fullPath: '/concorsi-bandi'
+      preLoaderRoute: typeof ConcorsiBandiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pubblica-annuncio': {
       id: '/pubblica-annuncio'
       path: '/pubblica-annuncio'
@@ -155,11 +241,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PubblicaAnnuncioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reimposta-password': {
+      id: '/reimposta-password'
+      path: '/reimposta-password'
+      fullPath: '/reimposta-password'
+      preLoaderRoute: typeof ReimpostaPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trova-lavoro': {
       id: '/trova-lavoro'
       path: '/trova-lavoro'
       fullPath: '/trova-lavoro'
       preLoaderRoute: typeof TrovaLavoroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volontariato': {
+      id: '/volontariato'
+      path: '/volontariato'
+      fullPath: '/volontariato'
+      preLoaderRoute: typeof VolontariatoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/area-personale': {
@@ -215,8 +315,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ChiSiamoRoute: ChiSiamoRoute,
+  ConcorsiBandiRoute: ConcorsiBandiRoute,
+  PrivacyRoute: PrivacyRoute,
   PubblicaAnnuncioRoute: PubblicaAnnuncioRoute,
+  ReimpostaPasswordRoute: ReimpostaPasswordRoute,
   TrovaLavoroRoute: TrovaLavoroRouteWithChildren,
+  VolontariatoRoute: VolontariatoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

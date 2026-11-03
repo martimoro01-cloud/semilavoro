@@ -49,7 +49,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     enabled: !!user,
     queryFn: async () => (await supabase.from("profiles").select("nome, foto_path").eq("id", user!.id).maybeSingle()).data,
   });
-  const iniziale = (profilo?.nome?.trim() || String(user?.user_metadata?.nome || "").trim() || user?.email?.split("@")[0] || "U").charAt(0).toUpperCase();
+  const iniziale = (profilo?.nome?.trim() || String(user?.user_metadata?.["nome"] || "").trim() || user?.email?.split("@")[0] || "U").charAt(0).toUpperCase();
   const fotoUrl = profilo?.foto_path ? supabase.storage.from("foto-profilo").getPublicUrl(profilo.foto_path).data.publicUrl : null;
   const accountTo = user ? "/area-personale" : "/auth";
   const accountLabel = user ? "Area personale" : "Accedi";
