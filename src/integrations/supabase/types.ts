@@ -17,7 +17,10 @@ export type Database = {
       annunci: {
         Row: {
           area: string
+          contratto_al: string | null
+          contratto_dal: string | null
           created_at: string
+          durata_contratto: string | null
           email: string
           guadagno_max: number
           guadagno_min: number
@@ -31,16 +34,16 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
-          durata_contratto: "determinato" | "indeterminato" | null
-          contratto_dal: string | null
-          contratto_al: string | null
-          tipologia_contratto: string
-          tipo_opportunita: "operatore" | "volontario"
-          stato_pubblicazione: "attivo" | "sospeso" | "archiviato"
+          stato_pubblicazione: string
+          tipo_opportunita: string | null
+          tipologia_contratto: string | null
         }
         Insert: {
           area: string
+          contratto_al?: string | null
+          contratto_dal?: string | null
           created_at?: string
+          durata_contratto?: string | null
           email: string
           guadagno_max: number
           guadagno_min: number
@@ -54,16 +57,16 @@ export type Database = {
           provincia: string
           regione: string
           servizio: string
-          durata_contratto?: "determinato" | "indeterminato" | null
-          contratto_dal?: string | null
-          contratto_al?: string | null
-          tipologia_contratto?: string
-          tipo_opportunita?: "operatore" | "volontario"
-          stato_pubblicazione?: "attivo" | "sospeso" | "archiviato"
+          stato_pubblicazione?: string
+          tipo_opportunita?: string | null
+          tipologia_contratto?: string | null
         }
         Update: {
           area?: string
+          contratto_al?: string | null
+          contratto_dal?: string | null
           created_at?: string
+          durata_contratto?: string | null
           email?: string
           guadagno_max?: number
           guadagno_min?: number
@@ -77,73 +80,10 @@ export type Database = {
           provincia?: string
           regione?: string
           servizio?: string
-          durata_contratto?: "determinato" | "indeterminato" | null
-          contratto_dal?: string | null
-          contratto_al?: string | null
-          tipologia_contratto?: string
-          tipo_opportunita?: "operatore" | "volontario"
-          stato_pubblicazione?: "attivo" | "sospeso" | "archiviato"
+          stato_pubblicazione?: string
+          tipo_opportunita?: string | null
+          tipologia_contratto?: string | null
         }
-        Relationships: []
-      }
-      bandi: {
-        Row: {
-          id: string
-          titolo: string
-          ente: string
-          tipo: "concorso" | "avviso" | "bando_enti"
-          regione: string
-          professione: string
-          descrizione: string
-          scadenza: string
-          url_ufficiale: string
-          fonte: "manuale" | "automatica"
-          identificativo_fonte: string | null
-          verificato: boolean
-          pubblicato: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          titolo: string
-          ente: string
-          tipo: "concorso" | "avviso" | "bando_enti"
-          regione?: string
-          professione?: string
-          descrizione?: string
-          scadenza: string
-          url_ufficiale: string
-          fonte?: "manuale" | "automatica"
-          identificativo_fonte?: string | null
-          verificato?: boolean
-          pubblicato?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          titolo?: string
-          ente?: string
-          tipo?: "concorso" | "avviso" | "bando_enti"
-          regione?: string
-          professione?: string
-          descrizione?: string
-          scadenza?: string
-          url_ufficiale?: string
-          fonte?: "manuale" | "automatica"
-          identificativo_fonte?: string | null
-          verificato?: boolean
-          pubblicato?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      bandi_amministratori: {
-        Row: { user_id: string }
-        Insert: { user_id: string }
-        Update: { user_id?: string }
         Relationships: []
       }
       candidature: {
@@ -203,76 +143,109 @@ export type Database = {
         ]
       }
       messaggi_candidatura: {
-        Row: { id: string; candidatura_id: string; mittente_id: string; testo: string; created_at: string }
-        Insert: { id?: string; candidatura_id: string; mittente_id: string; testo: string; created_at?: string }
-        Update: { id?: string; candidatura_id?: string; mittente_id?: string; testo?: string; created_at?: string }
-        Relationships: []
+        Row: {
+          candidatura_id: string
+          created_at: string
+          id: string
+          mittente_id: string
+          testo: string
+        }
+        Insert: {
+          candidatura_id: string
+          created_at?: string
+          id?: string
+          mittente_id: string
+          testo: string
+        }
+        Update: {
+          candidatura_id?: string
+          created_at?: string
+          id?: string
+          mittente_id?: string
+          testo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messaggi_candidatura_candidatura_id_fkey"
+            columns: ["candidatura_id"]
+            isOneToOne: false
+            referencedRelation: "candidature"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
-          created_at: string
           citta: string | null
+          created_at: string
           cv_path: string | null
           descrizione: string | null
           esperienza: string | null
+          foto_path: string | null
+          id: string
+          nome: string
           qualifica: string | null
           sito_web: string | null
           telefono: string | null
-          id: string
-          nome: string
-          foto_path: string | null
         }
         Insert: {
-          created_at?: string
           citta?: string | null
+          created_at?: string
           cv_path?: string | null
           descrizione?: string | null
           esperienza?: string | null
+          foto_path?: string | null
+          id: string
+          nome?: string
           qualifica?: string | null
           sito_web?: string | null
           telefono?: string | null
-          id: string
-          nome?: string
-          foto_path?: string | null
         }
         Update: {
+          citta?: string | null
           created_at?: string
+          cv_path?: string | null
+          descrizione?: string | null
+          esperienza?: string | null
+          foto_path?: string | null
           id?: string
           nome?: string
-          foto_path?: string | null
+          qualifica?: string | null
+          sito_web?: string | null
+          telefono?: string | null
         }
         Relationships: []
       }
       recensioni: {
         Row: {
-          id: string
+          approvata: boolean
           autore_id: string
+          created_at: string
+          id: string
           nome: string
-          ruolo: "educatore" | "servizio"
+          ruolo: string
           testo: string
           valutazione: number
-          approvata: boolean
-          created_at: string
         }
         Insert: {
-          id?: string
+          approvata?: boolean
           autore_id: string
+          created_at?: string
+          id?: string
           nome: string
-          ruolo: "educatore" | "servizio"
+          ruolo: string
           testo: string
           valutazione: number
-          approvata?: boolean
-          created_at?: string
         }
         Update: {
-          id?: string
+          approvata?: boolean
           autore_id?: string
+          created_at?: string
+          id?: string
           nome?: string
-          ruolo?: "educatore" | "servizio"
+          ruolo?: string
           testo?: string
           valutazione?: number
-          approvata?: boolean
-          created_at?: string
         }
         Relationships: []
       }
@@ -300,8 +273,6 @@ export type Database = {
     }
     Functions: {
       annuncio_aperto: { Args: { _annuncio_id: string }; Returns: boolean }
-      puo_messaggiare_candidatura: { Args: { p_candidatura_id: string }; Returns: boolean }
-      is_bandi_admin: { Args: Record<PropertyKey, never>; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -310,6 +281,10 @@ export type Database = {
         Returns: boolean
       }
       owns_annuncio: { Args: { _annuncio_id: string }; Returns: boolean }
+      puo_messaggiare_candidatura: {
+        Args: { p_candidatura_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "educatore" | "servizio"
