@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { trovaArea, type Annuncio } from "@/lib/annunci";
@@ -272,6 +272,12 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
 function AreaPage() {
   const { area } = Route.useLoaderData();
   const { data: annunci = [], isLoading } = useQuery({ queryKey: ["annunci", area.nome], queryFn: () => fetchAnnunci({ area: area.nome }) });
+  const [regione, setRegione] = useState("");
+  const [provincia, setProvincia] = useState("");
+  const regioni = useMemo(() => [...new Set(annunci.map(a => a.regione?.trim()).filter((r): r is string => Boolean(r)))].sort((a,b) => a.localeCompare(b,"it")), [annunci]);
+  const province = useMemo(() => [...new Set(annunci.filter(a => !regione || a.regione?.trim() === regione).map(a => a.sede?.trim()).filter((p): p is string => Boolean(p)))].sort((a,b) => a.localeCompare(b,"it")), [annunci, regione]);
+  const annunciFiltrati = annunci.filter(a => (!regione || a.regione?.trim() === regione) && (!provincia || a.sede?.trim() === provincia));
+  const filtriAttivi = Boolean(regione || provincia);
 
   return (
     <SiteLayout>
@@ -286,19 +292,40 @@ function AreaPage() {
         <h1 className="mt-6 text-4xl font-bold md:text-5xl">{area.nome}</h1>
         <p className="mt-4 text-lg text-muted-foreground">{area.descrizione}</p>
 
-        {isLoading ? null : annunci.length === 0 ? (
+        <div className="mt-8 rounded-2xl border border-border bg-card p-5">
+          <h2 className="text-lg font-semibold">Filtra per zona</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Seleziona una regione e, se vuoi, una provincia. I filtri sono facoltativi.</p>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="filtro-regione" className={labelClass}>Regione</label>
+              <select id="filtro-regione" className={inputClass} value={regione} onChange={e => { setRegione(e.target.value); setProvincia(""); }}>
+                <option value="">Tutte le regioni</option>
+                {regioni.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="filtro-provincia" className={labelClass}>Provincia</label>
+              <select id="filtro-provincia" className={inputClass} value={provincia} onChange={e => setProvincia(e.target.value)}>
+                <option value="">Tutte le province</option>
+                {province.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+          </div>
+          {filtriAttivi && <button type="button" className="mt-4 text-sm font-semibold text-primary underline" onClick={() => { setRegione(""); setProvincia(""); }}>Cancella filtri</button>}
+        </div>
+        {isLoading ? null : annunciFiltrati.length === 0 ? (
           <div className="mt-12 rounded-3xl border border-border bg-card p-12 text-center">
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-primary">
               <SearchX className="h-6 w-6" />
             </span>
-            <p className="mt-5 text-xl font-bold">Nessun annuncio disponibile</p>
+            <p className="mt-5 text-xl font-bold">{filtriAttivi ? "Nessun annuncio nella zona selezionata" : "Nessun annuncio disponibile"}</p>
             <p className="mt-2 text-muted-foreground">
-              Torna presto: pubblicheremo nuove opportunità per quest'area.
+              {filtriAttivi ? "Prova a cambiare zona oppure cancella i filtri." : "Torna presto: pubblicheremo nuove opportunità per quest’area."}
             </p>
           </div>
         ) : (
           <div className="mt-12 grid gap-6">
-            {annunci.map((annuncio) => (
+            {annunciFiltrati.map((annuncio) => (
               <AnnuncioCard key={annuncio.id} annuncio={annuncio} />
             ))}
           </div>
