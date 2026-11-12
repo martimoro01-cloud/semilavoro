@@ -114,7 +114,7 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
     const up = await supabase.storage.from("cv").upload(path, file);
     if (up.error) return setStato("errore");
     const { data: prof } = await supabase.from("profiles").select("nome").eq("id", user!.id).maybeSingle();
-    const { error } = await supabase.from("candidature").insert({
+    const { data: candidaturaCreata, error } = await supabase.from("candidature").insert({
       annuncio_id: annuncio.id,
       candidato_id: user!.id,
       nome: prof?.nome ?? "",
@@ -122,9 +122,17 @@ function CandidaturaForm({ annuncio }: { annuncio: Annuncio }) {
       cellulare: String(f.get("telefono")),
       lettera: String(f.get("lettera")),
       cv_path: path,
-    });
+    }).select("id").single();
     if (error) return setStato(error.code === "23505" ? "doppia" : "errore");
     setStato("ok");
+    // A notification failure must not invalidate an already saved application.
+    if (candidaturaCreata?.id) {
+      void supabase.functions.invoke("notifica-candidatura", {
+        body: { candidaturaId: candidaturaCreata.id },
+      }).then(({ error: notificationError }) => {
+        if (notificationError) console.error("Notifica candidatura non inviata", notificationError);
+      }).catch((notificationError) => console.error("Notifica candidatura non inviata", notificationError));
+    }
   }
 
   return (
