@@ -26,10 +26,18 @@ export function ChatCandidatura({ candidaturaId, stato, nomeCandidato, nomeServi
     e.preventDefault();
     if (!user || !aperta || !testo.trim() || busy) return;
     setBusy(true); setErrore("");
-    const { error } = await supabase.from("messaggi_candidatura").insert({ candidatura_id: candidaturaId, mittente_id: user.id, testo: testo.trim() });
+    const { data: messaggioCreato, error } = await supabase.from("messaggi_candidatura").insert({ candidatura_id: candidaturaId, mittente_id: user.id, testo: testo.trim() }).select("id").single();
     setBusy(false);
     if (error) return setErrore("Invio non riuscito. Verifica che la candidatura sia accettata e riprova.");
     setTesto("");
+    // Email failures do not affect a message already saved in the conversation.
+    if (messaggioCreato?.id) {
+      void supabase.functions.invoke("notifica-messaggio", {
+        body: { messageId: messaggioCreato.id },
+      }).then(({ error: notificationError }) => {
+        if (notificationError) console.error("Notifica messaggio non inviata", notificationError);
+      }).catch((notificationError) => console.error("Notifica messaggio non inviata", notificationError));
+    }
     await client.invalidateQueries({ queryKey: ["messaggi-candidatura", candidaturaId] });
   }
   if (!aperta) return null;
