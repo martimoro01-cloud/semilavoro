@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, Link, notFound, useLocation } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { trovaArea, type Annuncio } from "@/lib/annunci";
 import { useQuery } from "@tanstack/react-query";
@@ -221,9 +221,20 @@ export function AnnuncioCard({ annuncio }: { annuncio: Annuncio }) {
   const [open, setOpen] = useState(false);
   const [dettagliAperti, setDettagliAperti] = useState(false);
   const volontario = annuncio.tipo_opportunita === "volontario";
+  const hash = useLocation({ select: (location) => location.hash });
+  const id = `annuncio-${annuncio.id}`;
+
+  useEffect(() => {
+    if (hash !== id && hash !== `#${id}`) return;
+    setDettagliAperti(true);
+    const frame = requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ block: "start" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [hash, id]);
 
   return (
-    <article className="flex flex-col rounded-3xl border border-border bg-card p-7 transition-all hover:shadow-xl hover:shadow-primary/10">
+    <article id={id} className="scroll-mt-28 flex flex-col rounded-3xl border border-border bg-card p-7 transition-all hover:shadow-xl hover:shadow-primary/10">
       <span className="inline-flex w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
         {annuncio.area}
       </span>
