@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAnnunci } from "@/lib/annunci-db";
+import { areeDiIntervento } from "@/lib/annunci";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccount } from "@/hooks/use-account";
 import { Button } from "@/components/ui/button";
@@ -128,9 +129,19 @@ function Index() {
                     {annuncio.orario}
                   </span>
                 </div>
-                <span className="mt-6 flex h-9 w-9 items-center justify-center self-end rounded-full bg-primary/15 text-primary transition-transform group-hover:translate-x-1">
-                  <ArrowRight className="h-4 w-4" />
-                </span>
+                {(() => {
+                  const area = areeDiIntervento.find(a => a.nome === annuncio.area);
+                  const className = "mt-6 flex h-9 w-9 items-center justify-center self-end rounded-full bg-primary/15 text-primary transition-transform group-hover:translate-x-1";
+                  return area ? (
+                    <Link to="/trova-lavoro/$area" params={{ area: area.slug }} hash={`annuncio-${annuncio.id}`} aria-label={`Visualizza annuncio: ${annuncio.titolo}`} className={className}>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  ) : (
+                    <Link to="/trova-lavoro" aria-label="Vedi tutti gli annunci" className={className}>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  );
+                })()}
               </article>
             ))}
           </div>
